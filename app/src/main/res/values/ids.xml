@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="startButton" type="id" />
+    <item name="timelineTitleText" type="id" />
+    <item name="nextButton" type="id" />
+    <item name="prevButton" type="id" />
+    <item name="submitButton" type="id" />
+    <item name="fakeTextView" type="id" />
+    <item name="recyclerView" type="id" />
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<labelingStudy.nctu.si.inteco.minuku_2.view.customview.MoodEntryView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="187dp"
+    android:layout_weight="0.80"
+    android:paddingTop="10dp"/>
