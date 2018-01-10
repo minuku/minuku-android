@@ -184,19 +184,21 @@ public class Timeline extends AppCompatActivity {
 
         current_task = v.getResources().getString(R.string.current_task);
 
-        if(current_task.equals("PART")) {
-            setDataListItems();
-            MyAdapter myAdapter = new MyAdapter(myTimeDataset, myActivityDataset,myTrafficDataset,myAnnotationDataset);
-            RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
-            //initialize RecyclerView
-//            final View vitem = LayoutInflater.from(Timeline.this).inflate(R.layout.item_dialog, null);
-//            item  = vitem;
-            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mList.setLayoutManager(layoutManager);
-            mList.setAdapter(myAdapter);
-        }else{
+//        if(current_task.equals("PART")) {
+////            setDataListItems();
+//
+//
+//            MyAdapter myAdapter = new MyAdapter(myTimeDataset, myActivityDataset,myTrafficDataset,myAnnotationDataset);
+//            RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
+//            //initialize RecyclerView
+////            final View vitem = LayoutInflater.from(Timeline.this).inflate(R.layout.item_dialog, null);
+////            item  = vitem;
+//            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//
+//            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//            mList.setLayoutManager(layoutManager);
+//            mList.setAdapter(myAdapter);
+//        }else{
             ArrayList<String> locationDataRecords = null;
 
             listview = (RecyclerView) v.findViewById(R.id.list_view);
@@ -218,8 +220,14 @@ public class Timeline extends AppCompatActivity {
                 List<String> sessionids = new ArrayList<>();
                 List<LatLng> locations = new ArrayList<>();
 
+                Boolean userPressOrNot = false;
+
                 for(String data : locationDataRecords){
                     String[] datasplit = data.split("-");
+
+                    for(String datasplitpart : datasplit){
+                        Log.d(TAG, "datasplit : "+datasplitpart);
+                    }
 
 //                    String[] getRidofYear = datasplit[0].split("/");
 //                    String[] getRidofYear2 = datasplit[1].split("/");
@@ -231,9 +239,15 @@ public class Timeline extends AppCompatActivity {
                     LatLng latLng = new LatLng(Double.valueOf(datasplit[4]),Double.valueOf(datasplit[5]));
                     Log.d(TAG, "datasplit[4] : "+datasplit[4]+"; datasplit[5] : "+ datasplit[5]);
                     locations.add(latLng);
+
+                    Log.d(TAG, "Boolean.valueOf(datasplit[6]) : "+Boolean.valueOf(datasplit[6]));
+
+                    userPressOrNot = userPressOrNot || Boolean.valueOf(datasplit[6]);
+
+                    Log.d(TAG, "userPressOrNot : "+userPressOrNot);
                 }
 
-                MyAdapter myAdapter = new MyAdapter(times, activities, myTrafficDataset,myAnnotationDataset, sessionids, locations);//
+                MyAdapter myAdapter = new MyAdapter(times, activities, myTrafficDataset,myAnnotationDataset, sessionids, locations, userPressOrNot);//
                 RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
 
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -246,15 +260,18 @@ public class Timeline extends AppCompatActivity {
 
                 mlocationDataRecords = locationDataRecords;
 
-            }catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 Log.d(TAG,"InterruptedException");
                 e.printStackTrace();
-            } catch (ExecutionException e) {
+            } /*catch (IndexOutOfBoundsException e) {
+                Log.d(TAG,"InterruptedException");
+                e.printStackTrace();
+            }*/ catch (ExecutionException e) {
                 Log.d(TAG,"ExecutionException");
                 e.printStackTrace();
             }
 
-        }
+//        }
 
     }
 
@@ -297,6 +314,7 @@ public class Timeline extends AppCompatActivity {
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<String> mTime, mActivity, mTraffic, mAnnotation, mSession;
         private List<LatLng> mlocation;
+        private Boolean mUserPressOrNot;
 
 //        private String getRidofMD = "", getRidofMD2 = "";
 
@@ -306,6 +324,7 @@ public class Timeline extends AppCompatActivity {
             public LinearLayout cardbackground;
             public android.support.v7.widget.CardView cardView;
             public ImageView traffic;
+            public View car_line;
             public ViewHolder(View v) {
                 super(v);
                 time = (TextView) v.findViewById(R.id.tv_time);
@@ -314,6 +333,7 @@ public class Timeline extends AppCompatActivity {
                 lineView = (TimelineView) v.findViewById(R.id.time_marker);
                 cardView = (android.support.v7.widget.CardView) v.findViewById(R.id.cardview);
                 cardbackground = (LinearLayout) v.findViewById(R.id.cardbackground);
+                car_line = (View) v.findViewById(R.id.CAR_line);
             }
         }
 
@@ -324,13 +344,14 @@ public class Timeline extends AppCompatActivity {
             mAnnotation = annotationdata;
         }
 
-        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata, List<String> sessioniddata, List<LatLng> locationdata) {
+        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata, List<String> sessioniddata, List<LatLng> locationdata, Boolean userPressOrNot) {
             mTime = timedata;
             mActivity = activitydata;
             mTraffic = trafficdata;
             mAnnotation = annotationdata;
             mSession = sessioniddata;
             mlocation = locationdata;
+            mUserPressOrNot = userPressOrNot;
         }
 
         @Override
@@ -360,12 +381,20 @@ public class Timeline extends AppCompatActivity {
 //            holder.time.setText(mTime.get(position));
             holder.time.setText(getRidofSec[0]+":"+getRidofSec[1]+"-"+getRidofSec2[0]+":"+getRidofSec2[1]);
 
+            //if it was pressed by the user show the line
+            if(mUserPressOrNot)
+                holder.car_line.setVisibility(View.VISIBLE);
+
             //TODO when it is static search the corresponding site
             String json = "";
             String name = "";
 
+            Log.d(TAG, "mActivity : "+mActivity);
+
             if(mActivity.get(position).equals("static")) {
 //                json = getJSON(GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude));
+
+                holder.traffic.setImageResource(R.drawable.if_94_171453);// default
 
                 //TODO the reason why checking annotation after the if condition is because of there are same with the session id.
                 //TODO try to get the data from annotation table first.
@@ -373,59 +402,129 @@ public class Timeline extends AppCompatActivity {
                     //TODO take data from annotation table
                     SQLiteDatabase db = DBManager.getInstance().openDatabase();
                     Cursor annotationCursor = db.rawQuery("SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                            +" ORDER BY "+DBHelper.TIME+" ASC", null);
+                            +" ORDER BY "+DBHelper.StartTime_col+" ASC", null);
                     Log.d(TAG,"SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                            +" ORDER BY "+DBHelper.TIME+" ASC");
+                            +" ORDER BY "+DBHelper.StartTime_col+" ASC");
                     int rows = annotationCursor.getCount();
 
                     if(rows!=0){
-                        String activity = annotationCursor.getString(4);
+                        annotationCursor.moveToLast();
+                        String activity = annotationCursor.getString(6);
                         Log.d(TAG,"activity : "+activity);
                         holder.duration.setText(activity);
+
+                        if(activity.equals("定點")){
+                            holder.traffic.setImageResource(R.drawable.if_94_171453);
+                        }else if(activity.equals("走路")){
+                            holder.traffic.setImageResource(R.drawable.walk);
+                        }else if(activity.equals("自行車")){
+                            holder.traffic.setImageResource(R.drawable.bike);
+                        }else if(activity.equals("汽車")){
+                            holder.traffic.setImageResource(R.drawable.car);
+                        }
+
                     }else{
                         //if not in annotation table, search on the google service to get the recent site.
-                        String url =  GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                            json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                    url
-                            ).get();
-                        else
-                            json = new HttpAsyncGetSiteTask().execute(
-                                    url
-                            ).get();
 
-                        JSONObject jsonObject = null;
-                        jsonObject = new JSONObject(json);
-                        JSONArray results = jsonObject.getJSONArray("results");
-                        //TODO default now we choose the second index from the json.(first index is ken name.)
-                        name = results.getJSONObject(1).getString("name");
-                        holder.duration.setText(name);
+                        if(!current_task.equals("PART")) {
+                            String url =  GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                                json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                        url
+                                ).get();
+                            else
+                                json = new HttpAsyncGetSiteTask().execute(
+                                        url
+                                ).get();
+
+                            JSONObject jsonObject = null;
+                            jsonObject = new JSONObject(json);
+                            JSONArray results = jsonObject.getJSONArray("results");
+                            //TODO default now we choose the second index from the json.(first index is ken name.)
+                            name = results.getJSONObject(1).getString("name");
+                            holder.duration.setText(name);
+
+                            //in PART there will store a sitename in triptable
+                        }else {
+
+                            try {
+                                //TODO take data from annotation table
+                                SQLiteDatabase db2 = DBManager.getInstance().openDatabase();
+                                Cursor tripSiteCursor = db2.rawQuery("SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
+                                        +" ORDER BY "+DBHelper.TIME+" ASC", null);
+                                Log.d(TAG,"SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
+                                        +" ORDER BY "+DBHelper.TIME+" ASC");
+                                int rows2 = tripSiteCursor.getCount();
+
+                                if(rows2!=0){
+                                    tripSiteCursor.moveToLast();
+                                    name = tripSiteCursor.getString(7);
+
+                                    Log.d(TAG,"name : "+name);
+                                }
+                            }catch (Exception e2){
+                                e2.printStackTrace();
+                                android.util.Log.e(TAG, "exception", e2);
+                            }
+
+                            holder.duration.setText(name);
+
+                        }
                     }
 
                 } catch (Exception e){
                     e.printStackTrace();
                     android.util.Log.e(TAG, "exception", e);
-                    String url =  GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
-                    try{
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                        json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                url
-                        ).get();
-                    else
-                        json = new HttpAsyncGetSiteTask().execute(
-                                url
-                        ).get();
 
-                    JSONObject jsonObject = null;
-                    jsonObject = new JSONObject(json);
-                    JSONArray results = jsonObject.getJSONArray("results");
-                    //TODO default now we choose the second index from the json.(first index is ken name.)
-                    name = results.getJSONObject(1).getString("name");
-                    holder.duration.setText(name);
-                    }catch (Exception e2){
-                        e2.printStackTrace();
-                        android.util.Log.e(TAG, "exception", e2);
+                    if(!current_task.equals("PART")) {
+                        String url = GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                                json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                        url
+                                ).get();
+                            else
+                                json = new HttpAsyncGetSiteTask().execute(
+                                        url
+                                ).get();
+
+                            JSONObject jsonObject = null;
+                            jsonObject = new JSONObject(json);
+                            JSONArray results = jsonObject.getJSONArray("results");
+                            //TODO default now we choose the second index from the json.(first index is ken name.)
+                            name = results.getJSONObject(1).getString("name");
+                            holder.duration.setText(name);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                            android.util.Log.e(TAG, "exception", e2);
+                        }
+
+                        //in PART there will store a sitename in triptable
+                    }else {
+
+                        try {
+                            //TODO take data from annotation table
+                            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+                            Cursor tripSiteCursor = db.rawQuery("SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
+                                    +" ORDER BY "+DBHelper.TIME+" ASC", null);
+                            Log.d(TAG,"SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
+                                    +" ORDER BY "+DBHelper.TIME+" ASC");
+                            int rows = tripSiteCursor.getCount();
+
+                            if(rows!=0){
+                                tripSiteCursor.moveToLast();
+                                name = tripSiteCursor.getString(7);
+
+                                Log.d(TAG,"name : "+name);
+                            }
+                        }catch (Exception e2){
+                            e2.printStackTrace();
+                            android.util.Log.e(TAG, "exception", e2);
+                        }
+
+                        holder.duration.setText(name);
                     }
+
                 }
 
             }else{
@@ -440,27 +539,27 @@ public class Timeline extends AppCompatActivity {
 
             }
 
-            if(current_task.equals("PART")) {
-                if (mTraffic.get(position).equals("walk")) {
-                    holder.traffic.setImageResource(R.drawable.walk);
-                } else if (mTraffic.get(position).equals("bike")) {
-                    holder.traffic.setImageResource(R.drawable.bike);
-                } else if (mTraffic.get(position).equals("car")) {
-                    holder.traffic.setImageResource(R.drawable.car);
-                } else if (mTraffic.get(position).equals("site")) {
-                    holder.traffic.setImageResource(R.drawable.if_94_171453);
-                }
-            }else{
+//            if(current_task.equals("PART")) {
+//                if (mTraffic.get(position).equals("walk")) {
+//                    holder.traffic.setImageResource(R.drawable.walk);
+//                } else if (mTraffic.get(position).equals("bike")) {
+//                    holder.traffic.setImageResource(R.drawable.bike);
+//                } else if (mTraffic.get(position).equals("car")) {
+//                    holder.traffic.setImageResource(R.drawable.car);
+//                } /*else if (mTraffic.get(position).equals("site")) {
+//                    holder.traffic.setImageResource(R.drawable.if_94_171453);
+//                }*/
+//            }else{
                 if (mActivity.get(position).equals("on_foot")) {
                     holder.traffic.setImageResource(R.drawable.walk);
                 } else if (mActivity.get(position).equals("on_bicycle")) {
                     holder.traffic.setImageResource(R.drawable.bike);
                 } else if (mActivity.get(position).equals("in_vehicle")) {
                     holder.traffic.setImageResource(R.drawable.car);
-                } else if (mActivity.get(position).equals("static")) {
+                } /*else if (mActivity.get(position).equals("static")) {
                     holder.traffic.setImageResource(R.drawable.if_94_171453);
-                }
-            }
+                }*/
+//            }
 
             //change the line color to red if its sessionid is not in annotation table.
             //and not showing if the trip is "此移動不存在"
@@ -674,19 +773,21 @@ public class Timeline extends AppCompatActivity {
                         //TODO take data from annotation table
                         SQLiteDatabase db = DBManager.getInstance().openDatabase();
                         Cursor annotationCursor = db.rawQuery("SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                +" ORDER BY "+DBHelper.TIME+" ASC", null);
+                                +" ORDER BY "+DBHelper.StartTime_col+" ASC", null);
                         Log.d(TAG,"SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                +" ORDER BY "+DBHelper.TIME+" ASC");
+                                +" ORDER BY "+DBHelper.StartTime_col+" ASC");
                         int rows = annotationCursor.getCount();
 
                         if(rows!=0){
-                            String goal = annotationCursor.getString(5);
+                            annotationCursor.moveToLast();
+//                            String activity_FromAnnotate = annotationCursor.getString(6);
+                            String goal = annotationCursor.getString(7);
                             Dannotation_goal.setText(goal);
-                            String specialEvent = annotationCursor.getString(6);
+                            String specialEvent = annotationCursor.getString(8);
                             Dannotation_specialEvent.setText(specialEvent);
 
                         }else{
-                            Dannotation_goal.setText(mAnnotation.get(position));
+//                            Dannotation_goal.setText(mAnnotation.get(position));
                             //add for PART?
                         }
 
@@ -714,6 +815,32 @@ public class Timeline extends AppCompatActivity {
 
                                 @Override
                                 public void onClick(View view) {
+
+//                                    if(current_task.equals("PART")) {
+//                                        if (Dspinner.getSelectedItem().equals("走路")) {
+//                                            mTraffic.set(position, "walk");
+//                                        } else if (Dspinner.getSelectedItem().equals("自行車")) {
+//                                            mTraffic.set(position, "bike");
+//                                        } else if (Dspinner.getSelectedItem().equals("汽車")) {
+//                                            mTraffic.set(position, "car");
+//                                        } else if (Dspinner.getSelectedItem().equals("定點")) {
+//                                            mTraffic.set(position, "site");
+//                                        } else if (Dspinner.getSelectedItem().equals(" ")) {
+//                                            ;
+//                                        }
+//                                    }else{
+                                        if (Dspinner.getSelectedItem().equals("走路")) {
+                                            mActivity.set(position, "on_foot");
+                                        } else if (Dspinner.getSelectedItem().equals("自行車")) {
+                                            mActivity.set(position, "on_bicycle");
+                                        } else if (Dspinner.getSelectedItem().equals("汽車")) {
+                                            mActivity.set(position, "in_vehicle");
+                                        } else if (Dspinner.getSelectedItem().equals("定點")) {
+                                            mActivity.set(position, "static");
+                                        } else if (Dspinner.getSelectedItem().equals(" ")) {
+                                            ;
+                                        }
+//                                    }
 
                                     if(Dspinner.getSelectedItem().equals("請選擇交通模式")){
                                         Toast.makeText(mContext, "請選擇一項交通模式！！", Toast.LENGTH_SHORT).show();
@@ -792,6 +919,12 @@ public class Timeline extends AppCompatActivity {
                                         try {
                                             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
+                                            String sitename = "";
+
+                                            if(Dspinner.getSelectedItem().toString().equals("定點")){
+                                                sitename = holder.duration.getText().toString();
+                                            }
+
 //                                            String times[] = mTime.get(position).split("-");
 //                                            String startTime = times[0];
 //                                            String endTime = times[1];
@@ -813,6 +946,8 @@ public class Timeline extends AppCompatActivity {
                                             values.put(DBHelper.Activity_col, Dspinner.getSelectedItem().toString());
                                             values.put(DBHelper.Annotation_Goal_col, Dannotation_goal.getText().toString());
                                             values.put(DBHelper.Annotation_SpecialEvent_col, Dannotation_specialEvent.getText().toString());
+                                            values.put(DBHelper.SiteName_col, sitename);
+                                            values.put(DBHelper.uploaded_col, false);
 
                                             db.insert(DBHelper.annotate_table, null, values);
 
@@ -822,8 +957,48 @@ public class Timeline extends AppCompatActivity {
                                             values.clear();
                                             DBManager.getInstance().closeDatabase();
                                         }
-//                                        notifyDataSetChanged();
+
+
+                                        //reset data
+                                        ArrayList<String> locationDataRecords = null;
+                                        try{
+                                            Log.d(TAG,"reset data");
+
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                                                locationDataRecords = new ListRecordAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                                            else
+                                                locationDataRecords = new ListRecordAsyncTask().execute().get();
+
+                                            List<String> times = new ArrayList<>();
+                                            List<String> activities = new ArrayList<>();
+                                            List<String> sessionids = new ArrayList<>();
+                                            List<LatLng> locations = new ArrayList<>();
+
+                                            for(String data : locationDataRecords){
+                                                String[] datasplit = data.split("-");
+
+                                                times.add(data);
+
+                                                activities.add(datasplit[2]);
+                                                sessionids.add(datasplit[3]);
+                                                LatLng latLng = new LatLng(Double.valueOf(datasplit[4]),Double.valueOf(datasplit[5]));
+                                                Log.d(TAG, "datasplit[4] : "+datasplit[4]+"; datasplit[5] : "+ datasplit[5]);
+                                                locations.add(latLng);
+                                            }
+                                            mTime = times;
+                                            mActivity = activities;
+//                                            mTraffic = trafficdata;
+//                                            mAnnotation = annotationdata;
+                                            mSession = sessionids;
+                                            mlocation = locations;
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                        notifyDataSetChanged();
+
                                         DchoosingSite.setVisibility(View.INVISIBLE); // set back to default
+
+                                        Toast.makeText(mContext,"感謝您的填答", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
                                 }

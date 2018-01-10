@@ -32,7 +32,7 @@ public class TripManager {
     public static int sessionid_unStatic;
     private static int trip_size;
 
-    private String sessionid;
+    public static String sessionid;
     private String transportation;
     private String lasttime_transportation;
 
@@ -105,6 +105,8 @@ public class TripManager {
 
     public void setTrip(LocationDataRecord entity) {
 
+        Log.d(TAG, "setTrip");
+
         Log.d(TAG,"lasttime_transportation "+lasttime_transportation);
         Log.d(TAG,"sessionid_unStatic "+sessionid_unStatic);
         Log.d(TAG,"sessionid_Static" + sessionid_Static);
@@ -165,6 +167,7 @@ public class TripManager {
                 values.put(DBHelper.longitude_col, record.getLongitude());
                 values.put(DBHelper.Accuracy_col, record.getAccuracy());
                 values.put(DBHelper.trip_transportation_col, transportation);
+                values.put(DBHelper.userPressOrNot_col, false);
 
                 db.insert(DBHelper.trip_table, null, values);
             } catch (NullPointerException e) {
@@ -205,13 +208,15 @@ public class TripManager {
         long startTime = -999;
         long endTime = -999;
 
-//        startTime = getSpecialTimeInMillis(makingDataFormat(Year, Month, Day));
-//        endTime = getSpecialTimeInMillis(makingDataFormat(Year, Month, Day+1));
-
         Log.d(TAG,"month : " + Constants.Month + " year : " + Constants.Year + " day : " + Constants.Day);
 
-        startTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day));
-        endTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day+1));
+//        startTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day));
+//        endTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day+1));
+
+        //getting the data start from 4 am
+        startTime = getSpecialTimeInMillis(makingDataFormatWithHour(Constants.Year, Constants.Month, Constants.Day));
+        endTime = getSpecialTimeInMillis(makingDataFormatWithHour(Constants.Year, Constants.Month, Constants.Day+1));
+
 
 //        for(int i=1;i<=sessionid_unStatic;i++){
         for(int i=sessionid_unStatic;i>=1;i--){
@@ -228,6 +233,9 @@ public class TripManager {
                     tripCursor.moveToFirst();
                     String firstTime = tripCursor.getString(1);
 //                    String firstTime = getmillisecondToDateWithTime(Long.valueOf(tripCursor.getString(1))); //tripCursor.getString(1);
+
+                    String userPressOrNot = tripCursor.getString(7);
+
                     tripCursor.moveToLast();
                     String lastTime = tripCursor.getString(1);
 //                    String lastTime = getmillisecondToDateWithTime(Long.valueOf(tripCursor.getString(1))); //tripCursor.getString(1);
@@ -242,9 +250,9 @@ public class TripManager {
                     String firstTimeString = getmillisecondToDateWithTime(Long.valueOf(firstTime));
                     String lastTimeString = getmillisecondToDateWithTime(Long.valueOf(lastTime));
 
-                    Log.d(TAG, firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng));
+                    Log.d(TAG, firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+userPressOrNot);
 
-                    times.add(firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng));
+                    times.add(firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+userPressOrNot);
 
                 }else
                     Log.d(TAG, "rows==0");
@@ -323,6 +331,17 @@ public class TripManager {
 
 //        dataformat = addZero(year)+"-"+addZero(month)+"-"+addZero(date)+" "+addZero(hour)+":"+addZero(min)+":00";
         dataformat = addZero(year)+"/"+addZero(month)+"/"+addZero(date)+" "+"00:00:00";
+        labelingStudy.nctu.minuku.logger.Log.d(TAG,"dataformat : " + dataformat);
+
+        return dataformat;
+    }
+
+    public static String makingDataFormatWithHour(int year,int month,int date){
+        String dataformat= "";
+
+//        dataformat = addZero(year)+"-"+addZero(month)+"-"+addZero(date)+" "+addZero(hour)+":"+addZero(min)+":00";
+        //start from 4 am
+        dataformat = addZero(year)+"/"+addZero(month)+"/"+addZero(date)+" "+"04:00:00";
         labelingStudy.nctu.minuku.logger.Log.d(TAG,"dataformat : " + dataformat);
 
         return dataformat;

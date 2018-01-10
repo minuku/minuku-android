@@ -1,7 +1,9 @@
 package labelingStudy.nctu.minuku_2.controller;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku_2.MainActivity;
 import labelingStudy.nctu.minuku_2.R;
 
@@ -32,13 +35,41 @@ public class timer_move extends AppCompatActivity {
 
     static String BigFlag = "";
 
+    private SharedPreferences sharedPrefs;
+    private boolean firstTimeOrNot;
+
+
     public timer_move(){}
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timer_move);
 
+        sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
+
+        firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
+        Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
+
+        if(firstTimeOrNot) {
+            startpermission();
+            firstTimeOrNot = false;
+            sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
+        }
+
         inittimer_move();
+    }
+
+    public void startpermission(){
+        //Maybe useless in this project.
+        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));  // 協助工具
+
+        Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
+        startActivity(intent1);
+
+//                    Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
+//                    startActivity(intent);
+
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
     }
 
     public void inittimer_move(){

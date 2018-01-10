@@ -24,6 +24,7 @@ import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.streamgenerator.AndroidStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
+import labelingStudy.nctu.minuku_2.Constant;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.dao.CheckAndRemindDataRecordDAO;
 import labelingStudy.nctu.minuku_2.model.CheckAndRemindDataRecord;
@@ -41,7 +42,7 @@ public class CheckAndRemindStreamGenerator extends AndroidStreamGenerator<CheckA
 
     private final String TAG = "CheckAndRemindStreamGenerator";
 
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
+//    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
 
     private CheckAndRemindStream mStream;
     private CheckAndRemindDataRecordDAO mDAO;
@@ -199,14 +200,14 @@ public class CheckAndRemindStreamGenerator extends AndroidStreamGenerator<CheckA
         String sFileName = logfile+".csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
             Log.d(TAG, "root : " + root);
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 
@@ -235,12 +236,12 @@ public class CheckAndRemindStreamGenerator extends AndroidStreamGenerator<CheckA
         String sFileName = logfile+".csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 

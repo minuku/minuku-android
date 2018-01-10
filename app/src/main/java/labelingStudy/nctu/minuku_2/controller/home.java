@@ -1,7 +1,10 @@
 package labelingStudy.nctu.minuku_2.controller;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +24,11 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.manager.DBManager;
+import labelingStudy.nctu.minuku.manager.TripManager;
+import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService;
 
@@ -41,6 +49,8 @@ public class home extends AppCompatActivity {
 
     private Context mContext;
     private LayoutInflater mInflater;
+
+    private String siteName;
 
     public static TextView counter;
     public static String result, duration;
@@ -64,7 +74,8 @@ public class home extends AppCompatActivity {
                   ,calories,distance,stepcount
                   ,move,site;
 
-
+    private SharedPreferences sharedPrefs;
+    private static SharedPreferences.Editor editor;
 
     public home(){}
 
@@ -91,6 +102,10 @@ public class home extends AppCompatActivity {
     }
 
     public void inithome(){
+
+        sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
+
+        editor = mContext.getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE).edit();
 
         counter = (TextView) findViewById(R.id.tv_timer);
         play = (ImageButton) findViewById(R.id.btn_play);
@@ -143,7 +158,11 @@ public class home extends AppCompatActivity {
 
     }
 
-    public void inithome(View v){
+    public void inithome(View v, String siteName){
+
+        editor = mContext.getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE).edit();
+
+        this.siteName = siteName;
 
         counter = (TextView) v.findViewById(R.id.tv_timer);
         play = (ImageButton) v.findViewById(R.id.btn_play);
@@ -160,8 +179,8 @@ public class home extends AppCompatActivity {
         play.setOnClickListener(listener);
 //        pause.setOnClickListener(listener);
         stop.setOnClickListener(listener);
-        Toast toast = Toast.makeText(mContext, "CountFlag" + CountFlag, Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(mContext, "CountFlag" + CountFlag, Toast.LENGTH_SHORT);
+//        toast.show();
         //宣告Timer
         if(CountFlag){
 //            Timer timer01 =new Timer();
@@ -289,6 +308,70 @@ public class home extends AppCompatActivity {
                 tsec++;
                 Message message = new Message();
 
+                //update the session data to Sqlite
+                TripManager.sessionid = TripManager.sessionid + ", " + String.valueOf(TripManager.sessionid_unStatic);
+
+                //in PART lat lng acc is useless with the trip data
+                LocationDataRecord record = new LocationDataRecord(
+                        TripManager.sessionid,
+                        999,
+                        999,
+                        999);
+
+                Log.d(TAG, record.getCreationTime() + "," +
+                        record.getSessionid() + "," +
+                        record.getLatitude() + "," +
+                        record.getLongitude() + "," +
+                        record.getAccuracy());
+
+                // store to DB
+                ContentValues values = new ContentValues();
+
+                try {
+                    SQLiteDatabase db = DBManager.getInstance().openDatabase();
+
+                    values.put(DBHelper.TIME, record.getCreationTime());
+                    values.put(DBHelper.sessionid_col, record.getSessionid());
+                    values.put(DBHelper.latitude_col, record.getLatitude());
+                    values.put(DBHelper.longitude_col, record.getLongitude());
+                    values.put(DBHelper.Accuracy_col, record.getAccuracy());
+
+                    String transportation = "";
+
+                    if(TrafficFlag.equals("walk")){
+                        transportation = "on_foot";
+                    }else if(TrafficFlag.equals("bike")){
+                        transportation = "on_bicycle";
+                    }else if(TrafficFlag.equals("car")){
+                        transportation = "in_vehicle";
+                    }else if(TrafficFlag.equals("site")){
+                        transportation = "static";
+
+//                        sitename = getIntent().getStringExtra("SiteName");
+
+//                        String sitename = sharedPrefs.getString("timer_sitename","");
+
+                        Log.d(TAG, "siteName : "+ siteName);
+
+                        values.put(DBHelper.trip_site_col, siteName);
+                    }
+
+                    values.put(DBHelper.trip_transportation_col, transportation);
+
+                    db.insert(DBHelper.trip_table, null, values);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                } finally {
+                    values.clear();
+                    DBManager.getInstance().closeDatabase(); // Closing database connection
+                }
+
+                TripManager.sessionid = "0";
+
+                editor.putInt("sessionid_unStatic",TripManager.sessionid_unStatic);
+
+                editor.commit();
+
                 //傳送訊息1
                 message.what =1;
                 handler.sendMessage(message);
@@ -315,6 +398,9 @@ public class home extends AppCompatActivity {
                         starttime = formatter.format(curDate);
 //                        FirstPlayFlag = false;
 //                    }
+
+                    //new Trip
+                    TripManager.sessionid_unStatic++;
 
                     if(!startflag){ //play → pause
                         play.setImageResource(R.drawable.icon_pause);
@@ -351,8 +437,8 @@ public class home extends AppCompatActivity {
                         duration = MarkerFlag + "(" + counter.getText().toString() + ")";
                     Log.d(TAG, "recordflag: " + recordflag + ", counter:" + result);
 
-                    Timeline mtimeline = new Timeline(mContext);
-                    mtimeline.initTime(recordview);
+//                    Timeline mtimeline = new Timeline(mContext);
+//                    mtimeline.initTime(recordview);
 
                     //TextView 初始化
                     counter.setText("00:00:00");

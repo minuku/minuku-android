@@ -47,6 +47,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String Bearing_col = "Bearing";
     public static final String Provider_col = "Provider";
     public static final String trip_transportation_col = "trip_transportation";
+    public static final String trip_site_col = "trip_site";
+    public static final String userPressOrNot_col = "userPressOrNot";
 
     //ActivityRecognition
     public static final String MostProbableActivity_col = "MostProbableActivity";
@@ -147,6 +149,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String Activity_col = "Activity";
     public static final String Annotation_Goal_col = "Annotate_Goal";
     public static final String Annotation_SpecialEvent_col = "Annotate_SpecialEvent";
+    public static final String SiteName_col = "SiteName";
+    public static final String uploaded_col = "uploaded";
 
     //table name
     public static final String location_table = "Location";
@@ -252,7 +256,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 sessionid_col + " TEXT," +
                 Activity_col + " TEXT," +
                 Annotation_Goal_col + " TEXT," +
-                Annotation_SpecialEvent_col + " TEXT" +
+                Annotation_SpecialEvent_col + " TEXT," +
+                SiteName_col + " TEXT," +
+                uploaded_col + " BOOLEAN" +
                 ");";
 
         db.execSQL(cmd);
@@ -425,7 +431,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 latitude_col+" FLOAT,"+
                 longitude_col +" FLOAT, " +
                 Accuracy_col + " FLOAT," +
-                trip_transportation_col + " TEXT" +
+                trip_transportation_col + " TEXT, " +
+                trip_site_col + " TEXT, " +
+                userPressOrNot_col + " BOOLEAN" +
                 ");";
 
         db.execSQL(cmd);

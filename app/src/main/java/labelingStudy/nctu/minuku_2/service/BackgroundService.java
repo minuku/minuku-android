@@ -31,6 +31,7 @@ import android.os.IBinder;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
+import labelingStudy.nctu.minuku.manager.MobilityManager;
 import labelingStudy.nctu.minuku.manager.TripManager;
 import labelingStudy.nctu.minuku_2.manager.InstanceManager;
 
@@ -68,6 +69,7 @@ public class BackgroundService extends Service {
         if(!InstanceManager.isInitialized()) {
             InstanceManager.getInstance(this);
             TripManager.getInstance(this);
+            MobilityManager.getInstance(this);
         }
 
         /*MinukuDAOManager daoManager = MinukuDAOManager.getInstance();

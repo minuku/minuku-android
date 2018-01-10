@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import labelingStudy.nctu.minuku.R;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.LocationDataRecordDAO;
 import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
@@ -76,7 +77,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     private LocationStream mStream;
     private String TAG = "LocationStreamGenerator";
 
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
+//    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
 
     private CSVWriter csv_writer = null;
 
@@ -93,6 +94,9 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     public static final String RECORD_DATA_PROPERTY_BEARING = "Bearing";
     public static final String RECORD_DATA_PROPERTY_EXTRAS = "Extras";
 
+    private static long sUpdateIntervalInMilliSeconds = Constants.INTERNAL_LOCATION_UPDATE_FREQUENCY;
+
+
     public static long lastposupdate = -99;
 
     public static AtomicDouble latitude;
@@ -100,7 +104,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     private Context context;
 
-    private float accuracy;
+    public static float accuracy;
 
 //    private TripManager tripManager;
 
@@ -255,11 +259,15 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             EventBus.getDefault().post(newlocationDataRecord);
             try {
 
-//            mDAO.add(locationDataRecord);
                 mDAO.add(newlocationDataRecord);
-//                mDAO.addToBeATrip(newlocationDataRecord);
-//                tripManager.setTrip(newlocationDataRecord);
-                TripManager.getInstance().setTrip(newlocationDataRecord);
+
+                String current_task = context.getResources().getString(R.string.current_task);
+
+                //in PART the session id will be controlled by the user
+                if(!current_task.equals("PART")) {
+                    Log.d(TAG, "current_task is not equal to PART");
+                    TripManager.getInstance().setTrip(locationDataRecord);
+                }
 
                 mDAO.query_counting();
                 mDAO.query_getAll();
@@ -339,9 +347,13 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
                     (float) longitude.get(),
                     accuracy);
 
-//            String current_task = context.getResources().getString(R.string.current_task);
-            TripManager.getInstance().setTrip(locationDataRecord);
+            String current_task = context.getResources().getString(R.string.current_task);
 
+            //in PART the session id will be controlled by the user
+            if(!current_task.equals("PART")) {
+                Log.d(TAG, "current_task is not equal to PART");
+                TripManager.getInstance().setTrip(locationDataRecord);
+            }
 
             Log.d(TAG,"onLocationChanged latitude : "+latitude+" longitude : "+ longitude);
             //**** additional
@@ -359,12 +371,12 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         String sFileName = "LocationOnChange.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 
@@ -386,12 +398,12 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         String sFileName = "LocationOnChange.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 
@@ -429,8 +441,8 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         Log.d(TAG, "onConnected");
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(Constants.INTERNAL_LOCATION_UPDATE_FREQUENCY);
-        mLocationRequest.setFastestInterval(Constants.INTERNAL_LOCATION_UPDATE_FREQUENCY);
+        mLocationRequest.setInterval(sUpdateIntervalInMilliSeconds);
+        mLocationRequest.setFastestInterval(sUpdateIntervalInMilliSeconds);
         //mLocationRequest.setSmallestDisplacement(Constants.LOCATION_MINUMUM_DISPLACEMENT_UPDATE_THRESHOLD);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
@@ -444,6 +456,68 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             onConnected(bundle);
         }
     }
+/*
+
+    public void setLocationUpdateInterval(long updateInterval) {
+
+        Log.i("LocationStreamGenerator", "[testLocationUpdate] attempt to update the location request interval to " + updateInterval);
+
+        //before we update we make sure GoogleClient is connected.
+        if (!mGoogleApiClient.isConnected()){
+            //do nothing
+        }
+        else{
+            sUpdateIntervalInMilliSeconds = updateInterval;
+
+            //after we get location we need to update the location request
+            //1. remove the update
+            removeUpdates();
+            //2. create new update, and then start update
+            createLocationRequest();
+            requestUpdates();
+
+        }
+
+
+    }
+
+    @Override
+    public void removeUpdates() {
+        //stop requesting location udpates
+
+        mRequestingLocationUpdates = false;
+        Log.d(TAG, "[testLocationUpdate]  going to remove location update ");
+
+        if (!mGoogleApiClient.isConnected()) {
+            connentClient();
+        }
+        else {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            Log.d(TAG, "[testLocationUpdate] we have removed location update ");
+            disconnectClient();
+        }
+    }
+
+    @Override
+    public void requestUpdates() {
+
+        Log.d(TAG, "[testLocationUpdate] going to request location update ");
+        //we need to get location. Set this true
+        mRequestingLocationUpdates = true;
+
+        //first check whether we have GoogleAPIClient connected. if yes, we request location. Otherwise
+        //we connect the client and then in onConnected() we request location
+        if (!mGoogleApiClient.isConnected()){
+            Log.d(TAG,"[testLocationUpdate] Google Service is not connected, need to connect ");
+            connentClient();
+        }
+        else {
+            Log.d(TAG, "[testLocationUpdate] Google Service is connected, now starts to start location update ");
+            startLocationUpdates();
+            disconnectClient();
+        }
+    }
+*/
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -467,4 +541,5 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             }
         }
     }
+
 }

@@ -36,7 +36,7 @@ public class SessionStreamGenerator  extends AndroidStreamGenerator<SessionDataR
 
     private final String TAG = "SessionStreamGenerator";
 
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
+//    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
     private CSVWriter csv_writer = null;
 
     private SessionStream mStream;
@@ -102,14 +102,14 @@ public class SessionStreamGenerator  extends AndroidStreamGenerator<SessionDataR
         String sFileName = "Sessionid_Log.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
             Log.d(TAG, "root : " + root);
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 

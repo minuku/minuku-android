@@ -63,7 +63,7 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
     static String MarkerFlag = "";
     static int MarkerCount = 0;
 
-    boolean fromTimeLineFlag = false;
+    private boolean fromTimeLineFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +161,8 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
 
         Log.d(TAG,"onResume");
 
+        fromTimeLineFlag = false;
+
         initPlaceSelection();
     }
 
@@ -179,7 +181,7 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
 //                float lat = 0;
 //                float lng = 0;
 
-                if(!fromTimeLineFlag){
+                /*if(!fromTimeLineFlag){
                     try{
                         lat = LocationStreamGenerator.latitude.get();
                         lng = LocationStreamGenerator.longitude.get();
@@ -190,6 +192,13 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                     Bundle latlng = getIntent().getExtras();
                     lat = latlng.getDouble("lat");
                     lng = latlng.getDouble("lng");
+                }*/
+
+                try{
+                    lat = LocationStreamGenerator.latitude.get();
+                    lng = LocationStreamGenerator.longitude.get();
+                } catch(Exception e) {
+                    e.printStackTrace();
                 }
 
                 final double finalLat = lat;

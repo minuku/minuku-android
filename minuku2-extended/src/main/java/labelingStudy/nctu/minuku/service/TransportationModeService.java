@@ -140,7 +140,7 @@ public class TransportationModeService extends Service {
     public static final int TransportationMode_REFRESH_FREQUENCY = 10; //1s, 1000ms
     public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
 
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.nctu.minuku_2/";
+//    private static final String Constants.PACKAGE_DIRECTORY_PATH="/Android/data/labelingStudy.nctu.minuku_2/";
     private CSVWriter csv_writer = null;
 
     public TransportationModeService(){}
@@ -241,14 +241,14 @@ public class TransportationModeService extends Service {
         String sFileName = "TransportationMode.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
             Log.d(TAG, "root : " + root);
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 
@@ -293,17 +293,17 @@ public class TransportationModeService extends Service {
     public void StoreToCSV(long timestamp,String state, String activitySofar, long detecttime){
         Log.d(TAG,"StoreToCSV");
 
-        String sFileName = "FuckingStatic.csv";
+        String sFileName = "Static.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
             Log.d(TAG, "root : " + root);
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 

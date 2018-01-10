@@ -41,7 +41,10 @@ public class Constants {
     public static int Month = c.get(Calendar.MONTH) + 1;
 
     //sharedPrefS
-    public static final String sharedPrefString = "edu.nctu.minuku_2";
+    public static final String sharedPrefString = "labelingStudy.nctu.minuku_2";
+
+    //file path
+    public static final String PACKAGE_DIRECTORY_PATH = "/Android/data/labelingStudy.nctu.minuku_2/";
 
     // Firebase config
     public static final String FIREBASE_URL = BuildConfig.UNIQUE_FIREBASE_ROOT_URL;
@@ -139,7 +142,7 @@ public class Constants {
     public static final String APP_NAME = "LS";
     public static final String RUNNING_APP_DECLARATION = APP_NAME + " is running in the background";
     public static final long INTERNAL_LOCATION_UPDATE_FREQUENCY = 1 * 10 * 1000; // 1 * 300 * 1000
-    public static final long INTERNAL_LOCATION_LOW_UPDATE_FREQUENCY = 1 * 20 * 1000; // 1 * 300 * 1000
+    public static final long INTERNAL_LOCATION_LOW_UPDATE_FREQUENCY = 1 * 60 * 1000; // 1 * 300 * 1000
 
     public static final float LOCATION_MINUMUM_DISPLACEMENT_UPDATE_THRESHOLD = 50 ;
 

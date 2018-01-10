@@ -40,7 +40,7 @@ public class timer_site extends AppCompatActivity {
 
     public static int dataSize;
     private SharedPreferences sharedPrefs;
-
+    private SharedPreferences.Editor editor;
     public timer_site(){}
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class timer_site extends AppCompatActivity {
         setContentView(R.layout.timer_site);
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
+        editor = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE).edit();
 
         dataSize = sharedPrefs.getInt("dataSize", 1);
 
@@ -122,7 +123,19 @@ public class timer_site extends AppCompatActivity {
                 if(position == 0)
                     startActivity(new Intent(timer_site.this, PlaceSelection.class));
                 else{
-                    startActivity(new Intent(timer_site.this, MainActivity.class));
+
+                    String sitename = (String) parent.getItemAtPosition(position);
+
+                    Log.d(TAG, "SiteName : " + sitename);
+
+//                    editor.putString("timer_sitename",sitename).apply();
+
+//                    startActivity(new Intent(timer_site.this, MainActivity.class));
+
+                    Intent intent = new Intent(timer_site.this, MainActivity.class);
+                    intent.putExtra("SiteName", sitename);
+                    startActivity(intent);
+
                     timer_site.this.finish();
                 }
             }

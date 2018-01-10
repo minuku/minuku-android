@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckPointActivity checkPointActivity;
     private home mhome;
 
+    public Timeline mtimeline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,9 +144,11 @@ public class MainActivity extends AppCompatActivity {
 
         if(current_task.equals("PART")) {
             initViewPager(timerview, recordview);
+            mtimeline = new Timeline(this);
+            mtimeline.initTime(recordview);
         }else{
             initViewPager(checkpointview, recordview);
-            Timeline mtimeline = new Timeline(this);
+            mtimeline = new Timeline(this);
             mtimeline.initTime(recordview);
         }
 
@@ -194,6 +198,13 @@ public class MainActivity extends AppCompatActivity {
         shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
         shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), MainActivity.class));
         sendBroadcast(shortcutintent);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"onResume");
+
     }
 
     public void getStartDate(){
@@ -444,21 +455,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SettingViewPager() {
-        viewList = new ArrayList<View>();
 
-        if(current_task.equals("PART")) {
-            viewList.add(timerview);
-        }else{
-            viewList.add(checkpointview);
-        }
+//        if(firstTimeOrNot) {
 
-        viewList.add(recordview);
+            viewList = new ArrayList<View>();
 
-        mViewPager.setAdapter(new TimerOrRecordPagerAdapter(viewList, this));
+            if (current_task.equals("PART")) {
+                viewList.add(timerview);
+            } else {
+                viewList.add(checkpointview);
+            }
+
+            viewList.add(recordview);
+
+            mViewPager.setAdapter(new TimerOrRecordPagerAdapter(viewList, this));
+
+//        }
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
         //TODO date button now can show on menu when switch to recordview, but need to determine where to place the date textview(default is today's date).
-        mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -468,6 +485,8 @@ public class MainActivity extends AppCompatActivity {
                 else
                     //hide date on menu
                     Constant.tabpos = false;
+
+                mtimeline.initTime(recordview);
 
                 invalidateOptionsMenu();
             }
@@ -595,7 +614,15 @@ public class MainActivity extends AppCompatActivity {
 
                     if(current_task.equals("PART")) {
                         mhome = new home(mContext);
-                        mhome.inithome(timerview);
+
+                        String siteName = "";
+                        try{
+                            siteName = getIntent().getStringExtra("SiteName");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        mhome.inithome(timerview, siteName);
                     }else{
                         checkPointActivity = new CheckPointActivity(mContext);
                         checkPointActivity.initCheckPoint(checkpointview);

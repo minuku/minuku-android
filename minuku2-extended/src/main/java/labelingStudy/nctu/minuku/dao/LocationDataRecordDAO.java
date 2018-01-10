@@ -259,7 +259,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
         }
 
         Log.d(TAG, "dataset : "+ dataset);
-
+/*
         ContentValues values = new ContentValues();
 
         try {
@@ -276,6 +276,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
             values.clear();
             DBManager.getInstance().closeDatabase(); // Closing database connection
         }
+*/
 
     }
 
