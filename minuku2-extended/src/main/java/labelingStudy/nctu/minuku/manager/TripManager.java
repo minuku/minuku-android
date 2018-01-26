@@ -167,7 +167,7 @@ public class TripManager {
                 values.put(DBHelper.longitude_col, record.getLongitude());
                 values.put(DBHelper.Accuracy_col, record.getAccuracy());
                 values.put(DBHelper.trip_transportation_col, transportation);
-                values.put(DBHelper.userPressOrNot_col, false);
+                values.put(DBHelper.userPressOrNot_col, "false");
 
                 db.insert(DBHelper.trip_table, null, values);
             } catch (NullPointerException e) {
@@ -234,7 +234,18 @@ public class TripManager {
                     String firstTime = tripCursor.getString(1);
 //                    String firstTime = getmillisecondToDateWithTime(Long.valueOf(tripCursor.getString(1))); //tripCursor.getString(1);
 
-                    String userPressOrNot = tripCursor.getString(7);
+                    boolean userPressOrNot = false;
+                    do{
+                        String getUserPressOrNot =  tripCursor.getString(8);
+                        Log.d(TAG, "getUserPressOrNot : "+getUserPressOrNot);
+
+                        userPressOrNot = userPressOrNot || Boolean.valueOf(getUserPressOrNot);
+
+                        //if userPressOrNot == true, it don't need to waste time to keep checking.
+                        if(userPressOrNot)
+                            break;
+
+                    }while (tripCursor.moveToNext());
 
                     tripCursor.moveToLast();
                     String lastTime = tripCursor.getString(1);
@@ -250,9 +261,9 @@ public class TripManager {
                     String firstTimeString = getmillisecondToDateWithTime(Long.valueOf(firstTime));
                     String lastTimeString = getmillisecondToDateWithTime(Long.valueOf(lastTime));
 
-                    Log.d(TAG, firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+userPressOrNot);
+                    Log.d(TAG, firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+String.valueOf(userPressOrNot));
 
-                    times.add(firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+userPressOrNot);
+                    times.add(firstTimeString+"-"+lastTimeString+"-"+transportation+"-"+sessionid+"-"+String.valueOf(lat)+"-"+String.valueOf(lng)+"-"+String.valueOf(userPressOrNot));
 
                 }else
                     Log.d(TAG, "rows==0");

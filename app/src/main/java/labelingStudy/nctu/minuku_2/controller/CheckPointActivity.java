@@ -102,10 +102,10 @@ public class CheckPointActivity extends AppCompatActivity {
 
             Log.d(TAG, "sessionid : "+ sessionid);
 
-            Log.d(TAG, record.getCreationTime() + "," +
-                    record.getSessionid() + "," +
-                    record.getLatitude() + "," +
-                    record.getLongitude() + "," +
+            Log.d(TAG, record.getCreationTime() + ", " +
+                    record.getSessionid() + ", " +
+                    record.getLatitude() + ", " +
+                    record.getLongitude() + ", " +
                     record.getAccuracy());
 
 //            LocationToTrip.add(record);
@@ -122,7 +122,7 @@ public class CheckPointActivity extends AppCompatActivity {
                 values.put(DBHelper.longitude_col, record.getLongitude());
                 values.put(DBHelper.Accuracy_col, record.getAccuracy());
                 values.put(DBHelper.trip_transportation_col, transportation);
-                values.put(DBHelper.userPressOrNot_col, true);
+                values.put(DBHelper.userPressOrNot_col, "true");
 
                 db.insert(DBHelper.trip_table, null, values);
             } catch (NullPointerException e) {

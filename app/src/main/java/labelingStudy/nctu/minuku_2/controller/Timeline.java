@@ -219,8 +219,8 @@ public class Timeline extends AppCompatActivity {
                 List<String> activities = new ArrayList<>();
                 List<String> sessionids = new ArrayList<>();
                 List<LatLng> locations = new ArrayList<>();
-
-                Boolean userPressOrNot = false;
+                List<Boolean> userPressOrNot = new ArrayList<>();
+//                Boolean userPressOrNot = false;
 
                 for(String data : locationDataRecords){
                     String[] datasplit = data.split("-");
@@ -242,9 +242,11 @@ public class Timeline extends AppCompatActivity {
 
                     Log.d(TAG, "Boolean.valueOf(datasplit[6]) : "+Boolean.valueOf(datasplit[6]));
 
-                    userPressOrNot = userPressOrNot || Boolean.valueOf(datasplit[6]);
+                    userPressOrNot.add(Boolean.valueOf(datasplit[6]));
 
-                    Log.d(TAG, "userPressOrNot : "+userPressOrNot);
+//                    userPressOrNot = userPressOrNot || Boolean.valueOf(datasplit[6]);
+
+//                    Log.d(TAG, "userPressOrNot : "+userPressOrNot);
                 }
 
                 MyAdapter myAdapter = new MyAdapter(times, activities, myTrafficDataset,myAnnotationDataset, sessionids, locations, userPressOrNot);//
@@ -314,7 +316,7 @@ public class Timeline extends AppCompatActivity {
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<String> mTime, mActivity, mTraffic, mAnnotation, mSession;
         private List<LatLng> mlocation;
-        private Boolean mUserPressOrNot;
+        private List<Boolean> mUserPressOrNot;
 
 //        private String getRidofMD = "", getRidofMD2 = "";
 
@@ -344,7 +346,7 @@ public class Timeline extends AppCompatActivity {
             mAnnotation = annotationdata;
         }
 
-        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata, List<String> sessioniddata, List<LatLng> locationdata, Boolean userPressOrNot) {
+        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata, List<String> sessioniddata, List<LatLng> locationdata, List<Boolean> userPressOrNot) {
             mTime = timedata;
             mActivity = activitydata;
             mTraffic = trafficdata;
@@ -382,7 +384,7 @@ public class Timeline extends AppCompatActivity {
             holder.time.setText(getRidofSec[0]+":"+getRidofSec[1]+"-"+getRidofSec2[0]+":"+getRidofSec2[1]);
 
             //if it was pressed by the user show the line
-            if(mUserPressOrNot)
+            if(mUserPressOrNot.get(position))
                 holder.car_line.setVisibility(View.VISIBLE);
 
             //TODO when it is static search the corresponding site

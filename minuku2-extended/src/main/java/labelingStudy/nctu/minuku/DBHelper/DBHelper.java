@@ -433,7 +433,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Accuracy_col + " FLOAT," +
                 trip_transportation_col + " TEXT, " +
                 trip_site_col + " TEXT, " +
-                userPressOrNot_col + " BOOLEAN" +
+                userPressOrNot_col + " TEXT" +
                 ");";
 
         db.execSQL(cmd);

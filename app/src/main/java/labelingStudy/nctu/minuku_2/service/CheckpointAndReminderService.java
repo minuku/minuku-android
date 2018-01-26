@@ -207,7 +207,8 @@ public class CheckpointAndReminderService extends Service {
 
 //            handler.postDelayed(this , 60 * 1000);
 
-            checkInNoti();
+            //TODO comment it during testing.
+//            checkInNoti();
 
             Log.d(TAG, "after checkInNoti");
 

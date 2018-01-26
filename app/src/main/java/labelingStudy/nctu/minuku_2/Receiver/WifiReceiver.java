@@ -73,6 +73,8 @@ public class WifiReceiver extends BroadcastReceiver {
     private long startTime = -9999;
     private long endTime = -9999;
 
+    private long startTripTime = -9999;
+
     public static final int HTTP_TIMEOUT = 10000; // millisecond
     public static final int SOCKET_TIMEOUT = 20000; // millisecond
 
@@ -137,6 +139,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
                 //do the work here.
 //                MakingJsonDumpDataMainThread();
+                //TODO become function not thread
                 MakingJsonDataMainThread();
 
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
@@ -157,6 +160,7 @@ public class WifiReceiver extends BroadcastReceiver {
         }
 
     }
+/*
 
     public void MakingJsonDumpDataMainThread(){
 
@@ -224,22 +228,57 @@ public class WifiReceiver extends BroadcastReceiver {
 
         mDumpThread.post(runnable_);
     }
+*/
 
-    public void gettingDumpLastTime(){
+    public String gettingTripLastTime(){
         //TODO upload to MongoDB
         JSONObject data = new JSONObject();
 
         String curr =  getDateCurrentTimeZone(new Date().getTime());
 
+        String result = "";
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                new HttpAsyncPostJsonTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                result = new HttpAsyncPostJsonTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        postTripUrl_search,
+                        data.toString(),
+                        "Trip",
+                        curr).get();
+            else
+                result = new HttpAsyncPostJsonTask().execute(
+                        postTripUrl_search,
+                        data.toString(),
+                        "Trip",
+                        curr).get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+    public String gettingDumpLastTime(){
+        //TODO upload to MongoDB
+        JSONObject data = new JSONObject();
+
+        String curr =  getDateCurrentTimeZone(new Date().getTime());
+
+        String result = "";
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                result = new HttpAsyncPostJsonTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         postDumpUrl_search,
                         data.toString(),
                         "Dump",
                         curr).get();
             else
-                new HttpAsyncPostJsonTask().execute(
+                result = new HttpAsyncPostJsonTask().execute(
                         postDumpUrl_search,
                         data.toString(),
                         "Dump",
@@ -250,6 +289,8 @@ public class WifiReceiver extends BroadcastReceiver {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        return result;
 
     }
 
@@ -334,31 +375,41 @@ public class WifiReceiver extends BroadcastReceiver {
             @Override
             public void run() {
 
+                //TODO improve to for or while loop
+
                 //dump only can be sent when wifi is connected
                 if(ConnectivityStreamGenerator.mIsWifiConnected){
 
                     //TODO update endtime to get the latest data's time from MongoDB
                     //TODO endtime = latest data's time + nextinterval
-                    gettingDumpLastTime();
+                    String lasttime = gettingDumpLastTime();
 
-                    //TODO delete the data in SQLite before the latest data's time
+                    if(lasttime == null || lasttime.isEmpty()){
+                        lasttime = "0";
+
+                        //if it doesn't reponse the setting with initialize ones
+                        //initialize
+                        long startstartTime = getSpecialTimeInMillis(makingDataFormat(year,month,day,hour,min));
+                        startTime = sharedPrefs.getLong("StartTime", startstartTime); //default
+                        Log.d(TAG,"StartTimeString : " + getTimeString(startTime));
 
 
-                    //default
-                    long startstartTime = getSpecialTimeInMillis(makingDataFormat(year,month,day,hour,min));
-                    startTime = sharedPrefs.getLong("StartTime", startstartTime); //default
-//                    Log.d(TAG,"Start year : "+ year+" month : "+ month+" day : "+ day+" hour : "+ hour+" min : "+ min);
-                    Log.d(TAG,"StartTimeString : " + getTimeString(startTime));
-//                    Log.d(TAG,"StartTime : " + startTime);
+                        //initialize
+                        long startendTime = getSpecialTimeInMillis(makingDataFormat(year,month,day,hour+1,min));
+                        endTime = sharedPrefs.getLong("EndTime", startendTime);
+                        Log.d(TAG,"EndTimeString : " + getTimeString(endTime));
 
+                    }else{
+                        //if it do reponse the setting with initialize ones
+                        startTime = Long.valueOf(lasttime);
+                        Log.d(TAG,"StartTimeString : " + getTimeString(startTime));
 
-                    //default
-                    long startendTime = getSpecialTimeInMillis(makingDataFormat(year,month,day,hour+1,min));
-                    endTime = sharedPrefs.getLong("EndTime", startendTime);
-//                    Log.d(TAG,"End year : "+ year+" month : "+ month+" day : "+ day+" hour+1 : "+ (hour+1)+" min : "+ min);
-                    Log.d(TAG,"EndTimeString : " + getTimeString(endTime));
-//                    Log.d(TAG,"EndTime : " + endTime);
+                        long nextinterval = 1 * 60 * 60000; //1 hr
 
+                        endTime = Long.valueOf(lasttime) + nextinterval;
+                        Log.d(TAG,"EndTimeString : " + getTimeString(endTime));
+
+                    }
 
                     nowTime = new Date().getTime();
                     Log.d(TAG,"NowTimeString : " + getTimeString(nowTime));
@@ -372,10 +423,9 @@ public class WifiReceiver extends BroadcastReceiver {
                         latestUpdatedTime = endTime;
                         startTime = latestUpdatedTime;
 
-//                    long nextinterval = getSpecialTimeInMillis(makingDataFormat(0,0,0,0,5));
                         long nextinterval = 1 * 60 * 60000; //1 hr
 
-                        endTime = startTime + nextinterval;//getSpecialTimeInMillis(0,0,0,0,10);
+                        endTime = startTime + nextinterval;
 
                         Log.d(TAG,"latestUpdatedTime : " + latestUpdatedTime);
                         Log.d(TAG,"latestUpdatedTime + 1 hour : " + latestUpdatedTime + nextinterval);
@@ -389,11 +439,30 @@ public class WifiReceiver extends BroadcastReceiver {
                 // Trip, isAlive
                 if(ConnectivityStreamGenerator.mIsWifiConnected && ConnectivityStreamGenerator.mIsMobileConnected) {
 
+                    String lastTriptime = gettingTripLastTime();
+                    if(lastTriptime == null || lastTriptime.equals("")){
+                        lastTriptime = "0";
+
+                        //if it doesn't reponse the setting with initialize ones
+                        //initialize
+                        long startstartTime = getSpecialTimeInMillis(makingDataFormat(year,month,day,hour,min));
+                        startTripTime = sharedPrefs.getLong("startTripTime", startstartTime); //default
+                        Log.d(TAG,"StartTripTimeString : " + getTimeString(startTripTime));
+
+
+                    }else{
+                        //if it do reponse the setting with initialize ones
+                        startTripTime = Long.valueOf(lastTriptime);
+                        Log.d(TAG,"StartTripTimeString : " + getTimeString(startTripTime));
+
+                    }
+
                     sendingTripData();
 
                     sendingIsAliveData();
 
                 }
+
                 handler.postDelayed(this, mainThreadUpdateFrequencyInMilliseconds);
             }
         };
