@@ -38,11 +38,9 @@ import javax.net.ssl.HttpsURLConnection;
 import labelingStudy.nctu.minuku.DBHelper.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.DBManager;
-import labelingStudy.nctu.minuku.streamgenerator.LocationStreamGenerator;
+import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku_2.NearbyPlaces.GetUrl;
 import labelingStudy.nctu.minuku_2.R;
-
-import static labelingStudy.nctu.minuku_2.controller.Timeline.DchoosingSite;
 
 public class PlaceSelection extends FragmentActivity implements OnMapReadyCallback {
 
@@ -50,20 +48,22 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
 
     private SharedPreferences sharedPrefs;
 
-    ArrayList<String> MarkerName = new ArrayList<String>();
-    ArrayList<String> MarkerLat = new ArrayList<String>();
-    ArrayList<String> MarkerLng = new ArrayList<String>();
+    private ArrayList<String> MarkerName = new ArrayList<String>();
+    private ArrayList<String> MarkerLat = new ArrayList<String>();
+    private ArrayList<String> MarkerLng = new ArrayList<String>();
 
-    MapView mapView;
-    Button AddPlace, SecRes, Muf, Third;
-    static String json = "";
+    private MapView mapView;
+    private Button AddPlace, SecRes, Muf, Third;
+    private static String json = "";
 
-    static double lat = 0;
-    static double lng = 0;
-    static String MarkerFlag = "";
-    static int MarkerCount = 0;
+    private static double lat = 0;
+    private static double lng = 0;
+    public static String MarkerFlag = "";
+    public static int MarkerCount = 0;
 
-    private boolean fromTimeLineFlag = false;
+    private Bundle bundle;
+
+    public static boolean fromTimeLineFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +71,8 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_place_selection);
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
+
+        bundle = getIntent().getExtras();
 
     }
 
@@ -110,14 +112,18 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                     DBManager.getInstance().closeDatabase(); // Closing database connection
                 }
 
-                if(!fromTimeLineFlag) {
-                    timer_site.data.add(sitename);
+                Log.d(TAG, "[test add site] fromTimeLineFlag : "+fromTimeLineFlag);
 
-                    Log.d(TAG, " data : "+ timer_site.data);
-                    Log.d(TAG, " dataSize : "+ timer_site.data.size());
+                //TODO confirm the functionality of this
+                if(!fromTimeLineFlag) {
+                    //Timer_site is initialized or alive or not.
+                    Timer_site.data.add(sitename);
+
+                    Log.d(TAG, " data : "+ Timer_site.data);
+                    Log.d(TAG, " dataSize : "+ Timer_site.data.size());
                 }else{
                     Timeline.selectedSiteName = sitename;
-                    DchoosingSite.setText(Timeline.selectedSiteName);
+                    Timeline.DchoosingSite.setText(Timeline.selectedSiteName);
                 }
 
                 PlaceSelection.this.finish();
@@ -125,33 +131,6 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                 Toast.makeText(PlaceSelection.this,"請點選一個地點" , Toast.LENGTH_LONG).show();
             }
 
-//            sharedPrefs.edit().putString("dataContent" + (timer_site.data.size()-1), sitename);// -1 is because of after add it in.
-//            sharedPrefs.edit().putInt("dataSize", timer_site.data.size());
-//            sharedPrefs.edit().apply();
-
-
-
-            /*if(AddPlace.getText().equals("新增地點")) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PlaceSelection.this);
-                alertDialog.setTitle("自訂地點");
-                alertDialog.setView(v);
-                alertDialog.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText editText = (EditText) v.findViewById(R.id.edit_text);
-                        String name = editText.getText().toString();
-                        if (name.equals("")) {
-                            Toast.makeText(PlaceSelection.this, "請輸入地點", Toast.LENGTH_SHORT);
-                        }
-                        AddPlace.setText("使用\"" + name + "\"為地點");
-                    }
-                });
-                alertDialog.show();
-            }else {
-                //TODO jump back to home.xml and ready to count the time they staying here;
-
-
-            }*/
         }
     };
 
@@ -161,16 +140,17 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
 
         Log.d(TAG,"onResume");
 
-        fromTimeLineFlag = false;
-
+        try {
+            fromTimeLineFlag = bundle.getBoolean("fromTimeLineFlag", false);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            fromTimeLineFlag = false;
+            Log.d(TAG, "no bundle be sent");
+        }
         initPlaceSelection();
     }
 
     private void initPlaceSelection(){
-
-//        mapView = (MapView) findViewById(R.id.mapView);
-//        mapView.onCreate(savedInstanceState);
-//        mapView.getMapAsync(PlaceSelection.this);
 
         ((MapFragment) getFragmentManager().findFragmentById(R.id.Mapfragment)).getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -178,26 +158,20 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                 map.setOnMarkerClickListener(MarkClick);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-//                float lat = 0;
-//                float lng = 0;
-
-                /*if(!fromTimeLineFlag){
-                    try{
-                        lat = LocationStreamGenerator.latitude.get();
-                        lng = LocationStreamGenerator.longitude.get();
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    Bundle latlng = getIntent().getExtras();
-                    lat = latlng.getDouble("lat");
-                    lng = latlng.getDouble("lng");
-                }*/
-
                 try{
-                    lat = LocationStreamGenerator.latitude.get();
-                    lng = LocationStreamGenerator.longitude.get();
-                } catch(Exception e) {
+
+                    lat = bundle.getDouble("lat", MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude());
+                    lng = bundle.getDouble("lng", MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude());
+//                    lat = MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude();
+//                    lng = MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude();
+                }catch (NullPointerException e){
+                    Log.d(TAG, "NullPointerException");
+                    Log.d(TAG, "no bundle be sent");
+
+                    lat = MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude();
+                    lng = MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude();
+                }
+                catch(Exception e) {
                     e.printStackTrace();
                 }
 
@@ -234,12 +208,9 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                 thread.start();
                 try {
                     latch.await();
-//                    Log.d(TAG, "MMMMMMMMMMMMMMMMMM: " + MarkerLat.get(1));
                     for(int k = 0; k < MarkerLat.size(); k++){
-//                        Log.d(TAG, "Checkkkkkk name: " + MarkerName.get(k));
                         LatLng latandLng = new LatLng(Double.parseDouble(MarkerLat.get(k)), Double.parseDouble(MarkerLng.get(k)));
 
-//                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latandLng, 13));
                         map.addMarker(new MarkerOptions().position(latandLng).title(MarkerName.get(k)));
                     }
                 } catch (InterruptedException e) {
@@ -257,10 +228,6 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
         });
 
         AddPlace = (Button)findViewById(R.id.btn_addplace);
-//        SecRes = (Button)findViewById(R.id.btn_secRes);
-//        Muf = (Button)findViewById(R.id.btn_muf);
-//        Third = (Button)findViewById(R.id.btn_third);
-
 
         AddPlace.setOnClickListener(onClick);
     }
@@ -280,11 +247,8 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
             }
-//            Log.d(TAG, sb.toString());
             json = sb.toString();
             br.close();
-//            return sb.toString();
-
 
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
@@ -315,54 +279,11 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap map) {
 
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        /*
-        float lat = 0;
-        float lng = 0;
-
-        try{
-            lat = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLatitude();
-            lng = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLongitude();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        LatLng latLng = new LatLng(lat, lng);
-
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-        map.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-        */
     }
-
-   /* @Override
-    protected void onPause() {
-        mapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }*/
 
     @Override
     protected void onDestroy() {
-//        mapView.onDestroy();
         super.onDestroy();
     }
 
-//    @Override
-//    public boolean onMarkerClick(Marker marker) {
-//            Log.d(TAG, "Clickkkkkkkkkk");
-//            Toast.makeText(PlaceSelection.this,marker.getTitle() + " has been clicked " , Toast.LENGTH_SHORT).show();
-//
-//        return false;
-//    }
-
-    /*@Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }*/
 }

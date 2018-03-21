@@ -45,6 +45,8 @@
     <color name="accent_lightest">#dcdbdb</color>
     <color name="common_plus_signin_btn_text_dark_pressed">#000000</color>
     <color name="custom">#eaeef7</color>
+    <color name="stroke">#EF767A</color>
+
 
 
 </resources>

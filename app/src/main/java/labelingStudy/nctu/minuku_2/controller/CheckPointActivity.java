@@ -70,9 +70,9 @@ public class CheckPointActivity extends AppCompatActivity {
             //for testing the CAR
             CheckpointAndReminderService.CheckpointOrNot = true;
 
-
+            //TODO CAR need to changed
             //set Trip to show the car line
-            try{
+            /*try{
 
                 latitude = (float)LocationStreamGenerator.latitude.get();
                 longitude = (float)LocationStreamGenerator.longitude.get();
@@ -81,7 +81,7 @@ public class CheckPointActivity extends AppCompatActivity {
                 Log.d(TAG + " trying to get ", "latitude : " + latitude + " longitude : " + longitude);
 
                 if (MinukuStreamManager.getInstance().getTransportationModeDataRecord() != null) {
-                    transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
+                    transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityString();
 
                     Log.d(TAG, "transportation : " + transportation);
 
@@ -136,7 +136,7 @@ public class CheckPointActivity extends AppCompatActivity {
             TripManager.sessionid_unStatic ++;
 
             Toast.makeText(mContext, "Your checkpoint is confirmed !!", Toast.LENGTH_SHORT).show();
-
+*/
         }
     };
 }

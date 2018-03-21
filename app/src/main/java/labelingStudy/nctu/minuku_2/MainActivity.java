@@ -22,7 +22,6 @@
 
 package labelingStudy.nctu.minuku_2;
 
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -44,22 +43,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import labelingStudy.nctu.minuku.config.Constants;
@@ -67,9 +59,9 @@ import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku_2.controller.CheckPointActivity;
+import labelingStudy.nctu.minuku_2.controller.CounterActivity;
 import labelingStudy.nctu.minuku_2.controller.Timeline;
-import labelingStudy.nctu.minuku_2.controller.home;
-import labelingStudy.nctu.minuku_2.controller.report;
+import labelingStudy.nctu.minuku_2.controller.ReportPage;
 import labelingStudy.nctu.minuku_2.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,11 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String current_task;
 
-    //private TextView compensationMessage;
     private AtomicInteger loadingProcessCount = new AtomicInteger(0);
     private ProgressDialog loadingProgressDialog;
-
-    private int mYear, mMonth, mDay;
 
     public static String task="PART"; //default is PART
     ArrayList viewList;
@@ -92,33 +81,13 @@ public class MainActivity extends AppCompatActivity {
     public static android.support.design.widget.TabLayout mTabs;
     public static ViewPager mViewPager;
 
-    private TextView device_id;
-    private TextView num_6_digit;
-    private TextView user_id;
-    private TextView sleepingtime;
-
-    private ImageView tripStatus;
-    private ImageView surveyStatus;
-
-    private Button ohio_setting, ohio_annotate, startservice, tolinkList;
-    private String projName = "mobilecrowdsourcing";
-
-    private int requestCode_setting = 1;
-    private Bundle requestCode_annotate;
-
-    private boolean firstTimeToShowDialogOrNot;
     private SharedPreferences sharedPrefs;
-
-    private ScheduledExecutorService mScheduledExecutorService;
-    public static final int REFRESH_FREQUENCY = 15; //10s, 10000ms
-    public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
-    //private UserSubmissionStats mUserSubmissionStats;
 
     private boolean firstTimeOrNot;
 
     private Timeline timeline;
     private CheckPointActivity checkPointActivity;
-    private home mhome;
+    private CounterActivity mCounterActivity;
 
     public Timeline mtimeline;
 
@@ -127,16 +96,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Creating Main activity");
 
-        //compensationMessage = (TextView) findViewById(R.id.compensation_message);
-
-//        initializeActionList();
-
-        Log.e(TAG,"start");
-
         setContentView(R.layout.activity_main);
 
         final LayoutInflater mInflater = getLayoutInflater().from(this);
-        timerview = mInflater.inflate(R.layout.home, null);
+        timerview = mInflater.inflate(R.layout.counteractivtiy, null);
         recordview = mInflater.inflate(R.layout.activity_timeline, null);
         checkpointview = mInflater.inflate(R.layout.checkpoint_activity, null);
 
@@ -154,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         SettingViewPager();
         startService(new Intent(getBaseContext(), BackgroundService.class));
-//        startpermission();
 //        startService(new Intent(getBaseContext(), ExpSampleMethodService.class));
 //        startService(new Intent(getBaseContext(), CheckpointAndReminderService.class));
 
@@ -207,37 +169,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void getStartDate(){
-        //get timzone
-//        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = Calendar.getInstance();
-        Date date = new Date();
-        cal.setTime(date);
-        int Year = cal.get(Calendar.YEAR);
-        int Month = cal.get(Calendar.MONTH)+1;
-        int Day = cal.get(Calendar.DAY_OF_MONTH);
-
-        int Hour = cal.get(Calendar.HOUR_OF_DAY);
-        int Min = cal.get(Calendar.MINUTE);
-        Log.d(TAG, "Year : "+Year+" Month : "+Month+" Day : "+Day+" Hour : "+Hour+" Min : "+Min);
-
-        Constants.TaskDayCount = 0; //increase in checkfamiliarornotservice
-
-//        Day++; //TODO start the task tomorrow.
-
-        sharedPrefs.edit().putInt("StartYear", Year).apply();
-        sharedPrefs.edit().putInt("StartMonth", Month).apply();
-        sharedPrefs.edit().putInt("StartDay", Day).apply();
-
-        sharedPrefs.edit().putInt("StartHour", Hour).apply();
-        sharedPrefs.edit().putInt("StartMin", Min).apply();
-
-        sharedPrefs.edit().putInt("TaskDayCount", Constants.TaskDayCount).apply();
-
-        Log.d(TAG, "Start Year : " + Year + " Month : " + Month + " Day : " + Day + " TaskDayCount : " + Constants.TaskDayCount);
-
-    }
-
     public void startpermission(){
         //Maybe useless in this project.
         startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));  // 協助工具
@@ -245,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
         startActivity(intent1);
 
-//                    Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
-//                    startActivity(intent);
+//        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
+//        startActivity(intent);
 
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
     }
@@ -264,23 +195,18 @@ public class MainActivity extends AppCompatActivity {
         mTabs.addTab(mTabs.newTab().setText("紀錄"));
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        timerview.setTag(Constant.home_tag);
+        timerview.setTag(Constants.home_tag);
 
 
-    }
-
-    protected void showToast(String aText) {
-        Toast.makeText(this, aText, Toast.LENGTH_SHORT).show();
     }
 
     public void improveMenu(boolean bool){
-        Constant.tabpos = bool;
+        Constants.tabpos = bool;
         ActivityCompat.invalidateOptionsMenu(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //menu.findItem(R.id.action_selectdate).setVisible(false);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -288,10 +214,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if(Constant.tabpos)
+        //TODO we might not need to select date, see on pilot
+        /*if(Constants.tabpos)
             menu.findItem(R.id.action_selectdate).setVisible(true);
         else
-            menu.findItem(R.id.action_selectdate).setVisible(false);
+            menu.findItem(R.id.action_selectdate).setVisible(false);*/
         super.onPrepareOptionsMenu(menu);
 
         return true;
@@ -300,9 +227,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_report:
-                startActivity(new Intent(MainActivity.this, report.class));
+                startActivity(new Intent(MainActivity.this, ReportPage.class));
                 return true;
-            case R.id.action_selectdate:
+
+            //TODO we might not need to select date, see on pilot
+            /*case R.id.action_selectdate:
                 final Calendar c = Calendar.getInstance();
                 mYear = c.get(Calendar.YEAR);
                 mMonth = c.get(Calendar.MONTH);
@@ -324,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }, mYear, mMonth, mDay).show();
-                return true;
+                return true;*/
         }
         return true;
     }
@@ -380,12 +309,6 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e(TAG,"DEVICE_ID"+Constants.DEVICE_ID+" : "+mngr.getDeviceId());
 
-            /*if(projName.equals("Ohio")) {
-               device_id=(TextView)findViewById(R.id.deviceid);
-               device_id.setText("ID = " + Constants.DEVICE_ID);
-
-            }*/
-
         }
     }
 
@@ -393,18 +316,6 @@ public class MainActivity extends AppCompatActivity {
 
         getDeviceid();
 
-        //Use service to catch user's log, GPS, activity;
-        //TODO Bootcomplete 復原
-        //** remember to check this is for what?
-/*
-        if (!CheckFamiliarOrNotService.isServiceRunning()){
-            android.util.Log.d("MainActivity", "[test service running]  going start the probe service isServiceRunning:" + CheckFamiliarOrNotService.isServiceRunning());
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, CheckFamiliarOrNotService.class);
-
-            startService(intent);
-        }
-*/
     }
 
     @Override
@@ -424,8 +335,6 @@ public class MainActivity extends AppCompatActivity {
                 perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.BODY_SENSORS, PackageManager.PERMISSION_GRANTED);
 
-
-
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
                     for (int i = 0; i < permissions.length; i++)
@@ -438,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
                             && perms.get(android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(android.Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED){
                         android.util.Log.d("permission", "[permission test]all permission granted");
-                        //permission_ok=1;
                         startServiceWork();
                     } else {
                         Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
@@ -448,44 +356,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String setDateFormat(int year,int monthOfYear,int dayOfMonth){
-        return String.valueOf(year) + "/"
-                + String.valueOf(monthOfYear + 1) + "/"
-                + String.valueOf(dayOfMonth);
-    }
-
     public void SettingViewPager() {
 
-//        if(firstTimeOrNot) {
+        viewList = new ArrayList<View>();
 
-            viewList = new ArrayList<View>();
+        if (current_task.equals("PART")) {
+            viewList.add(timerview);
+        } else {
+            viewList.add(checkpointview);
+        }
 
-            if (current_task.equals("PART")) {
-                viewList.add(timerview);
-            } else {
-                viewList.add(checkpointview);
-            }
+        viewList.add(recordview);
 
-            viewList.add(recordview);
+        mViewPager.setAdapter(new TimerOrRecordPagerAdapter(viewList, this));
 
-            mViewPager.setAdapter(new TimerOrRecordPagerAdapter(viewList, this));
-
-//        }
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
         //TODO date button now can show on menu when switch to recordview, but need to determine where to place the date textview(default is today's date).
 
-         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if(!Constant.tabpos)
+                if(!Constants.tabpos)
                     //show date on menu
-                    Constant.tabpos = true;
+                    Constants.tabpos = true;
                 else
                     //hide date on menu
-                    Constant.tabpos = false;
+                    Constants.tabpos = false;
 
+                Log.d(TAG, "initialize tab (Swipe)");
+
+                //TODO might change it to only swipe to mtimeline then create it
                 mtimeline.initTime(recordview);
 
                 invalidateOptionsMenu();
@@ -504,44 +406,11 @@ public class MainActivity extends AppCompatActivity {
 
         mTabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(MainActivity.mViewPager));
     }
-/*
-    private void showSettingsScreen() {
-        //showToast("Clicked settings");
-        Intent preferencesIntent = new Intent(this, SettingsActivity.class);
-        startActivity(preferencesIntent);
-    }
-*/
+
     @Override
     protected void onStart() {
         super.onStart();
     }
-
-/*
-    @Subscribe
-    public void assertEligibilityAndPopulateCompensationMessage(
-            UserSubmissionStats userSubmissionStats) {
-        Log.d(TAG, "Attempting to update compesnation message");
-        if(userSubmissionStats != null && isEligibleForReward(userSubmissionStats)) {
-            Log.d(TAG, "populating the compensation message");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    compensationMessage.setText("You are now eligible for today's reward!");
-                    compensationMessage.setVisibility(View.VISIBLE);
-                    compensationMessage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            onCheckCreditPressed(v);
-                        }
-                    });
-
-                }});
-        } else {
-                compensationMessage.setText("");
-                compensationMessage.setVisibility(View.INVISIBLE);
-        }
-    }
-*/
 
     @Subscribe
     public void incrementLoadingProcessCount(IncrementLoadingProcessCountEvent event) {
@@ -553,32 +422,7 @@ public class MainActivity extends AppCompatActivity {
     public void decrementLoadingProcessCountEvent(DecrementLoadingProcessCountEvent event) {
         Integer loadingCount = loadingProcessCount.decrementAndGet();
         Log.d(TAG, "Decrementing loading processes count: " + loadingCount);
-        //maybeRemoveProgressDialog(loadingCount);
     }
-    // because of loadingProgressDialog
-/*
-    private void maybeRemoveProgressDialog(Integer loadingCount) {
-        if(loadingCount <= 0) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loadingProgressDialog.hide();
-                }
-            });
-        }
-    }
-*/
-    /*
-    @Subscribe
-    public boolean isEligibleForReward(UserSubmissionStats userSubmissionStats) {
-        return getRewardRelevantSubmissionCount(userSubmissionStats) >= ApplicationConstants.MIN_REPORTS_TO_GET_REWARD;
-    }
-
-    public void onCheckCreditPressed(View view) {
-        Intent displayCreditIntent = new Intent(MainActivity.this, DisplayCreditActivity.class);
-        startActivity(displayCreditIntent);
-    }*/
-
 
     public class TimerOrRecordPagerAdapter extends PagerAdapter {
         private List<View> mListViews;
@@ -613,7 +457,8 @@ public class MainActivity extends AppCompatActivity {
                 case 0: //timer
 
                     if(current_task.equals("PART")) {
-                        mhome = new home(mContext);
+
+                        mCounterActivity = new CounterActivity(mContext);
 
                         String siteName = "";
                         try{
@@ -622,19 +467,18 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        mhome.inithome(timerview, siteName);
+                        mCounterActivity.initCounterActivity(timerview, siteName);
                     }else{
+
                         checkPointActivity = new CheckPointActivity(mContext);
                         checkPointActivity.initCheckPoint(checkpointview);
                     }
 
                     break;
-                case 1: //report
-//                    record mrecord = new record(mContext);
-//                    mrecord.initrecord(recordview);
+                case 1:
+
                     timeline = new Timeline(mContext); //Timeline
                     timeline.initTime(recordview);
-//                    Timeline timeline = new Timeline();
 
                     break;
             }

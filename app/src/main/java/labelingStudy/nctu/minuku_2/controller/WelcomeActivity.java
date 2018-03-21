@@ -74,14 +74,14 @@ public class WelcomeActivity extends AppCompatActivity {
 
         if(current_task.equals("PART")) {
 
-            Intent intent = new Intent();
-            intent.setClass(WelcomeActivity.this, timer_move.class);
+            Intent intent = new Intent(WelcomeActivity.this, Timer_move.class);
+//            intent.setClass(WelcomeActivity.this, Timer_move.class);
             startActivity(intent);
 
         }else{
 
-            Intent intent = new Intent();
-            intent.setClass(WelcomeActivity.this, MainActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+//            intent.setClass(WelcomeActivity.this, MainActivity.class);
             startActivity(intent);
 
         }
@@ -164,12 +164,6 @@ public class WelcomeActivity extends AppCompatActivity {
             sharedPrefs.edit().putString("DEVICE_ID",  Constants.DEVICE_ID);
 
             Log.e(TAG,"DEVICE_ID"+Constants.DEVICE_ID+" : "+mngr.getDeviceId());
-
-            /*if(projName.equals("Ohio")) {
-               device_id=(TextView)findViewById(R.id.deviceid);
-               device_id.setText("ID = " + Constants.DEVICE_ID);
-
-            }*/
 
         }
     }

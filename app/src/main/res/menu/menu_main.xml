@@ -6,9 +6,9 @@
         android:title="Device ID"
         android:icon="@android:drawable/ic_menu_save"
         app:showAsAction="never" />
-    <item
+    <!--<item
         android:id="@+id/action_selectdate"
         android:title="日期選擇"
         android:icon="@android:drawable/ic_menu_my_calendar"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
 </menu>

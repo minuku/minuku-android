@@ -1,13 +1,21 @@
 package labelingStudy.nctu.minuku.DBHelper;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
+import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.DBManager;
+import labelingStudy.nctu.minuku.model.AnnotationSet;
+import labelingStudy.nctu.minuku.model.Session;
 
 
 /**
@@ -139,7 +147,33 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String AMBIENT_TEMPERATURE_col = "AMBIENT_TEMPERATURE";
 
     //session
-    public static final String Sessionid_col = "Sessionid";
+//    public static final String Sessionid_col = "Sessionid";
+
+    //records
+    public static final String COL_DATA = "data";
+    public static final int COL_INDEX_RECORD_ID = 0;
+    public static final int COL_INDEX_RECORD_SESSION_ID = 1;
+    public static final int COL_INDEX_RECORD_DATA = 2;
+    public static final int COL_INDEX_RECORD_TIMESTAMP_STRING = 3;
+    public static final int COL_INDEX_RECORD_TIMESTAMP_LONG = 4;
+
+    //session
+    public static final String COL_ID = "_id";
+    public static final String COL_SESSION_MODIFIED_FLAG = "session_modified_flag";
+    public static final String COL_SESSION_START_TIME = "session_start_time";
+    public static final String COL_SESSION_END_TIME = "session_end_time";
+    public static final String COL_SESSION_USERPRESSORNOT_FLAG = "userPressOrNot";
+    public static final String COL_SESSION_ID = "session_id";
+    public static final String COL_TIMESTAMP_STRING = "timestamp_string";
+    public static final String COL_TIMESTAMP_LONG = "timestamp_long";
+    public static final String COL_SESSION_ANNOTATION_SET = "session_annotation_set";
+    public static final int COL_INDEX_SESSION_ID = 0;
+    public static final int COL_INDEX_SESSION_TIMESTAMP_STRING = 1;
+    public static final int COL_INDEX_SESSION_START_TIME = 2;
+    public static final int COL_INDEX_SESSION_END_TIME= 3;
+    public static final int COL_INDEX_SESSION_ANNOTATION_SET= 4;
+    public static final int COL_INDEX_SESSION_MODIFIED_FLAG= 5;
+    public static final int COL_INDEX_SESSION_LONG_ENOUGH_FLAG= 6;
 
     //Annotate
     public static final String StartTime_col = "StartTime";
@@ -167,6 +201,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String accessibility_table = "Accessibility";
     public static final String sensor_table = "Sensor";
     public static final String session_table = "Session";
+    public static final String SESSION_TABLE_NAME = "Session_Table";
 
 
     public static final String DATABASE_NAME = "MySQLite.db";
@@ -225,19 +260,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 customsite_table + "(" +
                 id+" INTEGER PRIMARY KEY NOT NULL, " +
                 customsitename_col+" TEXT" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createSessionTable(SQLiteDatabase db){
-        Log.d(TAG,"create session table");
-
-        String cmd = "CREATE TABLE " +
-                session_table + "(" +
-                id + " INTEGER PRIMARY KEY NOT NULL," +
-                TIME + " TEXT NOT NULL," +
-                sessionid_col + " TEXT" + //only one number not like "0, 2"
                 ");";
 
         db.execSQL(cmd);
@@ -412,7 +434,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 Altitude_col +" FLOAT," +
                 Speed_col +" FLOAT," +
                 Bearing_col +" FLOAT," +
-                Provider_col +" TEXT" +
+                Provider_col +" TEXT," +
+                COL_SESSION_ID + " TEXT" +
                 ");";
 
         db.execSQL(cmd);
@@ -461,6 +484,579 @@ public class DBHelper extends SQLiteOpenHelper {
                 ");";
 
         db.execSQL(cmd);
+    }
+
+    //TODO convert them into new Session
+    /*public void createSessionTable(SQLiteDatabase db){
+        Log.d(TAG,"create session table");
+
+        String cmd = "CREATE TABLE " +
+                session_table + "(" +
+                id + " INTEGER PRIMARY KEY NOT NULL," +
+                TIME + " TEXT NOT NULL," +
+                sessionid_col + " TEXT" + //only one number not like "0, 2"
+                ");";
+
+        db.execSQL(cmd);
+    }*/
+
+    public void createSessionTable(SQLiteDatabase db){
+
+        Log.d(TAG, "createSessionTable");
+
+        String cmd = "CREATE TABLE" + " " +
+                SESSION_TABLE_NAME + " ( "+
+                COL_ID + " " + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_TIMESTAMP_STRING + " TEXT NOT NULL, " +
+                COL_SESSION_START_TIME + " INTEGER NOT NULL, " +
+                COL_SESSION_END_TIME + " INTEGER, " +
+                COL_SESSION_ANNOTATION_SET + " TEXT, " +
+                COL_SESSION_MODIFIED_FLAG + " INTEGER, " +
+                COL_SESSION_USERPRESSORNOT_FLAG + " INTEGER " +
+                ");" ;
+
+        db.execSQL(cmd);
+    }
+
+    public static long insertSessionTable(Session session){
+
+        //TODO: the user should be able to specify the database because each study may have a different database.
+        Log.d(TAG, "test trip put session " + session.getId() + " to table " + SESSION_TABLE_NAME);
+
+        long rowId = 0;
+
+        try{
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            ContentValues values = new ContentValues();
+
+//            values.put(COL_TASK_ID, session.getTaskId());
+            values.put(COL_TIMESTAMP_STRING, ScheduleAndSampleManager.getTimeString(session.getStartTime()));
+            values.put(COL_SESSION_START_TIME, session.getStartTime());
+            values.put(COL_SESSION_ANNOTATION_SET, session.getAnnotationsSet().toJSONObject().toString());
+            values.put(COL_SESSION_USERPRESSORNOT_FLAG, session.isUserPress());
+
+            //get row number after the insertion
+            Log.d(TAG, "[test combine] insert session: " + values.toString());
+
+            rowId = db.insert(SESSION_TABLE_NAME, null, values);
+
+//            Toast.makeText(mContext,"test trip inserting sessionid : "+ session.getId(),Toast.LENGTH_SHORT).show();
+
+        }catch(Exception e){
+            e.printStackTrace();
+            rowId = -1;
+        }
+
+        DBManager.getInstance().closeDatabase();
+
+        return rowId;
+    }
+
+    public static ArrayList<String> querySession(int sessionId){
+
+        Log.d(TAG, "[test show trip]query session in DBHelper with session id" + sessionId);
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+
+            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+                    //condition with session id
+                    " where " + COL_ID + " = " + sessionId + " and " +
+                    COL_SESSION_USERPRESSORNOT_FLAG + " = 1"     ; //only long enough trip
+
+            Log.d(TAG, "[test show trip querySession] the query statement is " +sql);
+
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+
+        }catch (Exception e){
+
+        }
+
+        Log.d(TAG, "[test show trip] the session is " +rows);
+
+        return rows;
+
+    }
+
+
+    public static ArrayList<String> querySessionsBetweenTimes(long startTime, long endTime, String order) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+
+//                    " where " + COL_SESSION_START_TIME + " > " + startTime + " and " +
+//                    COL_SESSION_START_TIME + " < " + endTime +
+                    " order by " + COL_SESSION_START_TIME + " " + order;
+
+            Log.d(TAG, "[test show trip querySessionsBetweenTimes] test order the query statement is " +sql);
+
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+    }
+
+
+    public static ArrayList<String> querySessionsBetweenTimes(long startTime, long endTime) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+                    " where "
+                    /* + COL_SESSION_USERPRESSORNOT_FLAG + " = 1" + " and "*/
+                    + COL_SESSION_START_TIME + " > " + startTime + " and " +
+                    COL_SESSION_START_TIME + " < " + endTime +
+                    " order by " + COL_SESSION_START_TIME + " DESC ";
+
+            Log.d(TAG, "test combine [querySessionsBetweenTimes] the query statement is " +sql);
+
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+//            Log.d(TAG,"cursor.getCount : "+cursor.getCount());
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+    }
+
+
+    //query task table
+    public static ArrayList<String> queryModifiedSessions (){
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME + " where " +
+                    COL_SESSION_MODIFIED_FLAG + " = 1";
+
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+    }
+
+
+    //query task table
+    public static ArrayList<String> querySessions (){
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + DBHelper.SESSION_TABLE_NAME;
+
+            Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+        Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
+
+        return rows;
+    }
+
+    //get the number of existing session
+    public static long querySessionCount (){
+
+
+        long count = 0;
+
+        try{
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT * "  +" FROM " + SESSION_TABLE_NAME ;
+            Cursor cursor = db.rawQuery(sql, null);
+            count = cursor.getCount();
+
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+        return count;
+
+    }
+
+    public static ArrayList<String> queryLastRecord(String table_name, int sessionId) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + table_name  +
+                    " where " + COL_SESSION_ID + " = " + sessionId +
+                    " order by " + COL_ID + " DESC LIMIT 1";
+            ;
+
+
+            //          Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+
+            //execute the query
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                Log.d(TAG, "[queryLastRecord] get result row " +curRow);
+
+                rows.add(curRow);
+            }
+            cursor.close();
+
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+    }
+
+    public static ArrayList<String> queryLastSession() {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME  +
+                    " order by " + COL_ID + " DESC LIMIT 1";
+            ;
+
+            //           Log.d(TAG, "[test combine queryLastSession] the query statement is " +sql);
+
+            //execute the query
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+                Log.d(TAG, "[test combine queryLastRecord] get result row " +curRow);
+
+                rows.add(curRow);
+            }
+            cursor.close();
+
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+    }
+
+
+    public static ArrayList<String> queryRecordsBetweenTimes(String table_name, long startTime, long endTime) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + table_name  +
+                    " where " +  TIME + " > " + startTime + " and " +
+                    TIME + " < " + endTime  +
+                    " order by " + TIME;
+
+            Log.d(TAG, "[test sampling] the query statement is " +sql);
+
+            //execute the query
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+//                    Log.d(TAG, "[queryRecordsInSession][testgetdata] column " + i + " content: " + cursor.getString(i));
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+
+                }
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+
+        }catch (Exception e){
+
+        }
+
+
+        Log.d(TAG, "[test sampling] the rsult is " +rows);
+        return rows;
+
+
+    }
+
+
+
+
+    public static ArrayList<String> queryRecordsInSession(String table_name, int sessionId, long startTime, long endTime) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + table_name  +
+                    " where " + COL_SESSION_ID + " = " + sessionId + " and " +
+                    TIME + " > " + startTime + " and " +
+                    TIME + " < " + endTime  +
+                    " order by " + TIME;
+
+            //execute the query
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+
+                }
+
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+
+    }
+
+    public static ArrayList<String> queryRecordsInSession(String table_name, int sessionId) {
+
+        ArrayList<String> rows = new ArrayList<String>();
+
+        Log.d(TAG, "[test show trip] queryRecordsInSession ");
+        try{
+
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            String sql = "SELECT *"  +" FROM " + table_name  +
+                    " where " + COL_SESSION_ID + " = " + sessionId +
+                    " order by " + TIME;
+
+
+            Log.d(TAG, "[test show trip] the query statement is " +sql);
+
+            //execute the query
+            Cursor cursor = db.rawQuery(sql, null);
+            int columnCount = cursor.getColumnCount();
+            while(cursor.moveToNext()){
+                String curRow = "";
+                for (int i=0; i<columnCount; i++){
+                    curRow += cursor.getString(i)+ Constants.DELIMITER;
+                }
+
+                rows.add(curRow);
+            }
+            cursor.close();
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch (Exception e){
+
+        }
+
+
+        return rows;
+
+
+    }
+
+    /**
+     * this is called usally when we want to end a session.
+     * @param session_id
+     * @param endTime
+     * @param sessionLongEnoughFlag
+     */
+    public static void updateSessionTable(int session_id, long endTime, boolean sessionLongEnoughFlag){
+
+        String where = COL_ID + " = " +  session_id;
+
+        try{
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            ContentValues values = new ContentValues();
+
+            //TODO get the col name after complete the annotate part.
+
+            values.put(COL_SESSION_END_TIME, endTime);
+            values.put(COL_SESSION_USERPRESSORNOT_FLAG, sessionLongEnoughFlag);
+
+            db.update(SESSION_TABLE_NAME, values, where, null);
+
+            DBManager.getInstance().closeDatabase();
+
+            Log.d(TAG, "test combine: completing updating end time for sesssion" + id );
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    public static void updateSessionTable(int sessionId, long endTime){
+
+        String where = COL_ID + " = " +  sessionId;
+
+        try{
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            ContentValues values = new ContentValues();
+
+            //TODO get the col name after complete the annotate part.
+
+            /**first check if the endtime is intentionally invalid**/
+
+            //if not
+            if (endTime!=Constants.INVALID_TIME_VALUE){
+                values.put(COL_SESSION_END_TIME, endTime);
+            }
+            else{
+                values.put(COL_SESSION_END_TIME, "");
+            }
+
+            db.update(SESSION_TABLE_NAME, values, where, null);
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "test trip: completing updating end time for sesssion" + id );
+
+    }
+
+    public static void updateSessionTable(int sessionId, long startTime,long endTime, AnnotationSet annotationSet){
+
+        String where = COL_ID + " = " +  sessionId;
+
+        try{
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+            ContentValues values = new ContentValues();
+
+            //TODO get the col name after complete the annotate part.
+            values.put(COL_SESSION_START_TIME, startTime);
+            values.put(COL_SESSION_END_TIME, endTime);
+            //beacuse only one data(annotation) exist.
+            values.put(COL_SESSION_ANNOTATION_SET, annotationSet.toString());
+
+            db.update(SESSION_TABLE_NAME, values, where, null);
+
+            DBManager.getInstance().closeDatabase();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 }

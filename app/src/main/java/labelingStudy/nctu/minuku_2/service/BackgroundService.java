@@ -22,23 +22,28 @@
 
 package labelingStudy.nctu.minuku_2.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.manager.MobilityManager;
-import labelingStudy.nctu.minuku.manager.TripManager;
+import labelingStudy.nctu.minuku.manager.SessionManager;
+import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.manager.InstanceManager;
 
 public class BackgroundService extends Service {
 
     private static final String TAG = "BackgroundService";
     MinukuStreamManager streamManager;
+
+    private int ongoingNotificationID = 42;
+    private String ongoingNotificationText = Constants.RUNNING_APP_DECLARATION;
 
     public BackgroundService() {
         super();
@@ -49,38 +54,55 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         streamManager.updateStreamGenerators();
-        AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
+        /*AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarm.set(
                 AlarmManager.RTC_WAKEUP,     //
                 System.currentTimeMillis() + Constants.PROMPT_SERVICE_REPEAT_MILLISECONDS,
                 PendingIntent.getService(this, 0, new Intent(this, BackgroundService.class), 0)
-        );
-/*
-        Notification note  = new Notification.Builder(getBaseContext())
-                .setContentTitle(Constants.APP_NAME)
-                .setContentText(Constants.RUNNING_APP_DECLARATION)
-                .setSmallIcon(R.drawable.self_reflection)
-                .setAutoCancel(false)
-                .build();
-        note.flags |= Notification.FLAG_NO_CLEAR;
-        startForeground( 42, note );
-*/
+        );*/
+
+        // building the ongoing notification to the foreground
+        startForeground(ongoingNotificationID, getOngoingNotification(ongoingNotificationText));
 
         if(!InstanceManager.isInitialized()) {
             InstanceManager.getInstance(this);
-            TripManager.getInstance(this);
+//            TripManager.getInstance(this);
+            SessionManager.getInstance(this);
             MobilityManager.getInstance(this);
         }
 
-        /*MinukuDAOManager daoManager = MinukuDAOManager.getInstance();
 
-        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
-
-        LocationStreamGenerator locationStreamGenerator =
-                new LocationStreamGenerator(getApplicationContext());*/
 
         return START_STICKY_COMPATIBILITY;
+    }
+
+    private Notification getOngoingNotification(String text){
+
+        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+        bigTextStyle.setBigContentTitle(Constants.APP_NAME);
+        bigTextStyle.bigText(text);
+
+        Notification.Builder noti = new Notification.Builder(this);
+
+        return noti.setContentTitle(Constants.APP_NAME)
+                .setContentText(text)
+                .setStyle(bigTextStyle)
+//                .setSmallIcon(R.drawable.muilab_icon_noti)
+                .setSmallIcon(getNotificationIcon(noti))
+                .setAutoCancel(false)
+                .setOngoing(true)
+                .build();
+    }
+
+    private int getNotificationIcon(Notification.Builder notificationBuilder) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            notificationBuilder.setColor(Color.TRANSPARENT);
+            return R.drawable.muilab_icon_noti;
+
+        }
+        return R.drawable.muilab_icon;
     }
 
     @Override

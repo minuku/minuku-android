@@ -104,7 +104,7 @@ public class CheckpointAndReminderService extends Service {
         @Override
         public void run() {
             checkInNoti();
-            String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityType();
+            String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityString();
 
             StoreToCSV(TransportationModeStreamGenerator.toOtherClassDataRecord.getCreationTime(),
                     lastConfirmedActivityType,
@@ -165,11 +165,11 @@ public class CheckpointAndReminderService extends Service {
             caReminder();
         }
 
-        StoreToCSV(TransportationModeStreamGenerator.toOtherClassDataRecord.getCreationTime(),
-                lastConfirmedActivityType,
-                currentConfirmedActivityType,
-                checking,
-                CheckpointOrNot);
+//        StoreToCSV(TransportationModeStreamGenerator.toOtherClassDataRecord.getCreationTime(),
+//                lastConfirmedActivityType,
+//                currentConfirmedActivityType,
+//                checking,
+//                CheckpointOrNot);
 
         lastConfirmedActivityType = currentConfirmedActivityType;
 
@@ -186,8 +186,8 @@ public class CheckpointAndReminderService extends Service {
         @Override
         public void run() {
 
-            try{
-//                String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityType();
+            /*try{
+//                String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityString();
                 String currentConfirmedActivityType = TransportationModeStreamGenerator.ConfirmedActvitiyString;
 
                 Log.d(TAG, "currentConfirmedActivityType : "+ currentConfirmedActivityType);
@@ -214,7 +214,7 @@ public class CheckpointAndReminderService extends Service {
 
             if(checking==1){
                 checking = 0;
-            }
+            }*/
 
         }
     };

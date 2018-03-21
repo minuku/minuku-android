@@ -3,14 +3,9 @@ package labelingStudy.nctu.minuku_2.controller;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -33,9 +28,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.vipulasri.timelineview.TimelineView;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -43,29 +38,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.DBHelper.DataHandler;
+import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
-import labelingStudy.nctu.minuku.manager.DBManager;
-import labelingStudy.nctu.minuku.manager.TripManager;
-import labelingStudy.nctu.minuku_2.MyDBHelper;
+import labelingStudy.nctu.minuku.manager.SessionManager;
+import labelingStudy.nctu.minuku.model.Annotation;
+import labelingStudy.nctu.minuku.model.AnnotationSet;
+import labelingStudy.nctu.minuku.model.Session;
+import labelingStudy.nctu.minuku.service.TransportationModeService;
 import labelingStudy.nctu.minuku_2.NearbyPlaces.GetUrl;
 import labelingStudy.nctu.minuku_2.R;
-
-import static labelingStudy.nctu.minuku_2.controller.home.duration;
-import static labelingStudy.nctu.minuku_2.controller.home.recordflag;
-import static labelingStudy.nctu.minuku_2.controller.home.result;
-import static labelingStudy.nctu.minuku_2.controller.timer_move.TrafficFlag;
 
 
 public class Timeline extends AppCompatActivity {
@@ -86,24 +77,17 @@ public class Timeline extends AppCompatActivity {
 
     private String current_task;
 
-
-    private RecyclerView listview;
-    private int Trip_size;
-
-    ArrayList<String> mlocationDataRecords;
+    ArrayList<Session> mSessions;
 
     public Timeline(){}
     public Timeline(Context mContext){
         this.mContext = mContext;
     }
 
-    View item;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-
 
     }
 
@@ -115,210 +99,49 @@ public class Timeline extends AppCompatActivity {
         initTime(recordview);
     }
 
-//    public void initTime(){
-//
-//        String current_task = mContext.getResources().getString(R.string.current_task);
-//
-//        if(current_task.equals("PART")) {
-//            setDataListItems();
-//            Log.d(TAG, "myTimeDataset : "+ myTimeDataset);
-//            Log.d(TAG, "myActivityDataset : "+ myActivityDataset);
-//            Log.d(TAG, "myTrafficDataset : "+ myTrafficDataset);
-//            Log.d(TAG, "myAnnotationDataset : "+ myAnnotationDataset);
-//
-//            MyAdapter myAdapter = new MyAdapter(myTimeDataset, myActivityDataset,myTrafficDataset,myAnnotationDataset);
-//            RecyclerView mList = (RecyclerView) findViewById(R.id.list_view);
-//            //initialize RecyclerView
-////            final View vitem = LayoutInflater.from(Timeline.this).inflate(R.layout.item_dialog, null);
-////            item  = vitem;
-//            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//
-//            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//            mList.setLayoutManager(layoutManager);
-//            mList.setAdapter(myAdapter);
-//        }else{
-//            ArrayList<String> locationDataRecords = null;
-//
-//            listview = (RecyclerView) findViewById(R.id.list_view);
-////            listview.setEmptyView(findViewById(R.id.emptyView));
-//
-//            try{
-//
-//                Log.d(TAG,"ListRecordAsyncTask");
-//
-////            locationDataRecords = new ListRecordAsyncTask().execute(mReviewMode).get();
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-//                    locationDataRecords = new ListRecordAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
-//                else
-//                    locationDataRecords = new ListRecordAsyncTask().execute().get();
-//
-//                setDataListItems();
-//                MyAdapter myAdapter = new MyAdapter(locationDataRecords, myActivityDataset,myTrafficDataset,myAnnotationDataset);
-//                RecyclerView mList = (RecyclerView) findViewById(R.id.list_view);
-//
-//                final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//
-//                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//                mList.setLayoutManager(layoutManager);
-//                mList.setAdapter(myAdapter);
-//
-//                Log.d(TAG,"locationDataRecords = new ListRecordAsyncTask().execute().get();");
-//
-//                mlocationDataRecords = locationDataRecords;
-//
-//            }catch(InterruptedException e) {
-//                Log.d(TAG,"InterruptedException");
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                Log.d(TAG,"ExecutionException");
-//                e.printStackTrace();
-//            }
-//        }
-//
-//    }
-
     public void initTime(View v){
 
         recordview = v;
 
         current_task = v.getResources().getString(R.string.current_task);
 
-//        if(current_task.equals("PART")) {
-////            setDataListItems();
-//
-//
-//            MyAdapter myAdapter = new MyAdapter(myTimeDataset, myActivityDataset,myTrafficDataset,myAnnotationDataset);
-//            RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
-//            //initialize RecyclerView
-////            final View vitem = LayoutInflater.from(Timeline.this).inflate(R.layout.item_dialog, null);
-////            item  = vitem;
-//            final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//
-//            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//            mList.setLayoutManager(layoutManager);
-//            mList.setAdapter(myAdapter);
-//        }else{
-            ArrayList<String> locationDataRecords = null;
+        ArrayList<String> locationDataRecords = null;
 
-            listview = (RecyclerView) v.findViewById(R.id.list_view);
-//            listview.setEmptyView(v.findViewById(R.id.emptyView));
+        try{
 
-            try{
+            Log.d(TAG,"ListRecordAsyncTask");
 
-                Log.d(TAG,"ListRecordAsyncTask");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                new ListSessionAsyncTask(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+            else
+                new ListSessionAsyncTask(mContext).execute().get();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                    locationDataRecords = new ListRecordAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
-                else
-                    locationDataRecords = new ListRecordAsyncTask().execute().get();
-
-//                setDataListItems();
-
-                List<String> times = new ArrayList<>();
-                List<String> activities = new ArrayList<>();
-                List<String> sessionids = new ArrayList<>();
-                List<LatLng> locations = new ArrayList<>();
-                List<Boolean> userPressOrNot = new ArrayList<>();
-//                Boolean userPressOrNot = false;
-
-                for(String data : locationDataRecords){
-                    String[] datasplit = data.split("-");
-
-                    for(String datasplitpart : datasplit){
-                        Log.d(TAG, "datasplit : "+datasplitpart);
-                    }
-
-//                    String[] getRidofYear = datasplit[0].split("/");
-//                    String[] getRidofYear2 = datasplit[1].split("/");
-//
-                    times.add(data);
-//                    times.add(getRidofYear[1]+"/"+getRidofYear[2]+"-"+getRidofYear2[1]+"/"+getRidofYear2[2]);
-                    activities.add(datasplit[2]);
-                    sessionids.add(datasplit[3]);
-                    LatLng latLng = new LatLng(Double.valueOf(datasplit[4]),Double.valueOf(datasplit[5]));
-                    Log.d(TAG, "datasplit[4] : "+datasplit[4]+"; datasplit[5] : "+ datasplit[5]);
-                    locations.add(latLng);
-
-                    Log.d(TAG, "Boolean.valueOf(datasplit[6]) : "+Boolean.valueOf(datasplit[6]));
-
-                    userPressOrNot.add(Boolean.valueOf(datasplit[6]));
-
-//                    userPressOrNot = userPressOrNot || Boolean.valueOf(datasplit[6]);
-
-//                    Log.d(TAG, "userPressOrNot : "+userPressOrNot);
-                }
-
-                MyAdapter myAdapter = new MyAdapter(times, activities, myTrafficDataset,myAnnotationDataset, sessionids, locations, userPressOrNot);//
+            //TODO find better method
+            if(mSessions != null){
+                TimelineAdapter timelineAdapter = new TimelineAdapter(mSessions);
                 RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
 
-                final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+                final LinearLayoutManager layoutManager = new LinearLayoutManager(Timeline.this);
 
                 layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 mList.setLayoutManager(layoutManager);
-                mList.setAdapter(myAdapter);
-
-                Log.d(TAG,"locationDataRecords = new ListRecordAsyncTask().execute().get();");
-
-                mlocationDataRecords = locationDataRecords;
-
-            } catch (InterruptedException e) {
-                Log.d(TAG,"InterruptedException");
-                e.printStackTrace();
-            } /*catch (IndexOutOfBoundsException e) {
-                Log.d(TAG,"InterruptedException");
-                e.printStackTrace();
-            }*/ catch (ExecutionException e) {
-                Log.d(TAG,"ExecutionException");
-                e.printStackTrace();
+                mList.setAdapter(timelineAdapter);
             }
 
-//        }
-
-    }
-
-    private void setDataListItems(){
-
-        //TODO need to combine with ESM CAR
-        Log.d(TAG, "recordflag: " + recordflag);
-        if(recordflag){
-            myTimeDataset.add(result);
-            myActivityDataset.add(duration);
-            myTrafficDataset.add(TrafficFlag);
-            myAnnotationDataset.add("Annotation");
-            //SQLite
-            // Init
-            MyDBHelper mHelper = new MyDBHelper(mContext);
-            SQLiteDatabase mDB = null;
-            // Insert by raw SQL
-            mDB = mHelper.getWritableDatabase();
-            String sql = String.format("INSERT INTO Timeline (_Time, _Activity, _Annotation) VALUES ('%s', '%s', '%s')",result, TrafficFlag, "");
-
-            mDB.execSQL(sql);
-            Cursor cursor = mDB.rawQuery("SELECT _ID, _Time, _Activity, _Annotation FROM Timeline", null);
-            cursor.moveToFirst();
-            while(!cursor.isAfterLast()) {
-                Log.e("SQLiteDBTestingActivity","_id = "+cursor.getInt(0));
-                Log.e("SQLiteDBTestingActivity","_Time = "+cursor.getString(1));
-                Log.e("SQLiteDBTestingActivity","_Activity = "+cursor.getString(2));
-                Log.e("SQLiteDBTestingActivity","_Annotation = "+cursor.getString(3));
-                cursor.moveToNext();
-            }
-            cursor.close();
-            mDB.close();
-
-            recordflag=false;
+        } catch (InterruptedException e) {
+            Log.d(TAG,"InterruptedException");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            Log.d(TAG,"ExecutionException");
+            e.printStackTrace();
         }
 
+
     }
 
-
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private List<String> mTime, mActivity, mTraffic, mAnnotation, mSession;
-        private List<LatLng> mlocation;
-        private List<Boolean> mUserPressOrNot;
-
-//        private String getRidofMD = "", getRidofMD2 = "";
+    //TODO delete mTraffic
+    public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
+        private List<Session> mSessions;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public TextView time, duration;
@@ -339,25 +162,13 @@ public class Timeline extends AppCompatActivity {
             }
         }
 
-        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata) {
-            mTime = timedata;
-            mActivity = activitydata;
-            mTraffic = trafficdata;
-            mAnnotation = annotationdata;
-        }
+        public TimelineAdapter(List<Session> sessions){
+            mSessions = sessions;
 
-        public MyAdapter(List<String> timedata, List<String> activitydata, List<String> trafficdata, List<String> annotationdata, List<String> sessioniddata, List<LatLng> locationdata, List<Boolean> userPressOrNot) {
-            mTime = timedata;
-            mActivity = activitydata;
-            mTraffic = trafficdata;
-            mAnnotation = annotationdata;
-            mSession = sessioniddata;
-            mlocation = locationdata;
-            mUserPressOrNot = userPressOrNot;
         }
 
         @Override
-        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public TimelineAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.activity_card_view, parent, false);
             ViewHolder vh = new ViewHolder(v);
@@ -367,243 +178,184 @@ public class Timeline extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-            //TODO get rid of Year and month and date
-            String[] datasplit = mTime.get(position).split("-");
+            final Session session = mSessions.get(position);
 
-            String[] getRidofYear = datasplit[0].split("/");
-            String[] getRidofYear2 = datasplit[1].split("/");
+            final long startTime = session.getStartTime();
 
-            String getRidofMD = getRidofYear[2].split(" ")[1];
-            String getRidofMD2 = getRidofYear2[2].split(" ")[1];
+            final long endTime;
 
-            final String[] getRidofSec = getRidofMD.split(":");
-            final String[] getRidofSec2 = getRidofMD2.split(":");
-//            times.add(getRidofYear[1]+"/"+getRidofYear[2]+"-"+getRidofYear2[1]+"/"+getRidofYear2[2]);
+            //if the session is still ongoing, set the endTime with the current time.
+            if(SessionManager.getOngoingSessionIdList().contains(session.getId())){
 
-//            holder.time.setText(mTime.get(position));
-            holder.time.setText(getRidofSec[0]+":"+getRidofSec[1]+"-"+getRidofSec2[0]+":"+getRidofSec2[1]);
+                endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+            }else{
+                endTime = session.getEndTime();
+            }
+
+            SimpleDateFormat sdf_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
+
+            final String startTimeString = ScheduleAndSampleManager.getTimeString(startTime, sdf_hhmm);
+            final String endTimeString = ScheduleAndSampleManager.getTimeString(endTime, sdf_hhmm);
+
+            holder.time.setText(startTimeString+"-"+endTimeString);
+
+            SimpleDateFormat sdf_date = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_DAY);
+
+            final String startTimeDate = ScheduleAndSampleManager.getTimeString(startTime, sdf_date);
+            final String endTimeDate = ScheduleAndSampleManager.getTimeString(endTime, sdf_date);
+
 
             //if it was pressed by the user show the line
-            if(mUserPressOrNot.get(position))
+            if(session.isUserPress())
                 holder.car_line.setVisibility(View.VISIBLE);
 
-            //TODO when it is static search the corresponding site
-            String json = "";
-            String name = "";
 
-            Log.d(TAG, "mActivity : "+mActivity);
+            //check the annotation first, show the modification from the user
+            AnnotationSet annotationSet = session.getAnnotationsSet();
 
-            if(mActivity.get(position).equals("static")) {
-//                json = getJSON(GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude));
+            //check the transportation from the label, if it hasn't been labeled then check the detected one
+            ArrayList<Annotation> annotations_label = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_Label);
 
-                holder.traffic.setImageResource(R.drawable.if_94_171453);// default
+            JSONObject labelJson = new JSONObject();
+            //if the user's labels
+            try {
+                Annotation annotation_label = annotations_label.get(annotations_label.size() - 1);
+                String label = annotation_label.getContent();
+                String label_Transportation = "";
+                labelJson = new JSONObject(label);
 
-                //TODO the reason why checking annotation after the if condition is because of there are same with the session id.
-                //TODO try to get the data from annotation table first.
-                try {
-                    //TODO take data from annotation table
-                    SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                    Cursor annotationCursor = db.rawQuery("SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                            +" ORDER BY "+DBHelper.StartTime_col+" ASC", null);
-                    Log.d(TAG,"SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                            +" ORDER BY "+DBHelper.StartTime_col+" ASC");
-                    int rows = annotationCursor.getCount();
+                label_Transportation = labelJson.getString(Constants.ANNOTATION_Label_TRANSPORTATOIN);
 
-                    if(rows!=0){
-                        annotationCursor.moveToLast();
-                        String activity = annotationCursor.getString(6);
-                        Log.d(TAG,"activity : "+activity);
-                        holder.duration.setText(activity);
 
-                        if(activity.equals("定點")){
-                            holder.traffic.setImageResource(R.drawable.if_94_171453);
-                        }else if(activity.equals("走路")){
-                            holder.traffic.setImageResource(R.drawable.walk);
-                        }else if(activity.equals("自行車")){
-                            holder.traffic.setImageResource(R.drawable.bike);
-                        }else if(activity.equals("汽車")){
-                            holder.traffic.setImageResource(R.drawable.car);
+                //set the transportation (from label) icon and text
+                String transportation = getTransportationFromSpinnerItem(label_Transportation);
+                int icon = getIconToShowTransportation(transportation);
+
+                holder.traffic.setImageResource(icon);
+
+                holder.duration.setText(label_Transportation);
+
+
+            }catch (JSONException e){
+                Log.d(TAG, "JSONException");
+//                e.printStackTrace();
+            }catch (IndexOutOfBoundsException e){
+                Log.d(TAG, "IndexOutOfBoundsException");
+                Log.d(TAG, "No label yet.");
+//                e.printStackTrace();
+            }
+
+            //if the user hasn't labeled, check the detected one
+            if(!labelJson.has(Constants.ANNOTATION_Label_TRANSPORTATOIN)){
+
+                //TODO why getAnnotationByTag get ArrayList? check, first get the latest one
+                ArrayList<Annotation> annotations = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
+                Annotation annotation = annotations.get(annotations.size()-1);
+                String transportation = annotation.getContent();
+
+                //if it is static check the sitename
+                if(transportation.equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)){
+                    ArrayList<Annotation> annotations_sitename = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_SITENAME);
+
+                    //if there is no sitename has been stored
+                    if(annotations_sitename.size()==0){
+                        //get the site from the google service
+                        try {
+                            String json = "";
+                            String name = "";
+                            //get location by session id
+                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.location_table);
+                            String[] latlng_first = latlngs.get(0).split(Constants.DELIMITER);
+                            String latString = latlng_first[2];
+                            String lngString = latlng_first[3];
+
+                            double lat = Double.parseDouble(latString);
+                            double lng = Double.parseDouble(lngString);
+
+                            String url = GetUrl.getUrl(lat, lng);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                                json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                        url
+                                ).get();
+                            else
+                                json = new HttpAsyncGetSiteTask().execute(
+                                        url
+                                ).get();
+
+                            JSONObject jsonObject = new JSONObject(json);
+                            JSONArray results = jsonObject.getJSONArray("results");
+                            //default now we choose the second index from the json.(first index is ken(縣名) name.)
+                            name = results.getJSONObject(1).getString("name");
+
+                            String transportationDuration = getActivityNameFromTransportationString(name);
+
+                            holder.duration.setText(transportationDuration);
+                        }catch (InterruptedException e){
+                            e.printStackTrace();
+                        }catch (ExecutionException e){
+                            e.printStackTrace();
+                        }catch (JSONException e){
+                            e.printStackTrace();
                         }
 
+                        //if there IS a sitename has been stored
                     }else{
-                        //if not in annotation table, search on the google service to get the recent site.
+                        Annotation annotation_sitename = annotations.get(annotations_sitename.size()-1);
+                        String sitename = annotation_sitename.getContent();
+                        holder.duration.setText(sitename);
 
-                        if(!current_task.equals("PART")) {
-                            String url =  GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                                json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                        url
-                                ).get();
-                            else
-                                json = new HttpAsyncGetSiteTask().execute(
-                                        url
-                                ).get();
-
-                            JSONObject jsonObject = null;
-                            jsonObject = new JSONObject(json);
-                            JSONArray results = jsonObject.getJSONArray("results");
-                            //TODO default now we choose the second index from the json.(first index is ken name.)
-                            name = results.getJSONObject(1).getString("name");
-                            holder.duration.setText(name);
-
-                            //in PART there will store a sitename in triptable
-                        }else {
-
-                            try {
-                                //TODO take data from annotation table
-                                SQLiteDatabase db2 = DBManager.getInstance().openDatabase();
-                                Cursor tripSiteCursor = db2.rawQuery("SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                        +" ORDER BY "+DBHelper.TIME+" ASC", null);
-                                Log.d(TAG,"SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                        +" ORDER BY "+DBHelper.TIME+" ASC");
-                                int rows2 = tripSiteCursor.getCount();
-
-                                if(rows2!=0){
-                                    tripSiteCursor.moveToLast();
-                                    name = tripSiteCursor.getString(7);
-
-                                    Log.d(TAG,"name : "+name);
-                                }
-                            }catch (Exception e2){
-                                e2.printStackTrace();
-                                android.util.Log.e(TAG, "exception", e2);
-                            }
-
-                            holder.duration.setText(name);
-
-                        }
+                        int icon = getIconToShowTransportation(transportation);
+                        holder.traffic.setImageResource(icon);
                     }
 
-                } catch (Exception e){
+                    //if it isn't static set the text and icon directly
+                }else {
+                    //set the transportation (from detected) icon and text
+                    String activityName = getActivityNameFromTransportationString(transportation);
+                    holder.duration.setText(activityName);
+
+                    int icon = getIconToShowTransportation(transportation);
+                    holder.traffic.setImageResource(icon);
+                }
+            }
+
+            //TODO perhaps only need in CAR
+            //change the line color to red if its session annotation hasn't been filled.
+            if(annotations_label.size()==0){
+
+                GradientDrawable sd = new GradientDrawable();
+                int backgroundColor = mContext.getResources().getColor(R.color.custom);
+                int strokeColor = mContext.getResources().getColor(R.color.stroke);
+                sd.setColor(backgroundColor);
+                sd.setStroke(10, strokeColor);
+//                sd.setColor(Color.parseColor("#eaeef7"));
+//                sd.setStroke(10, Color.parseColor("#EF767A"));
+                holder.cardView.setBackground(sd);
+
+                //if the trip is "此移動不存在", do not show it
+            }else if(labelJson.has(Constants.ANNOTATION_Label_TRANSPORTATOIN)){
+                try{
+                    String label_transportation = labelJson.getString(Constants.ANNOTATION_Label_TRANSPORTATOIN);
+                    if(label_transportation.equals("此移動不存在")){
+//                        holder.cardView.setVisibility(View.GONE);
+//                        holder.lineView.setMarkerSize(0);
+                        holder.cardbackground.setVisibility(View.GONE);
+                    }
+                }catch (JSONException e){
                     e.printStackTrace();
-                    android.util.Log.e(TAG, "exception", e);
-
-                    if(!current_task.equals("PART")) {
-                        String url = GetUrl.getUrl(mlocation.get(position).latitude, mlocation.get(position).longitude);
-                        try {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                                json = new HttpAsyncGetSiteTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                        url
-                                ).get();
-                            else
-                                json = new HttpAsyncGetSiteTask().execute(
-                                        url
-                                ).get();
-
-                            JSONObject jsonObject = null;
-                            jsonObject = new JSONObject(json);
-                            JSONArray results = jsonObject.getJSONArray("results");
-                            //TODO default now we choose the second index from the json.(first index is ken name.)
-                            name = results.getJSONObject(1).getString("name");
-                            holder.duration.setText(name);
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                            android.util.Log.e(TAG, "exception", e2);
-                        }
-
-                        //in PART there will store a sitename in triptable
-                    }else {
-
-                        try {
-                            //TODO take data from annotation table
-                            SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                            Cursor tripSiteCursor = db.rawQuery("SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                    +" ORDER BY "+DBHelper.TIME+" ASC", null);
-                            Log.d(TAG,"SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                    +" ORDER BY "+DBHelper.TIME+" ASC");
-                            int rows = tripSiteCursor.getCount();
-
-                            if(rows!=0){
-                                tripSiteCursor.moveToLast();
-                                name = tripSiteCursor.getString(7);
-
-                                Log.d(TAG,"name : "+name);
-                            }
-                        }catch (Exception e2){
-                            e2.printStackTrace();
-                            android.util.Log.e(TAG, "exception", e2);
-                        }
-
-                        holder.duration.setText(name);
-                    }
-
                 }
-
-            }else{
-//                holder.duration.setText(mActivity.get(position));
-                if (mActivity.get(position).equals("on_foot")) {
-                    holder.duration.setText("walk");
-                } else if (mActivity.get(position).equals("on_bicycle")) {
-                    holder.duration.setText("bike");
-                } else if (mActivity.get(position).equals("in_vehicle")) {
-                    holder.duration.setText("car");
-                }
-
             }
 
-//            if(current_task.equals("PART")) {
-//                if (mTraffic.get(position).equals("walk")) {
-//                    holder.traffic.setImageResource(R.drawable.walk);
-//                } else if (mTraffic.get(position).equals("bike")) {
-//                    holder.traffic.setImageResource(R.drawable.bike);
-//                } else if (mTraffic.get(position).equals("car")) {
-//                    holder.traffic.setImageResource(R.drawable.car);
-//                } /*else if (mTraffic.get(position).equals("site")) {
-//                    holder.traffic.setImageResource(R.drawable.if_94_171453);
-//                }*/
-//            }else{
-                if (mActivity.get(position).equals("on_foot")) {
-                    holder.traffic.setImageResource(R.drawable.walk);
-                } else if (mActivity.get(position).equals("on_bicycle")) {
-                    holder.traffic.setImageResource(R.drawable.bike);
-                } else if (mActivity.get(position).equals("in_vehicle")) {
-                    holder.traffic.setImageResource(R.drawable.car);
-                } /*else if (mActivity.get(position).equals("static")) {
-                    holder.traffic.setImageResource(R.drawable.if_94_171453);
-                }*/
-//            }
-
-            //change the line color to red if its sessionid is not in annotation table.
-            //and not showing if the trip is "此移動不存在"
-            try{
-                SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                Cursor tripCursor = db.rawQuery("SELECT * FROM " + DBHelper.annotate_table +
-                        " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'", null);
-                Log.d(TAG,"SELECT * FROM " + DBHelper.annotate_table +
-                        " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'");
-                int rows = tripCursor.getCount();
-
-                if(rows==0){
-                    //setting the red wrap on the cardview.
-                    GradientDrawable sd = new GradientDrawable();
-                    sd.setColor(Color.parseColor("#eaeef7"));
-                    sd.setStroke(10, Color.parseColor("#EF767A"));
-                    holder.cardView.setBackground(sd);
-                }else{
-                    //because we wanna check the newest one.
-                    tripCursor.moveToLast();
-                    Log.d(TAG, "checking annotate : tripCursor.getString(4) = "+tripCursor.getString(4));
-
-                    if(tripCursor.getString(4).equals("此移動不存在")){
-                        //don't show it
-                        holder.cardView.setVisibility(View.GONE);
-                        holder.lineView.setMarkerSize(0);
-                    }
-                }
-            }catch (SQLException e){
-                e.printStackTrace();
-            }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View view) {
-
                     Log.d(TAG, "mContext : " + mContext);
 
                     final LayoutInflater inflater = LayoutInflater.from(mContext);
                     final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                     final View layout = inflater.inflate(R.layout.custom_dialog,null);
-//                    final EditText Dtime = (EditText) layout.findViewById(R.id.ed_time);
                     final Spinner Dspinner = (Spinner) layout.findViewById(R.id.spinner);
                     DchoosingSite = (Button) layout.findViewById(R.id.choosingSite);
                     final Button DstartTime = (Button) layout.findViewById(R.id.startTime);
@@ -612,58 +364,54 @@ public class Timeline extends AppCompatActivity {
                     final ArrayAdapter<String> activityList = new ArrayAdapter<>(mContext,
                             android.R.layout.simple_spinner_dropdown_item,
                             activity);
-                    Dspinner.setAdapter(activityList);
 
+                    Dspinner.setAdapter(activityList);
                     Dspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                            if(current_task.equals("PART")) {
-                                if (parent.getSelectedItem().equals("走路")) {
-                                    mTraffic.set(position, "walk");
-                                } else if (parent.getSelectedItem().equals("自行車")) {
-                                    mTraffic.set(position, "bike");
-                                } else if (parent.getSelectedItem().equals("汽車")) {
-                                    mTraffic.set(position, "car");
-                                } else if (parent.getSelectedItem().equals("定點")) {
-                                    mTraffic.set(position, "site");
-                                } else if (parent.getSelectedItem().equals(" ")) {
-                                    ;
-                                }
-                            }else{
-                                if (parent.getSelectedItem().equals("走路")) {
-                                    mActivity.set(position, "on_foot");
-                                } else if (parent.getSelectedItem().equals("自行車")) {
-                                    mActivity.set(position, "on_bicycle");
-                                } else if (parent.getSelectedItem().equals("汽車")) {
-                                    mActivity.set(position, "in_vehicle");
-                                } else if (parent.getSelectedItem().equals("定點")) {
-                                    mActivity.set(position, "static");
-                                } else if (parent.getSelectedItem().equals(" ")) {
-                                    ;
-                                }
-                            }
 
-                            if(parent.getSelectedItem().equals("定點")){
+                            String selectedItem = parent.getSelectedItem().toString();
+                            String selectedItemTransportationName = getTransportationFromSelectedItem(selectedItem);
+
+                            //show the button "DchoosingSite" when the user choose "定點", for choosing the real site
+                            //otherwise, conceal the button
+                            if(selectedItemTransportationName.equals("static") && selectedItem.equals("定點")){
                                 DchoosingSite.setVisibility(View.VISIBLE);
                                 DchoosingSite.setText("請選擇地點");
                                 DchoosingSite.setOnClickListener(new Button.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        double lat = mlocation.get(position).latitude;
-                                        double lng = mlocation.get(position).longitude;
-//                                        PlaceSelection placeSelection = new PlaceSelection(lat, lng);
-                                        Intent intent = new Intent(mContext, PlaceSelection.class);
-                                        Bundle latlng = new Bundle();
-                                        latlng.putDouble("lat",lat);
-                                        latlng.putDouble("lng",lng);
-                                        intent.putExtras(latlng);
-                                        mContext.startActivity(intent);
-//                                        DchoosingSite.setText(selectedSiteName);
+
+                                        //try catch the situation that the location hasn't been caught
+                                        try {
+
+                                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.location_table);
+                                            String[] latlng_first = latlngs.get(0).split(Constants.DELIMITER);
+                                            String latString = latlng_first[2];
+                                            String lngString = latlng_first[3];
+
+                                            double lat = Double.parseDouble(latString);
+                                            double lng = Double.parseDouble(lngString);
+
+                                            Intent intent = new Intent(mContext, PlaceSelection.class);
+
+                                            Bundle latlng = new Bundle();
+                                            latlng.putDouble("lat", lat);
+                                            latlng.putDouble("lng", lng);
+                                            latlng.putBoolean("fromTimeLineFlag", true);
+                                            intent.putExtras(latlng);
+
+                                            mContext.startActivity(intent);
+
+                                        }catch (IndexOutOfBoundsException e){
+                                            e.printStackTrace();
+                                            Toast.makeText(mContext, "尚未抓到GPS", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
                             }else{
                                 DchoosingSite.setVisibility(View.INVISIBLE);
-                                DchoosingSite.setText(" ");
+                                DchoosingSite.setText("");
                             }
                         }
 
@@ -673,85 +421,57 @@ public class Timeline extends AppCompatActivity {
                         }
                     });
 
-                    final EditText Dannotation_goal = (EditText)layout.findViewById(R.id.ed_annotate_goal);
-                    final EditText Dannotation_specialEvent = (EditText)layout.findViewById(R.id.ed_annotate_specialEvent);
-
-//                    Dtime.setText(mTime.get(position));
-
-                    //Time
-                    Log.d(TAG, " Time : " + mTime.get(position));
-                    String[] datasplit = mTime.get(position).split("-");
-
-                    final String startTimeString = datasplit[0];
-                    final String endTimeString = datasplit[1];
-
-                    String[] getRidofYear = datasplit[0].split("/"); //2017 / 12 / 20 07:12:53
-                    String[] getRidofYear2 = datasplit[1].split("/");
-
-                    String getRidofMD = getRidofYear[2].split(" ")[1]; // 20 07:12:53
-                    String getRidofMD2 = getRidofYear2[2].split(" ")[1];
-
-                    final String[] getRidofSec = getRidofMD.split(":");
-                    final String[] getRidofSec2 = getRidofMD2.split(":");
-
-                    final String correspondingDate = getRidofYear[0]+"/"+getRidofYear[1]+"/"+getRidofYear[2].split(" ")[0];
-                    final String correspondingDate2 = getRidofYear2[0]+"/"+getRidofYear2[1]+"/"+getRidofYear2[2].split(" ")[0];
-
-//                    Dtime.setText(getRidofMD+"-"+getRidofMD2);
-                    final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW); //2017/12/20 07:12:53
-
-                    DstartTime.setText(getRidofSec[0]+":"+getRidofSec[1]);
+                    DstartTime.setText(startTimeString);
                     DstartTime.setOnClickListener(new Button.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Log.d(TAG,"startTime clicked");
-                            Date date1 = null;
-                            try {
-                                date1 = sdf.parse(startTimeString);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
 
-                            Calendar c = Calendar.getInstance();
-                            c.setTime(date1);
+                            final SimpleDateFormat sdf_HHmm = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MIN);
+                            String startTimeString_HHmm = ScheduleAndSampleManager.getTimeString(startTime, sdf_HHmm);
 
-                            int hour = c.get(Calendar.HOUR_OF_DAY);
-                            int minute = c.get(Calendar.MINUTE);
+                            String[] date = startTimeString_HHmm.split(":");
+
+                            int hour = Integer.parseInt(date[0]);//c.get(Calendar.HOUR_OF_DAY);
+                            int minute = Integer.parseInt(date[1]);
                             new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener(){
                                 @Override
                                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
                                     String hour=String.valueOf(hourOfDay);
                                     String min =String.valueOf(minute);
+
                                     if(hourOfDay<10)
                                         hour = "0" + String.valueOf(hourOfDay);
 
                                     if(minute<10)
                                         min = "0" + String.valueOf(minute);
 
-                                    DstartTime.setText( hour + ":" + min );
+                                    String HHmm = hour + ":" + min;
+                                    long time = ScheduleAndSampleManager.getTimeInMillis(HHmm, sdf_HHmm);
+                                    final SimpleDateFormat sdf_a_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
+                                    String a_hhmm = ScheduleAndSampleManager.getTimeString(time, sdf_a_hhmm);
+
+                                    DstartTime.setText(a_hhmm);
 
                                 }
                             }, hour, minute, false).show();
                         }
                     });
 
-                    DendTime.setText(getRidofSec2[0]+":"+getRidofSec2[1]);
+                    DendTime.setText(endTimeString);
                     DendTime.setOnClickListener(new Button.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Log.d(TAG,"startTime clicked");
-                            Date date2 = null;
-                            try {
-                                date2 = sdf.parse(endTimeString);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
 
-                            Calendar c = Calendar.getInstance();
-                            c.setTime(date2);
-                            int hour = c.get(Calendar.HOUR_OF_DAY);
-                            int minute = c.get(Calendar.MINUTE);
+                            final SimpleDateFormat sdf_HHmm = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MIN);
+                            String endTimeString_HHmm = ScheduleAndSampleManager.getTimeString(endTime, sdf_HHmm);
+
+                            String[] date = endTimeString_HHmm.split(":");
+
+                            int hour = Integer.parseInt(date[0]);//c.get(Calendar.HOUR_OF_DAY);
+                            int minute = Integer.parseInt(date[1]);
                             new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener(){
                                 @Override
                                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -764,277 +484,270 @@ public class Timeline extends AppCompatActivity {
                                     if(minute<10)
                                         min  = "0" + String.valueOf(minute);
 
-                                    DendTime.setText( hour + ":" + min );
+                                    String HHmm = hour + ":" + min;
+                                    long time = ScheduleAndSampleManager.getTimeInMillis(HHmm, sdf_HHmm);
+                                    final SimpleDateFormat sdf_a_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
+                                    String a_hhmm = ScheduleAndSampleManager.getTimeString(time, sdf_a_hhmm);
+
+                                    DendTime.setText( a_hhmm );
 
                                 }
                             }, hour, minute, false).show();
                         }
                     });
 
+
+                    final EditText Dannotation_goal = (EditText)layout.findViewById(R.id.ed_annotate_goal);
+                    final EditText Dannotation_specialEvent = (EditText)layout.findViewById(R.id.ed_annotate_specialEvent);
+
+                    Dannotation_goal.setText("");
+                    Dannotation_specialEvent.setText("");
+
                     try {
-                        //TODO take data from annotation table
-                        SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                        Cursor annotationCursor = db.rawQuery("SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                +" ORDER BY "+DBHelper.StartTime_col+" ASC", null);
-                        Log.d(TAG,"SELECT * FROM " + DBHelper.annotate_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ mSession.get(position) + "'"
-                                +" ORDER BY "+DBHelper.StartTime_col+" ASC");
-                        int rows = annotationCursor.getCount();
+                        AnnotationSet annotationSet = session.getAnnotationsSet();
 
-                        if(rows!=0){
-                            annotationCursor.moveToLast();
-//                            String activity_FromAnnotate = annotationCursor.getString(6);
-                            String goal = annotationCursor.getString(7);
-                            Dannotation_goal.setText(goal);
-                            String specialEvent = annotationCursor.getString(8);
-                            Dannotation_specialEvent.setText(specialEvent);
+                        ArrayList<Annotation> annotations_label = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_Label);
+                        Annotation annotation_label = annotations_label.get(annotations_label.size() - 1);
+                        String label = annotation_label.getContent();
+                        JSONObject labelJson = new JSONObject(label);
 
-                        }else{
-//                            Dannotation_goal.setText(mAnnotation.get(position));
-                            //add for PART?
-                        }
+                        String goal = labelJson.getString(Constants.ANNOTATION_Label_GOAL);
+                        Dannotation_goal.setText(goal);
+                        String specialEvent = labelJson.getString(Constants.ANNOTATION_Label_SPECIALEVENT);
+                        Dannotation_specialEvent.setText(specialEvent);
 
                     }catch (IndexOutOfBoundsException e){
-                        e.printStackTrace();
-                        android.util.Log.e(TAG, "exception", e);
-                        Dannotation_goal.setText("");
-                        Dannotation_specialEvent.setText("");
-                    }catch (SQLException e){
-                        e.printStackTrace();
-                        android.util.Log.e(TAG, "exception", e);
-                        Dannotation_goal.setText("");
-                        Dannotation_specialEvent.setText("");
+                        Log.d(TAG, "IndexOutOfBoundsException");
+//                        e.printStackTrace();
+                    }catch (JSONException e){
+                        Log.d(TAG, "JSONException");
+//                        e.printStackTrace();
                     }
 
                     builder.setView(layout)
                             .setPositiveButton(R.string.ok, null);
 
-                    final AlertDialog mAlertDialog = builder.create();
-                    mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener(){
-                        @Override
-                        public void onShow(final DialogInterface dialog) {
-                            Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            button.setOnClickListener(new View.OnClickListener() {
 
-                                @Override
-                                public void onClick(View view) {
+                    ArrayList<Integer> ongoingSessionIdList = SessionManager.getOngoingSessionIdList();
 
-//                                    if(current_task.equals("PART")) {
-//                                        if (Dspinner.getSelectedItem().equals("走路")) {
-//                                            mTraffic.set(position, "walk");
-//                                        } else if (Dspinner.getSelectedItem().equals("自行車")) {
-//                                            mTraffic.set(position, "bike");
-//                                        } else if (Dspinner.getSelectedItem().equals("汽車")) {
-//                                            mTraffic.set(position, "car");
-//                                        } else if (Dspinner.getSelectedItem().equals("定點")) {
-//                                            mTraffic.set(position, "site");
-//                                        } else if (Dspinner.getSelectedItem().equals(" ")) {
-//                                            ;
-//                                        }
-//                                    }else{
-                                        if (Dspinner.getSelectedItem().equals("走路")) {
-                                            mActivity.set(position, "on_foot");
-                                        } else if (Dspinner.getSelectedItem().equals("自行車")) {
-                                            mActivity.set(position, "on_bicycle");
-                                        } else if (Dspinner.getSelectedItem().equals("汽車")) {
-                                            mActivity.set(position, "in_vehicle");
-                                        } else if (Dspinner.getSelectedItem().equals("定點")) {
-                                            mActivity.set(position, "static");
-                                        } else if (Dspinner.getSelectedItem().equals(" ")) {
-                                            ;
+                    if(ongoingSessionIdList.contains(session.getId())){
+                        Toast.makeText(mContext, "你的路程還在進行中", Toast.LENGTH_SHORT).show();
+                    }else {
+
+                        final AlertDialog mAlertDialog = builder.create();
+                        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(final DialogInterface dialogInterface) {
+                                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                button.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        String selectedActivityString = Dspinner.getSelectedItem().toString();
+                                        String goal = Dannotation_goal.getText().toString();
+                                        String specialEvent = Dannotation_specialEvent.getText().toString();
+
+                                        String sitename = "";
+
+                                        if (selectedActivityString.equals("定點")) {
+                                            sitename = holder.duration.getText().toString();
                                         }
-//                                    }
 
-                                    if(Dspinner.getSelectedItem().equals("請選擇交通模式")){
-                                        Toast.makeText(mContext, "請選擇一項交通模式！！", Toast.LENGTH_SHORT).show();
-                                    } else{
-//                                        mTime.set(position, Dtime.getText().toString());
-//                                        mAnnotation.set(position, Dannotation.getText().toString());
+                                        if (selectedActivityString.equals("請選擇交通模式")) {
+                                            Toast.makeText(mContext, "請選擇一項交通模式", Toast.LENGTH_SHORT).show();
+                                        } else {
 
-                                        //TODO judging that we need to update session id or not
-                                        String currentSessionid = mSession.get(position); //mSession is ASC got from DB.
-                                        if(Dspinner.getSelectedItem().equals("與上一個相同")){
-                                            currentSessionid = mSession.get(position+1); //TODO because the order of the list is DESC
+                                            String startTimeaHHmmString = DstartTime.getText().toString();
+                                            String endTimeaHHmmString = DendTime.getText().toString();
 
-                                            //TODO update session id in Trip and Session table
-                                            //Trip
-                                            String lastSessionid = mSession.get(position);
-                                            Log.d(TAG,"lastSessionid : "+lastSessionid);
-                                            try{
-                                                SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                                                Cursor tripCursor = db.rawQuery("SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ lastSessionid + "'"
-                                                        +"ORDER BY "+DBHelper.TIME+" ASC", null);
-                                                Log.d(TAG,"SELECT * FROM " + DBHelper.trip_table + " WHERE "+ DBHelper.sessionid_col+ " =' "+ lastSessionid + "'"
-                                                        +"ORDER BY "+DBHelper.TIME+" ASC"); //+" ORDER BY "+DBHelper.TIME+" ASC"
-                                                int rows = tripCursor.getCount();
+//                                            //reversed the
+//                                            String startTimeHHmmaString = startTimeaHHmmString.split(" ")[1]+" "+ startTimeaHHmmString.split(" ")[0];
+//                                            String endTimeHHmmaString = endTimeaHHmmString.split(" ")[1]+" "+ endTimeaHHmmString.split(" ")[0];
 
-                                                if(rows!=0){
-                                                    tripCursor.moveToFirst();
-                                                    int first_id = tripCursor.getInt(0);
-                                                    tripCursor.moveToLast();
-                                                    int last_id = tripCursor.getInt(0);
-                                                    ContentValues contentValues = new ContentValues();
+                                            String startTimeString = startTimeDate + " " + startTimeaHHmmString;
+                                            String endTimeString = endTimeDate + " " + endTimeaHHmmString;
 
-                                                    contentValues.put(DBHelper.sessionid_col, currentSessionid); //update the session id to previous one in trip table
-                                                    contentValues.put(DBHelper.trip_transportation_col, mActivity.get(position+1));
+                                            SimpleDateFormat sdf_date_HHmma = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_AMPM_HOUR_MIN);
 
-                                                    db.update(DBHelper.trip_table, contentValues, "_id >= ? AND _id <= ?" , new String[] {String.valueOf(first_id), String.valueOf(last_id)});
-                                                }
-                                            }catch(Exception e){
+                                            long startTimeLabel = ScheduleAndSampleManager.getTimeInMillis(startTimeString, sdf_date_HHmma);
+                                            long endTimeLabel = ScheduleAndSampleManager.getTimeInMillis(endTimeString, sdf_date_HHmma);
+
+                                            //TODO judging that we need to update session id or not
+                                            int sessionId = session.getId();
+                                            AnnotationSet annotationSet = session.getAnnotationsSet();
+
+                                            //now, we keep the same trip which is claimed by users with different Ids,
+                                            //because it is _id, but we show them by checking their labels
+                                            /*if(Dspinner.getSelectedItem().equals("與上一個相同")){
+
+                                            }*/
+
+                                            //store the labels into the corresponding session
+                                            Annotation annotation = new Annotation();
+
+                                            JSONObject labelJson = new JSONObject();
+
+                                            try {
+                                                labelJson.put(Constants.ANNOTATION_Label_TRANSPORTATOIN, selectedActivityString);
+                                                labelJson.put(Constants.ANNOTATION_Label_GOAL, goal);
+                                                labelJson.put(Constants.ANNOTATION_Label_SPECIALEVENT, specialEvent);
+                                                labelJson.put(Constants.ANNOTATION_Label_SITENAME, sitename);
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                            annotation.setContent(labelJson.toString());
+                                            annotation.addTag(Constants.ANNOTATION_TAG_Label);
+                                            annotationSet.addAnnotation(annotation);
+
+                                            DataHandler.updateSession(sessionId, startTimeLabel, endTimeLabel, annotationSet);
+
+                                        /*preparing the updated data to show after the notifyDataSetChanged*/
+                                            //TODO might not work
+                                            try {
+
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                                                    mSessions = new ListSessionAsyncTask(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                                                else
+                                                    mSessions = new ListSessionAsyncTask(mContext).execute().get();
+
+                                                //conceal the red highlight circle
+                                                GradientDrawable sd = new GradientDrawable();
+
+                                                int backgroundColor = mContext.getResources().getColor(R.color.custom);
+                                                sd.setColor(backgroundColor);
+//                                                sd.setColor(Color.parseColor("#eaeef7"));
+//                                                sd.setStroke(10, Color.parseColor("#EF767A"));
+                                                holder.cardView.setBackground(sd);
+
+                                            } catch (InterruptedException e) {
+                                                Log.d(TAG, "InterruptedException");
+                                                e.printStackTrace();
+                                            } catch (ExecutionException e) {
+                                                Log.d(TAG, "ExecutionException");
                                                 e.printStackTrace();
                                             }
 
-                                            //Session
-                                            try{
-                                                String sessionidNoZero = lastSessionid.split(", ")[1];
+                                            notifyDataSetChanged();
 
-                                                SQLiteDatabase db = DBManager.getInstance().openDatabase();
-                                                Cursor sessionCursor = db.rawQuery("SELECT * FROM " + DBHelper.session_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ sessionidNoZero + "'"
-                                                        +" ORDER BY "+DBHelper.TIME+" ASC", null);
-                                                Log.d(TAG,"SELECT * FROM " + DBHelper.session_table + " WHERE "+ DBHelper.sessionid_col+ " ='"+ sessionidNoZero + "'"
-                                                        +" ORDER BY "+DBHelper.TIME+" ASC");
-                                                int rows = sessionCursor.getCount();
+                                            DchoosingSite.setVisibility(View.INVISIBLE); // set back to default
 
-                                                if(rows!=0){
-                                                    sessionCursor.moveToFirst();
-                                                    int first_id = sessionCursor.getInt(0);
-                                                    sessionCursor.moveToLast();
-                                                    int last_id = sessionCursor.getInt(0);
-                                                    ContentValues contentValues = new ContentValues();
-
-                                                    Log.d(TAG, "first_id : " + first_id + ", last_id : " + last_id);
-
-                                                    String currentSessionidNoZero = currentSessionid.split(", ")[1];
-
-                                                    Log.d(TAG, "currentSessionidNoZero : " + currentSessionidNoZero);
-                                                    contentValues.put(DBHelper.sessionid_col, currentSessionidNoZero); //update the session id to previous one in trip table
-//TODO check that...
-                                                    db.update(DBHelper.session_table, contentValues, "_id >= ? AND _id <= ?" , new String[] {String.valueOf(first_id), String.valueOf(last_id)});
-                                                }
-                                            }catch(Exception e){
-                                                e.printStackTrace();
-                                                android.util.Log.e(TAG, "exception", e);
-                                            }
-                                        }
-
-                                        //TODO then store in annotation table
-                                        ContentValues values = new ContentValues();
-                                        try {
-                                            SQLiteDatabase db = DBManager.getInstance().openDatabase();
-
-                                            String sitename = "";
-
-                                            if(Dspinner.getSelectedItem().toString().equals("定點")){
-                                                sitename = holder.duration.getText().toString();
-                                            }
-
-//                                            String times[] = mTime.get(position).split("-");
-//                                            String startTime = times[0];
-//                                            String endTime = times[1];
-                                            //TODO change the data format to store
-                                            String startTime = DstartTime.getText().toString();
-                                            String endTime = DendTime.getText().toString();
-
-                                            startTime = correspondingDate+" "+startTime+ ":00";
-                                            endTime = correspondingDate2 +" "+endTime+ ":00";
-
-                                            long startTimeLong = getSpecialTimeInMillis(startTime);
-                                            long endTimeLong = getSpecialTimeInMillis(endTime);
-
-                                            values.put(DBHelper.StartTime_col, startTimeLong);
-                                            values.put(DBHelper.EndTime_col, endTimeLong);
-                                            values.put(DBHelper.StartTimeString_col, startTime);
-                                            values.put(DBHelper.EndTimeString_col, endTime);
-                                            values.put(DBHelper.sessionid_col, currentSessionid);
-                                            values.put(DBHelper.Activity_col, Dspinner.getSelectedItem().toString());
-                                            values.put(DBHelper.Annotation_Goal_col, Dannotation_goal.getText().toString());
-                                            values.put(DBHelper.Annotation_SpecialEvent_col, Dannotation_specialEvent.getText().toString());
-                                            values.put(DBHelper.SiteName_col, sitename);
-                                            values.put(DBHelper.uploaded_col, false);
-
-                                            db.insert(DBHelper.annotate_table, null, values);
-
-                                        } catch (NullPointerException e) {
-                                            e.printStackTrace();
-                                        } finally {
-                                            values.clear();
-                                            DBManager.getInstance().closeDatabase();
+                                            Toast.makeText(mContext, "感謝您的填答", Toast.LENGTH_SHORT).show();
+                                            dialogInterface.dismiss();
                                         }
 
 
-                                        //reset data
-                                        ArrayList<String> locationDataRecords = null;
-                                        try{
-                                            Log.d(TAG,"reset data");
-
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                                                locationDataRecords = new ListRecordAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
-                                            else
-                                                locationDataRecords = new ListRecordAsyncTask().execute().get();
-
-                                            List<String> times = new ArrayList<>();
-                                            List<String> activities = new ArrayList<>();
-                                            List<String> sessionids = new ArrayList<>();
-                                            List<LatLng> locations = new ArrayList<>();
-
-                                            for(String data : locationDataRecords){
-                                                String[] datasplit = data.split("-");
-
-                                                times.add(data);
-
-                                                activities.add(datasplit[2]);
-                                                sessionids.add(datasplit[3]);
-                                                LatLng latLng = new LatLng(Double.valueOf(datasplit[4]),Double.valueOf(datasplit[5]));
-                                                Log.d(TAG, "datasplit[4] : "+datasplit[4]+"; datasplit[5] : "+ datasplit[5]);
-                                                locations.add(latLng);
-                                            }
-                                            mTime = times;
-                                            mActivity = activities;
-//                                            mTraffic = trafficdata;
-//                                            mAnnotation = annotationdata;
-                                            mSession = sessionids;
-                                            mlocation = locations;
-                                        }catch (Exception e){
-                                            e.printStackTrace();
-                                        }
-                                        notifyDataSetChanged();
-
-                                        DchoosingSite.setVisibility(View.INVISIBLE); // set back to default
-
-                                        Toast.makeText(mContext,"感謝您的填答", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
                                     }
-                                }
-                            });
-                        }
-                    });
+                                });
 
-                    mAlertDialog.show();
+                            }
+                        });
+
+                        mAlertDialog.show();
+                    }
                 }
+
             });
 
         }
 
         @Override
         public int getItemCount() {
-            return mTime.size();
+            return mSessions.size();
         }
 
     }
 
-    public long getSpecialTimeInMillis(String givenDateFormat){
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
-        long timeInMilliseconds = 0;
-        try {
-            Date mDate = sdf.parse(givenDateFormat);
-            timeInMilliseconds = mDate.getTime();
-            Log.d(TAG,"Date in milli :: " + timeInMilliseconds);
-        } catch (ParseException e) {
-            e.printStackTrace();
+    private String getTransportationFromSelectedItem(String selectedItem){
+        switch (selectedItem){
+            case "走路":
+                return "on_foot";
+            case "自行車":
+                return "on_bicycle";
+            case "汽車":
+                return "in_vehicle";
+            default:
+                return "static";
         }
-        return timeInMilliseconds;
     }
 
-    //use HTTPAsyncTask to poHttpAsyncPostJsonTaskst data
+    private String getTransportationFromSpinnerItem(String selectedTransportation){
+        final String[] activity = {"請選擇交通模式", "走路", "自行車", "汽車", "定點", "此移動不存在", "與上一個相同"};
+
+        switch (selectedTransportation){
+            case "走路":
+                return TransportationModeService.TRANSPORTATION_MODE_NAME_ON_FOOT;
+            case "自行車":
+                return TransportationModeService.TRANSPORTATION_MODE_NAME_ON_BICYCLE;
+            case "汽車":
+                return TransportationModeService.TRANSPORTATION_MODE_NAME_IN_VEHICLE;
+            case "定點":
+                return TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
+            case "此移動不存在":
+                return "此移動不存在";
+            case "與上一個相同":
+                return "與上一個相同";
+            default:
+                return "Unknown";
+        }
+
+    }
+
+    private String getActivityNameFromTransportationString(String transportation){
+
+        switch (transportation){
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_ON_FOOT:
+            case "走路":
+//                return "walk";
+                return "走路";
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_ON_BICYCLE:
+            case "自行車":
+//                return "bike";
+                return "騎自行車";
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_IN_VEHICLE:
+            case "汽車":
+//                return "car";
+                return "開車";
+
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION:
+            case "定點":
+                return "定點（未知地點）";
+
+            default:
+                return transportation;
+        }
+    }
+
+    private String getTransportationNameInChinese(String transportation){
+
+        switch (transportation){
+            case "walk":
+                return "走路";
+            case "bike":
+                return "騎自行車";
+            case "car":
+                return "開車";
+            default:
+                return "定點（未知地點）";
+        }
+    }
+
+    private int getIconToShowTransportation(String transportation){
+        switch (transportation){
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_ON_FOOT:
+                return R.drawable.walk;
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_ON_BICYCLE:
+                return R.drawable.bike;
+            case TransportationModeService.TRANSPORTATION_MODE_NAME_IN_VEHICLE:
+                return R.drawable.car;
+            default:
+                return R.drawable.if_94_171453;
+        }
+
+    }
+
     private class HttpAsyncGetSiteTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1091,57 +804,59 @@ public class Timeline extends AppCompatActivity {
         return json;
     }
 
-    private class ListRecordAsyncTask extends AsyncTask<String, Void, ArrayList<String>> {
+    /**
+     * Load Session Data from the SessionManager
+     */
+    private class ListSessionAsyncTask extends AsyncTask<String, Void, ArrayList<Session> > {
 
-        private ProgressDialog dialog = null;
+        private ProgressDialog dialog;
+        private Context mContext;
+
+        public ListSessionAsyncTask(Context context){
+            mContext = context;
+
+            Log.d(TAG, "ListSessionAsyncTask mContext : "+mContext);
+        }
+
 
         @Override
         protected void onPreExecute() {
-            Log.d(TAG,"onPreExecute");
+            Log.d(TAG,"[test show trip] onPreExecute");
+            dialog = ProgressDialog.show(mContext, "","Loading...",true,false);
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Session> sessions) {
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
+            mSessions = sessions;
+
+            Log.d(TAG, "[test show trip] on post return sessions " + mSessions);
+
         }
 
         @Override
-        protected ArrayList<String> doInBackground(String... params) {
+        protected ArrayList<Session> doInBackground(String... params) {
 
-            Log.d(TAG, "listRecordAsyncTask going to list recording");
-
-            ArrayList<String> locationDataRecords = new ArrayList<String>();
+            ArrayList<Session> sessions = new ArrayList<Session>();
 
             try {
 
-                locationDataRecords = TripManager.getTripDatafromSQLite();
-//                locationDataRecords = TripManager.getInstance().getTripDatafromSQLite();
-//                Trip_size = TripManager.getInstance().getSessionidForTripSize();
-                Trip_size = TripManager.getInstance().getTrip_size();
+                sessions = SessionManager.getRecentSessions();
 
-//                Log.d(TAG,"locationDataRecords(0) : " + locationDataRecords.get(0));
-//                Log.d(TAG,"locationDataRecords(max) : " + locationDataRecords.get(locationDataRecords.size()-1));
-
-//                if(locationDataRecords.isEmpty())
-//                    ;
-
-                Log.d(TAG,"try locationDataRecords");
             }catch (Exception e) {
-                locationDataRecords = new ArrayList<String>();
                 Log.d(TAG,"Exception");
                 e.printStackTrace();
             }
-//            return locationDataRecords;
 
-            return locationDataRecords;
-
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(ArrayList<String> result) {
-
-            super.onPostExecute(result);
+            return sessions;
 
         }
-
     }
-
 
 
 }

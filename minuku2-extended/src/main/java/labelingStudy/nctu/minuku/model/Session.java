@@ -16,31 +16,32 @@ public class Session {
     private float mBatteryLife = -1;
     //we need to rememeber this number in order to cancel the ongoing notification when the current session is done.
     private int mOngoingNotificationId=-1;
-    //protected AnnotationSet mAnnotationSet;
+    protected AnnotationSet mAnnotationSet;
+    private boolean mUserPressOrNot = false ;
+    private boolean mIsModified = false;
     //TODO: this should be defined based on what's being activated.
     ArrayList<String> mContextSourceNames;
 
-    public Session (int taskId){
-        mTaskId = taskId;
-        //mAnnotationSet = new AnnotationSet();
+    public Session (int sessionId){
+        mId = sessionId;
+        mAnnotationSet = new AnnotationSet();
     }
 
     public Session (long timestamp){
         mStartTime = timestamp;
-        // mAnnotationSet = new AnnotationSet();
+        mAnnotationSet = new AnnotationSet();
     }
 
-    public Session (long timestamp, int taskId){
+    public Session (long timestamp, int sessionId){
         mStartTime = timestamp;
-        mTaskId = taskId;
-        //mAnnotationSet = new AnnotationSet();
+        mId = sessionId;
+        mAnnotationSet = new AnnotationSet();
     }
 
-    public Session (int id, long timestamp, int taskId){
+    public Session (int id, long timestamp){
         mId = id;
         mStartTime = timestamp;
-        mTaskId = taskId;
-        // mAnnotationSet = new AnnotationSet();
+        mAnnotationSet = new AnnotationSet();
     }
 
     public ArrayList<String> getContextSourceNames() {
@@ -64,6 +65,17 @@ public class Session {
         }
     }
 
+    public boolean isUserPress() {
+        return mUserPressOrNot;
+    }
+
+    public void setUserPressOrNot(boolean userPressOrNot){
+        mUserPressOrNot = userPressOrNot;
+    }
+
+    public void setModified(boolean isModified){
+        mIsModified = isModified;
+    }
 
     public boolean isPaused() {
         return mPaused;
@@ -77,7 +89,7 @@ public class Session {
         mId = id;
     }
 
-    public long getId(){
+    public int getId(){
         return mId;
     }
 
@@ -119,10 +131,10 @@ public class Session {
         this.mEndtime = endtime;
     }
 
-    /**  public AnnotationSet getAnnotationsSet(){
+    public AnnotationSet getAnnotationsSet(){
 
-     return mAnnotationSet;
-     }**/
+        return mAnnotationSet;
+    }
 
     public float getBatteryLife() {
         return mBatteryLife;
@@ -132,19 +144,17 @@ public class Session {
         this.mBatteryLife = batteryStatus;
     }
 
-    /**   public void setAnnotationSet(AnnotationSet annotationSet){
+    public void setAnnotationSet(AnnotationSet annotationSet){
+        mAnnotationSet = annotationSet;
+    }
 
-     mAnnotationSet = annotationSet;
-     }
+    public void addAnnotation (Annotation annotation) {
 
-     public void addAnnotaiton (Annotation annotation) {
+        if (mAnnotationSet==null){
+            mAnnotationSet = new AnnotationSet();
+        }
+        mAnnotationSet.addAnnotation(annotation);
 
-     if (mAnnotationSet==null){
-     mAnnotationSet = new AnnotationSet();
-     }
-     mAnnotationSet.addAnnotation(annotation);
-
-     }
-     **/
+    }
 
 }

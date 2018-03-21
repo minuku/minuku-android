@@ -14,7 +14,6 @@ import java.util.TimerTask;
 
 import labelingStudy.nctu.minuku_2.R;
 
-//import edu.ohio.minuku_2.R;
 
 public class Counter extends AppCompatActivity {
 
@@ -84,7 +83,7 @@ public class Counter extends AppCompatActivity {
 
         @Override
         public void run() {
-        // TODO Auto-generated method stub
+            // TODO Auto-generated method stub
             if (startflag){
                 //如果startflag是true則每秒tsec+1
                 tsec++;
@@ -102,7 +101,7 @@ public class Counter extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-        // TODO Auto-generated method stub
+            // TODO Auto-generated method stub
             switch(v.getId()){
                 case R.id.btn_play:
                     startflag=true;

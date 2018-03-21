@@ -14,15 +14,15 @@ public class TransportationModeDataRecord implements DataRecord{
     public long creationTime;
     private int taskDayCount;
     private long hour;
-    public String ConfirmedActivityType; //
+    public String confirmedActivityString; //
 
     public TransportationModeDataRecord(){}
 
-    public TransportationModeDataRecord(String ConfirmedActivityType){
+    public TransportationModeDataRecord(String confirmedActivityString){
         this.creationTime = new Date().getTime();
 //        this.taskDayCount = Constants.TaskDayCount;
 //        this.hour = getmillisecondToHour(creationTime);
-        this.ConfirmedActivityType = ConfirmedActivityType;
+        this.confirmedActivityString = confirmedActivityString;
     }
 
     private long getmillisecondToHour(long timeStamp){
@@ -49,11 +49,12 @@ public class TransportationModeDataRecord implements DataRecord{
         return creationTime;
     }
 
-    public String getConfirmedActivityType(){
-        return ConfirmedActivityType;
+    public String getConfirmedActivityString(){
+        return confirmedActivityString;
     }
 
-    public void setConfirmedActivityType(String ConfirmedActivityType){
-        this.ConfirmedActivityType=ConfirmedActivityType;
+    public void setConfirmedActivityString(String confirmedActivityString){
+        this.confirmedActivityString =confirmedActivityString;
     }
+
 }

@@ -114,7 +114,7 @@ public class TripManager {
         try {
 
             if (MinukuStreamManager.getInstance().getTransportationModeDataRecord() != null) {
-                transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
+                transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityString();
 
                 Log.d(TAG, "transportation : " + transportation);
 
@@ -209,9 +209,6 @@ public class TripManager {
         long endTime = -999;
 
         Log.d(TAG,"month : " + Constants.Month + " year : " + Constants.Year + " day : " + Constants.Day);
-
-//        startTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day));
-//        endTime = getSpecialTimeInMillis(makingDataFormat(Constants.Year, Constants.Month, Constants.Day+1));
 
         //getting the data start from 4 am
         startTime = getSpecialTimeInMillis(makingDataFormatWithHour(Constants.Year, Constants.Month, Constants.Day));

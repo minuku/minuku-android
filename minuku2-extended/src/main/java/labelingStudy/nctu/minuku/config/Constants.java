@@ -33,8 +33,49 @@ public class Constants {
 
     static final Calendar c = Calendar.getInstance();
 
+    public static final long MILLISECONDS_PER_SECOND = 1000;
+    public static final int SECONDS_PER_MINUTE = 60;
+    public static final int MINUTES_PER_HOUR = 60;
+    public static final int HOURS_PER_DAY = 24;
+    public static final long MILLISECONDS_PER_DAY = HOURS_PER_DAY *MINUTES_PER_HOUR*SECONDS_PER_MINUTE*MILLISECONDS_PER_SECOND;
+    public static final long MILLISECONDS_PER_HOUR = MINUTES_PER_HOUR*SECONDS_PER_MINUTE*MILLISECONDS_PER_SECOND;
+    public static final long MILLISECONDS_PER_MINUTE = SECONDS_PER_MINUTE*MILLISECONDS_PER_SECOND;
+    public final static String DATE_FORMAT_NOW_Dash = "yyyy-MM-dd HH:mm:ss Z";
+    public final static String DATE_FORMAT_NOW_SLASH = "yyyy/MM/dd HH:mm:ss Z";
+    public final static String DATE_FORMAT_NOW_MINUTE_SLASH = "yyyy/MM/dd HH:mm";
+    public static final String DATE_FORMAT_NOW_NO_ZONE_Slash = "yyyy/MM/dd HH:mm:ss";
+    public static final String DATE_FORMAT_NOW_DAY_Slash = "yyyy/MM/dd";
+    public static final String DATE_FORMAT_NOW_NO_ZONE = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_NOW_DAY = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_NOW_HOUR = "yyyy-MM-dd HH";
+    public static final String DATE_FORMAT_NOW_HOUR_MIN = "yyyy-MM-dd HH:mm";
+    public static final String DATE_FORMAT_NOW_HOUR_MIN_AMPM = "yyyy-MM-dd hh:mm a";
+    public static final String DATE_FORMAT_NOW_AMPM_HOUR_MIN = "yyyy-MM-dd a hh:mm";
+    public static final String DATE_FORMAT_HOUR_MIN_SECOND = "HH:mm:ss";
+    public static final String DATE_FORMAT_FOR_ID = "yyyyMMddHHmmss";
+    public static final String DATE_FORMAT_HOUR_MIN = "HH:mm";
+    public static final String DATE_FORMAT_HOUR = "HH";
+    public static final String DATE_FORMAT_MIN = "mm";
+    public static final String DATE_FORMAT_AMPM_HOUR_MIN = "a hh:mm";
+    public static final String DATE_FORMAT_HOUR_MIN_AMPM = "hh:mm a";
+    public static final String DATE_FORMAT_Small_HOUR_MIN = "hh:mm";
+    public static final String DATE_FORMAT_DATE_TEXT = "MMM dd";
+    public static final String DATE_FORMAT_DATE_TEXT_HOUR_MIN = "MMM dd HH:mm";
+    public static final String DATE_FORMAT_DATE_TEXT_HOUR_MIN_SEC = "MMM dd  HH:mm:ss";
+    public static final int DATA_FORMAT_TYPE_NOW=0;
+    public static final int DATA_FORMAT_TYPE_DAY=1;
+    public static final int DATA_FORMAT_TYPE_HOUR=2;
+
+
+    public static final String DELIMITER = ";;;";
+    public static final String ACTIVITY_DELIMITER = ";;";
+    public static final String CONTEXT_SOURCE_DELIMITER = ":";
+    public static final String DELIMITER_IN_COLUMN = "::";
+
     public static final String YES = "YES";
     public static final String NO = "NO";
+
+    public static final long INVALID_TIME_VALUE = -1;
 
     public static int Day = c.get(Calendar.DAY_OF_MONTH);
     public static int Year = c.get(Calendar.YEAR);
@@ -45,6 +86,16 @@ public class Constants {
 
     //file path
     public static final String PACKAGE_DIRECTORY_PATH = "/Android/data/labelingStudy.nctu.minuku_2/";
+
+    public static final String ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY = "detected-transportation";
+    public static final String ANNOTATION_TAG_SITENAME = "Sitename";
+    public static final String ANNOTATION_TAG_Label = "Label";
+
+    public static final String ANNOTATION_Label_TRANSPORTATOIN = "Transportation";
+    public static final String ANNOTATION_Label_GOAL = "Goal";
+    public static final String ANNOTATION_Label_SPECIALEVENT = "SpecialEvent";
+    public static final String ANNOTATION_Label_SITENAME = "Sitename";
+
 
     // Firebase config
     public static final String FIREBASE_URL = BuildConfig.UNIQUE_FIREBASE_ROOT_URL;
@@ -140,7 +191,8 @@ public class Constants {
     public static final String BUNDLE_KEY_FOR_QUESTIONNAIRE_ID = "QUESTIONNAIRE_ID";
     public static final String BUNDLE_KEY_FOR_NOTIFICATION_SOURCE = "NOTIFICATION_SOURCE";
     public static final String APP_NAME = "LS";
-    public static final String RUNNING_APP_DECLARATION = APP_NAME + " is running in the background";
+    public static final String APP_FULL_NAME = "Labeling Study";
+    public static final String RUNNING_APP_DECLARATION = APP_FULL_NAME + " is running in the background";
     public static final long INTERNAL_LOCATION_UPDATE_FREQUENCY = 1 * 10 * 1000; // 1 * 300 * 1000
     public static final long INTERNAL_LOCATION_LOW_UPDATE_FREQUENCY = 1 * 60 * 1000; // 1 * 300 * 1000
 
@@ -159,22 +211,13 @@ public class Constants {
     public final static String home_tag = "home";
     public final static String timer_move_tag = "timer_move";
 
+    public static boolean tabpos = false;
+
     public static String DEVICE_ID = "NA";
     public static String USER_ID = "N";
     public static String GROUP_NUM = "A";
     public static int TaskDayCount = -1;
 
-    public static String Interval_Sample = "Interval_Sample";
-
-    public static final int SECONDS_PER_MINUTE = 60;
-    public static final int MINUTES_PER_HOUR = 60;
-    public static final int HOURS_PER_DAY = 24;
-
-    public static long MILLISECONDS_PER_SECOND = 1000;
-    public static final long MILLISECONDS_PER_MINUTE = SECONDS_PER_MINUTE*MILLISECONDS_PER_SECOND;
-
-    public static boolean tabpos = false;
-
-    public static final String ACTIVITY_DELIMITER = ":";
+    public static final String ACTIVITY_CONFIDENCE_CONNECTOR = ":";
 
 }

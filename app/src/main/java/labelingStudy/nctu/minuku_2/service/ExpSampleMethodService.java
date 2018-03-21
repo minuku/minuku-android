@@ -2,12 +2,9 @@ package labelingStudy.nctu.minuku_2.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -25,13 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.manager.DBManager;
-import labelingStudy.nctu.minuku.manager.TripManager;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
-import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
-import labelingStudy.nctu.minuku_2.MainActivity;
 import labelingStudy.nctu.minuku_2.R;
 
 /**
@@ -89,8 +81,9 @@ public class ExpSampleMethodService extends Service {
         @Override
         public void run() {
 
-            try{
-                String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityType();
+            //TODO need to changed
+            /*try{
+                String currentConfirmedActivityType = TransportationModeStreamGenerator.toOtherClassDataRecord.getConfirmedActivityString();
                 if(!lastConfirmedActivityType.equals(currentConfirmedActivityType))
                     ESMSurveying();
 
@@ -102,7 +95,7 @@ public class ExpSampleMethodService extends Service {
 
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
 
             checkInNoti();
         }
@@ -110,17 +103,12 @@ public class ExpSampleMethodService extends Service {
 
     private void checkInNoti(){
         try {
-//            String local_transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
+//            String local_transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityString();
 
             String local_transportation = lastConfirmedActivityType;
             NotificationText = "Current Transportation Mode: " + local_transportation
                     + "\r\n" + "ActivityRecognition : " + ActivityRecognitionStreamGenerator.getActivityNameFromType(ActivityRecognitionStreamGenerator.sMostProbableActivity.getType())
             ;
-
-            //TODO make a pendingIntent to record.xml
-//            Intent resultIntent = new Intent(this, MainActivity.class);
-//            resultIntent.setAction("open_timeline");
-//            PendingIntent pending = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             NotificationManager mNotificationManager =
                     (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);//Context.
@@ -147,7 +135,8 @@ public class ExpSampleMethodService extends Service {
 
     private void ESMSurveying(){
 
-        SQLiteDatabase db = DBManager.getInstance().openDatabase();
+        //TODO need to changed
+        /*SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
         Cursor tripCursor = null;
 
@@ -203,7 +192,7 @@ public class ExpSampleMethodService extends Service {
 
         // using the same tag and Id causes the new notification to replace an existing one
         mNotificationManager.notify(esm_notifyID, note); //String.valueOf(System.currentTimeMillis()),
-        note.flags = Notification.FLAG_AUTO_CANCEL;
+        note.flags = Notification.FLAG_AUTO_CANCEL;*/
     }
 
     public void StoreToCSV(long timestamp, String lastConfirmedActivityType, String currentConfirmedActivityType){

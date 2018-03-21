@@ -53,7 +53,7 @@
     <application xmlns:tools="http://schemas.android.com/tools"
         android:name="labelingStudy.nctu.minuku_2.MinukuApp"
         android:allowBackup="true"
-        android:icon="@drawable/self_reflection"
+        android:icon="@drawable/muilab_icon"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
@@ -76,11 +76,11 @@
         -->
 
         <activity android:name="labelingStudy.nctu.minuku_2.controller.CheckPointActivity" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.report" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.ReportPage" />
         <activity android:name="labelingStudy.nctu.minuku_2.controller.PlaceSelection" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.home" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.timer_move" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.timer_site" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_move" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_site" />
         <activity
             android:name="labelingStudy.nctu.minuku_2.controller.WelcomeActivity"
             android:launchMode="singleInstance"
@@ -238,7 +238,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.Counter" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
         <activity android:name="labelingStudy.nctu.minuku_2.MainActivity" />
         <activity android:name="labelingStudy.nctu.minuku_2.controller.CustomDialog"></activity>
     </application>
