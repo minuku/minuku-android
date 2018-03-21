@@ -233,6 +233,10 @@ public class Timeline extends AppCompatActivity {
 
                 holder.traffic.setImageResource(icon);
 
+                if(icon == R.drawable.transparent){
+                    holder.traffic.setVisibility(View.INVISIBLE);
+                }
+
                 holder.duration.setText(label_Transportation);
 
 
@@ -742,6 +746,8 @@ public class Timeline extends AppCompatActivity {
                 return R.drawable.bike;
             case TransportationModeService.TRANSPORTATION_MODE_NAME_IN_VEHICLE:
                 return R.drawable.car;
+            case "與上一個相同":
+                return R.drawable.transparent;
             default:
                 return R.drawable.if_94_171453;
         }

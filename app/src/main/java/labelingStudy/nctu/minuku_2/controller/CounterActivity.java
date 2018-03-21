@@ -62,7 +62,8 @@ public class CounterActivity extends AppCompatActivity {
     public static boolean CountFlag = true; //countung situation --- true:stop, false:ongoing
     public static SimpleDateFormat formatter;
 
-    public static ImageButton  play, pause, stop;
+    public static ImageButton play, pause, stop;
+    public static ImageButton play_stop;
     public static ImageView traffic;
     Timer timer01 = new Timer();
 
@@ -98,7 +99,7 @@ public class CounterActivity extends AppCompatActivity {
 
     }
 
-    public void initCounterActivity(){
+    /*public void initCounterActivity(){
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
 
@@ -153,7 +154,7 @@ public class CounterActivity extends AppCompatActivity {
             stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
         }
 
-    }
+    }*/
 
     public void initCounterActivity(View v, String siteName){
 
@@ -162,9 +163,10 @@ public class CounterActivity extends AppCompatActivity {
         this.siteName = siteName;
 
         counter = (TextView) v.findViewById(R.id.tv_timer);
-        play = (ImageButton) v.findViewById(R.id.btn_play);
+//        play = (ImageButton) v.findViewById(R.id.btn_play);
 //        pause = (ImageButton) v.findViewById(R.id.btn_pause);
-        stop = (ImageButton) v.findViewById(R.id.btn_stop);
+//        stop = (ImageButton) v.findViewById(R.id.btn_stop);
+
         move = (Button) v.findViewById(R.id.move);
 //        site = (Button) v.findViewById(R.id.site);
         traffic = (ImageView)v.findViewById(R.id.iv_traffic);
@@ -173,9 +175,12 @@ public class CounterActivity extends AppCompatActivity {
 //        site.setOnClickListener(siting);
 
         //Button監聽
-        play.setOnClickListener(listener.get());
+        play_stop = (ImageButton) v.findViewById(R.id.btn_play_stop);
+        play_stop.setOnClickListener(listener.get());
+
+//        play.setOnClickListener(listener.get());
 //        pause.setOnClickListener(listener);
-        stop.setOnClickListener(listener.get());
+//        stop.setOnClickListener(listener.get());
 
 //        Toast toast = Toast.makeText(mContext, "CountFlag" + CountFlag, Toast.LENGTH_SHORT).show();
 
@@ -192,23 +197,23 @@ public class CounterActivity extends AppCompatActivity {
         if(TrafficFlag.equals("walk")){
             traffic.setImageResource(R.drawable.walk);
             move.setTextColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_yellow));
-            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_yellow));
-            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_yellow));
+//            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_yellow));
+//            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_yellow));
         }else if(TrafficFlag.equals("bike")){
             traffic.setImageResource(R.drawable.bike);
             move.setTextColor(ContextCompat.getColor(mContext, R.color.reject_button));
-            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.reject_button));
-            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.reject_button));
+//            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.reject_button));
+//            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.reject_button));
         }else if(TrafficFlag.equals("car")){
             traffic.setImageResource(R.drawable.car);
             move.setTextColor(ContextCompat.getColor(mContext, R.color.instabug_annotation_color_blue));
-            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.step_pager_previous_tab_color));
-            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.step_pager_previous_tab_color));
+//            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.step_pager_previous_tab_color));
+//            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.step_pager_previous_tab_color));
         }else if(TrafficFlag.equals("site")){
             traffic.setImageResource(R.drawable.if_94_171453);
             move.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccentDark));
-            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+//            play.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+//            stop.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
         }
 
     }
@@ -239,12 +244,12 @@ public class CounterActivity extends AppCompatActivity {
                     cmin=tsec/60;
                     chour=tsec/3600;
                     String s="";
-                    if(chour <10){
+                    if(chour < 10){
                         s="0"+chour;
                     }else{
                         s=""+chour;
                     }
-                    if(cmin <10){
+                    if(cmin < 10){
                         s=s+":0"+cmin;
                     }else{
                         s=s+":"+cmin;
@@ -359,7 +364,9 @@ public class CounterActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
                     switch (v.getId()) {
+
                         case R.id.btn_play:
+                            Log.d(TAG, "[test button] btn_play");
                             Log.d(TAG, "test show trip : button play");
                             Date curDate = new Date(System.currentTimeMillis()); // 獲取當前時間
                             starttime = formatter.format(curDate);
@@ -396,7 +403,7 @@ public class CounterActivity extends AppCompatActivity {
                                 SessionManager.startNewSession(session);
                             }
 
-                            if (!startflag) { //play → pause
+                            /*if (!startflag) { //play → pause
                                 play.setImageResource(R.drawable.icon_pause);
                                 startflag = true;
                                 recordflag = false;
@@ -408,13 +415,17 @@ public class CounterActivity extends AppCompatActivity {
                                 recordflag = false;
                                 stopflag = false;
                                 CountFlag = false;
-                            }
+                            }*/
 
                             break;
+                            //TODO never go into the pause
                         case R.id.btn_pause:
+                            Log.d(TAG, "[test button] btn_pause");
                             startflag = false;
                             break;
                         case R.id.btn_stop:
+                            Log.d(TAG, "[test button] btn_stop");
+
                             Log.d(TAG, "test show trip : button stop");
 
                             play.setImageResource(R.drawable.icon_play);
@@ -436,7 +447,7 @@ public class CounterActivity extends AppCompatActivity {
                             //TextView 初始化
                             counter.setText("00:00:00");
 
-                            //TODO stop the session
+                            //stop the session
                             Session lastSession = SessionManager.getLastSession();
                             long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
                             lastSession.setEndTime(endTime);

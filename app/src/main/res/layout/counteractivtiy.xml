@@ -51,6 +51,14 @@
         android:layout_weight="0.25">
 
         <ImageButton
+            android:id="@+id/btn_play_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/instabug_annotation_color_yellow"
+            app:srcCompat="@drawable/icon_play" />
+
+        <!--<ImageButton
             android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -64,7 +72,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/instabug_annotation_color_yellow"
-            app:srcCompat="@drawable/icon_stop" />
+            app:srcCompat="@drawable/icon_stop" />-->
 
     </LinearLayout>
 
