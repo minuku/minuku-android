@@ -64,8 +64,8 @@ public class MobilityManager {
 
         int transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
 
-        if (transportation == TransportationModeService.NO_ACTIVITY_TYPE &&
-                TransportationModeService.getCurrentState()== TransportationModeService.STATE_STATIC) {
+        if (transportation == TransportationModeStreamGenerator.NO_ACTIVITY_TYPE &&
+                TransportationModeStreamGenerator.getCurrentState()== TransportationModeStreamGenerator.STATE_STATIC) {
 
             ///the mobility is static....we will slow down the location request rate
             mobility = STATIC;

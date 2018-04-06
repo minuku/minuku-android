@@ -6,10 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import labelingStudy.nctu.minuku.DBHelper.DBHelper;
-import labelingStudy.nctu.minuku.service.TransportationModeService;
 import labelingStudy.nctu.minuku_2.service.BackgroundService;
-import labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService;
-import labelingStudy.nctu.minuku_2.service.ExpSampleMethodService;
 
 /**
  * Created by Lawrence on 2017/7/19.
@@ -43,21 +40,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
                 //here we start the service
 
-                Intent tintent = new Intent(context, TransportationModeService.class);
-                context.startService(tintent);
-                Log.d(TAG,"TransportationModeService is ok");
-
                 Intent bintent = new Intent(context, BackgroundService.class);
                 context.startService(bintent);
                 Log.d(TAG,"BackgroundService is ok");
-
-                //TODO recover the latest working service (PART ESM CAR)
-                String current_task = context.getResources().getString(R.string.current_task);
-                if(current_task.equals("ESM")) {
-                    context.startService(new Intent(context, ExpSampleMethodService.class));
-                }else if(current_task.equals("CAR")){
-                    context.startService(new Intent(context, CheckpointAndReminderService.class));
-                }
 
             }
 

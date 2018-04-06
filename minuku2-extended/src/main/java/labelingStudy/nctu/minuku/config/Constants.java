@@ -33,6 +33,8 @@ public class Constants {
 
     static final Calendar c = Calendar.getInstance();
 
+    public static String currentWork;
+
     public static final long MILLISECONDS_PER_SECOND = 1000;
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int MINUTES_PER_HOUR = 60;
@@ -217,6 +219,9 @@ public class Constants {
     public static String USER_ID = "N";
     public static String GROUP_NUM = "A";
     public static int TaskDayCount = -1;
+
+    public static final int NOTIFICATION_UPDATE_THREAD_SIZE = 1;
+    public static final int STREAM_UPDATE_FREQUENCY = 10;
 
     public static final String ACTIVITY_CONFIDENCE_CONNECTOR = ":";
 

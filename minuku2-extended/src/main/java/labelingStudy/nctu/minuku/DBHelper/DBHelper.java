@@ -564,8 +564,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
                     //condition with session id
-                    " where " + COL_ID + " = " + sessionId + " and " +
-                    COL_SESSION_USERPRESSORNOT_FLAG + " = 1"     ; //only long enough trip
+                    " where " + COL_ID + " = " + sessionId /*+ " and " +
+                    COL_SESSION_USERPRESSORNOT_FLAG + " = 1"     */
+                    ;
 
             Log.d(TAG, "[test show trip querySession] the query statement is " +sql);
 

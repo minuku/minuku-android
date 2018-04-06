@@ -22,6 +22,8 @@
 
 package labelingStudy.nctu.minuku_2;
 
+import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
+
 /**
  * Created by neera_000 on 3/26/2016.
  *
@@ -39,6 +41,23 @@ public class Utils {
     public static final String encodeEmail(String unencodedEmail) {
         if (unencodedEmail == null) return null;
         return unencodedEmail.replace(".", ",");
+    }
+
+    public static String getActivityStringType(String activityString){
+
+        switch (activityString){
+
+            case TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_FOOT:
+                return "walk";
+            case TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_BICYCLE:
+                return "bike";
+            case TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_IN_VEHICLE:
+                return "car";
+            case TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION:
+                return "static";
+            default:
+                return "";
+        }
     }
 
 }

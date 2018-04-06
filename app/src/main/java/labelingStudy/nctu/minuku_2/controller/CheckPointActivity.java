@@ -1,21 +1,14 @@
 package labelingStudy.nctu.minuku_2.controller;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
-import labelingStudy.nctu.minuku.manager.DBManager;
-import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
-import labelingStudy.nctu.minuku.manager.TripManager;
-import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
-import labelingStudy.nctu.minuku.streamgenerator.LocationStreamGenerator;
+import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService;
 
@@ -37,6 +30,8 @@ public class CheckPointActivity extends AppCompatActivity {
 
     private String transportation;
 
+    private SharedPreferences sharedPrefs;
+
     public CheckPointActivity(){}
 
     public CheckPointActivity(Context mContext){
@@ -48,12 +43,28 @@ public class CheckPointActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkpoint_activity);
 
+        sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
     }
 
     @Override
     public void onResume(){
         super.onResume();
 
+        initCheckPoint();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sharedPrefs.edit().putString("lastActivity", getClass().getName()).apply();
+    }
+
+    public void initCheckPoint() {
+
+        checkpoint = (Button) findViewById(R.id.check);
+
+        checkpoint.setOnClickListener(checkpointing);
     }
 
     public void initCheckPoint(View v) {

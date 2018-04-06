@@ -143,11 +143,10 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         sharedPrefs = context.getSharedPreferences(Constants.sharedPrefString, context.MODE_PRIVATE);
 
         //for replay location record
-//        startReplayLocationRecordTimer();
+        startReplayLocationRecordTimer();
 
         this.register();
     }
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -176,9 +175,9 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             Log.d(TAG, "dist : " + dist);
 
             //TODO uncomment them when we stop testing
-            this.latestLatitude.set(location.getLatitude());
-            this.latestLongitude.set(location.getLongitude());
-            latestAccuracy = location.getAccuracy();
+//            this.latestLatitude.set(location.getLatitude());
+//            this.latestLongitude.set(location.getLongitude());
+//            latestAccuracy = location.getAccuracy();
 
             //the lastposition update value timestamp
             lastposupdate = new Date().getTime();
@@ -187,15 +186,6 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
             Log.d(TAG,"onLocationChanged latestLatitude : "+ latestLatitude +" latestLongitude : "+ latestLongitude);
             Log.d(TAG,"onLocationChanged location : "+this.location);
-
-            if(startIndoorOutdoor){
-                LatLng latLng = new LatLng(latestLatitude.get(), latestLongitude.get());
-                locForIndoorOutdoor.add(latLng);
-            }else{
-                locForIndoorOutdoor = new ArrayList<LatLng>();
-            }
-
-            StoreToCSV(new Date().getTime(), locForIndoorOutdoor);
 
             //store it to the sharePrefrence
             sharedPrefs.edit().putFloat("latestLatitude", (float) location.getLatitude()).apply();
@@ -351,54 +341,6 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     public static void setStartIndoorOutdoor(boolean value){
         startIndoorOutdoor = value;
-    }
-
-    public void StoreToCSV(long timestamp, ArrayList<LatLng> latLngs){
-
-        Log.d(TAG,"StoreToCSV startIndoorOutdoor");
-
-        String sFileName = "startIndoorOutdoor.csv";
-
-        Boolean startIndoorOutdoorfirstOrNot = sharedPrefs.getBoolean("startIndoorOutdoorfirstOrNot", true);
-
-        try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
-
-            List<String[]> data = new ArrayList<String[]>();
-
-            String timeString = getTimeString(timestamp);
-
-            if(startIndoorOutdoorfirstOrNot) {
-                data.add(new String[]{"timestamp", "timeString", "all latlngs", "distance"});
-                sharedPrefs.edit().putBoolean("startIndoorOutdoorfirstOrNot", false).apply();
-            }
-
-            //.........................because it will iterate two elements at one iteration.
-            double dist = 0;
-            if(!latLngs.isEmpty()) {
-                for (int index = 0; index < latLngs.size() - 1; index++) {
-                    LatLng latLng = latLngs.get(index);
-                    LatLng latLng2 = latLngs.get(index + 1);
-                    float[] results = new float[1];
-                    Location.distanceBetween(latLng.latitude, latLng.longitude, latLng2.latitude, latLng2.longitude, results);
-                    dist += results[0];
-                }
-            }
-
-            data.add(new String[]{String.valueOf(timestamp), timeString, String.valueOf(latLngs), String.valueOf(dist)});
-
-            csv_writer.writeAll(data);
-
-            csv_writer.close();
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
     }
 
     public void StoreToCSV(long timestamp, double latitude, double longitude, float accuracy){

@@ -5,11 +5,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,22 +19,19 @@ import java.util.List;
 
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
-import labelingStudy.nctu.minuku_2.MainActivity;
+import labelingStudy.nctu.minuku.manager.MinukuNotificationManager;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.service.BackgroundService;
-import labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService;
-import labelingStudy.nctu.minuku_2.service.ExpSampleMethodService;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     private static final String TAG = "WelcomeActivity";
 
-    public final int REQUEST_ID_MULTIPLE_PERMISSIONS=1;
+    public final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
-    private Button go;
+    private Button chooseMyMobility, watchMyTimeline;
 
     private String current_task;
-
 
     private SharedPreferences sharedPrefs;
 
@@ -42,16 +40,22 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        go = (Button)findViewById(R.id.btn_go);
-        go.setOnClickListener(doClick);
+        chooseMyMobility = (Button) findViewById(R.id.chooseMyMobility);
+        chooseMyMobility.setOnClickListener(choosingMyMobility);
+
+        watchMyTimeline = (Button) findViewById(R.id.watchMyTimeline);
+        watchMyTimeline.setOnClickListener(watchingMyTimeline);
 
         startService(new Intent(getBaseContext(), BackgroundService.class));
 
         current_task = getResources().getString(R.string.current_task);
         if(current_task.equals("ESM")) {
-            startService(new Intent(getBaseContext(), ExpSampleMethodService.class));
+
+            //conceal the button
+            chooseMyMobility.setVisibility(View.GONE);
         }else if(current_task.equals("CAR")){
-            startService(new Intent(getBaseContext(), CheckpointAndReminderService.class));
+
+            //startService(new Intent(getBaseContext(), CheckpointAndReminderService.class));
         }
 //        EventBus.getDefault().register(this);
 
@@ -64,45 +68,103 @@ public class WelcomeActivity extends AppCompatActivity {
             startServiceWork();
         }
 
+        Constants.currentWork = getResources().getString(R.string.current_task);
+
+        Intent intent = new Intent(getApplicationContext(), Timeline.class);
+        MinukuNotificationManager.setIntentToTimeline(intent);
+
     }
 
-    private Button.OnClickListener doClick = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-        String current_task = getResources().getString(R.string.current_task);
+        sharedPrefs.edit().putString("lastActivity", getClass().getName()).apply();
+    }
 
-        if(current_task.equals("PART")) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-            Intent intent = new Intent(WelcomeActivity.this, Timer_move.class);
-//            intent.setClass(WelcomeActivity.this, Timer_move.class);
-            startActivity(intent);
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
 
-        }else{
+        //TODO we might not need to select date, see on pilot
+        /*if(Constants.tabpos)
+            menu.findItem(R.id.action_selectdate).setVisible(true);
+        else
+            menu.findItem(R.id.action_selectdate).setVisible(false);*/
 
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-//            intent.setClass(WelcomeActivity.this, MainActivity.class);
-            startActivity(intent);
+        super.onPrepareOptionsMenu(menu);
 
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_checkingDeviceId:
+                startActivity(new Intent(WelcomeActivity.this, DeviceIdPage.class));
+                return true;
+
+            //TODO we might not need to select date, see on pilot
+            /*case R.id.action_selectdate:
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+                new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        String format = setDateFormat(year,month,day);
+
+                        Constants.Day = day;
+                        Constants.Year = year;
+                        Constants.Month = month+ 1;//
+
+                        Log.d(TAG,"month : " + (month) + "year : " + year + "day : " + day);
+
+                        timeline = new Timeline(); //Timeline
+                        timeline.initTime(recordview);
+                        //startdate.setText(format);
+                    }
+
+                }, mYear, mMonth, mDay).show();
+                return true;*/
         }
+        return true;
+    }
 
+    private Button.OnClickListener choosingMyMobility = new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            String current_task = getResources().getString(R.string.current_task);
+
+
+            if(current_task.equals("PART")) {
+
+                Intent intent = new Intent(WelcomeActivity.this, Timer_move.class);
+                startActivity(intent);
+            }else if(current_task.equals("CAR")){
+
+                Intent intent = new Intent(WelcomeActivity.this, CheckPointActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
-    public void startpermission(){
-        Log.d(TAG, "startpermission");
-        //Maybe useless in this project.
-        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));  // 協助工具
+    private Button.OnClickListener watchingMyTimeline = new Button.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
-        Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
-        startActivity(intent1);
+            Intent intent = new Intent(WelcomeActivity.this, Timeline.class);
 
-//                    Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
-//                    startActivity(intent);
+            startActivity(intent);
 
-        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
-    }
-
+        }
+    };
 
     private void checkAndRequestPermissions() {
 
@@ -161,7 +223,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if(permissionStatus==PackageManager.PERMISSION_GRANTED){
             Constants.DEVICE_ID = mngr.getDeviceId();
 
-            sharedPrefs.edit().putString("DEVICE_ID",  Constants.DEVICE_ID);
+            sharedPrefs.edit().putString("DEVICE_ID",  Constants.DEVICE_ID).apply();
 
             Log.e(TAG,"DEVICE_ID"+Constants.DEVICE_ID+" : "+mngr.getDeviceId());
 

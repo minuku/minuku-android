@@ -24,14 +24,11 @@ package labelingStudy.nctu.minuku_2.manager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import labelingStudy.nctu.minuku.DBHelper.DBHelper;
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
@@ -44,9 +41,6 @@ import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
-import labelingStudy.nctu.minuku.dao.UserSubmissionStatsDAO;
-import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
-import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
@@ -197,7 +191,7 @@ public class InstanceManager {
         // Fetch tags
 //        Model tagsModel = Model.getInstance();
 
-        AsyncTask.execute(new Runnable() {
+        /*AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 Future<UserSubmissionStats> submissionStatsFuture = ((UserSubmissionStatsDAO)
@@ -239,7 +233,7 @@ public class InstanceManager {
                     EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
                 }
             }
-        });
+        });*/
 
     }
 

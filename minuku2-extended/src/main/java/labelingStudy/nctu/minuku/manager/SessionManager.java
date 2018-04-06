@@ -308,6 +308,7 @@ public class SessionManager {
 
     public static Session getSession (int sessionId) {
 
+        Log.d(TAG, "[test reEnter] sessionId : "+sessionId);
         Session session = null;
         String sessionStr =  DBHelper.querySession(sessionId).get(0);
         Log.d(TAG, "[test combine]query session from LocalDB is " + sessionStr);
@@ -351,7 +352,7 @@ public class SessionManager {
         //InstanceManager add ongoing session for the new activity
         SessionManager.getInstance().addOngoingSessionid(session.getId());
 
-        Log.d(TAG, " test show trip startNewSession id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+        Log.d(TAG, "startNewSession id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
         DBHelper.insertSessionTable(session);
 
@@ -445,8 +446,6 @@ public class SessionManager {
 
         //update session with end time and long enough flag.
         updateCurSessionEndInfoTo(session.getId(),session.getEndTime(),session.isUserPress());
-        Log.d(TAG, "test show trip: after adding end time and longlong in  session in tge DB  " );
-
     }
 
     public static boolean isSessionLongEnough(String thresholdType, int sessionId){
@@ -542,6 +541,7 @@ public class SessionManager {
         for (int i=0; i<res.size() ; i++) {
 
             Session session = convertStringToSession(res.get(i));
+            Log.d(TAG, "[test show trip] session id : "+ session.getId());
             sessions.add(session);
         }
 

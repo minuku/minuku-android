@@ -61,7 +61,7 @@ import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku_2.controller.CheckPointActivity;
 import labelingStudy.nctu.minuku_2.controller.CounterActivity;
 import labelingStudy.nctu.minuku_2.controller.Timeline;
-import labelingStudy.nctu.minuku_2.controller.ReportPage;
+import labelingStudy.nctu.minuku_2.controller.DeviceIdPage;
 import labelingStudy.nctu.minuku_2.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,11 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean firstTimeOrNot;
 
-    private Timeline timeline;
     private CheckPointActivity checkPointActivity;
     private CounterActivity mCounterActivity;
-
-    public Timeline mtimeline;
+    private Timeline mtimeline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
+
         final LayoutInflater mInflater = getLayoutInflater().from(this);
         timerview = mInflater.inflate(R.layout.counteractivtiy, null);
         recordview = mInflater.inflate(R.layout.activity_timeline, null);
@@ -105,14 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
         current_task = getResources().getString(R.string.current_task);
 
+        sharedPrefs.edit().putString("currentWork", Constants.currentWork).apply();
+
         if(current_task.equals("PART")) {
             initViewPager(timerview, recordview);
-            mtimeline = new Timeline(this);
-            mtimeline.initTime(recordview);
+//            mtimeline = new Timeline(this);
+//            mtimeline.initTime(recordview);
         }else{
             initViewPager(checkpointview, recordview);
-            mtimeline = new Timeline(this);
-            mtimeline.initTime(recordview);
+//            mtimeline = new Timeline(this);
+//            mtimeline.initTime(recordview);
         }
 
         SettingViewPager();
@@ -128,8 +130,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             startServiceWork();
         }
-
-        sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
 
         firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
         Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
@@ -147,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 tab.select();
             }
         }catch (NullPointerException e){
-            e.printStackTrace();
-            android.util.Log.e(TAG, "exception", e);
+//            e.printStackTrace();
+//            android.util.Log.e(TAG, "exception", e);
         }
     }
 
@@ -196,8 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         timerview.setTag(Constants.home_tag);
-
-
     }
 
     public void improveMenu(boolean bool){
@@ -219,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_selectdate).setVisible(true);
         else
             menu.findItem(R.id.action_selectdate).setVisible(false);*/
+
         super.onPrepareOptionsMenu(menu);
 
         return true;
@@ -226,8 +225,8 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_report:
-                startActivity(new Intent(MainActivity.this, ReportPage.class));
+            case R.id.action_checkingDeviceId:
+                startActivity(new Intent(MainActivity.this, DeviceIdPage.class));
                 return true;
 
             //TODO we might not need to select date, see on pilot
@@ -370,7 +369,6 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(new TimerOrRecordPagerAdapter(viewList, this));
 
-
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
         //TODO date button now can show on menu when switch to recordview, but need to determine where to place the date textview(default is today's date).
 
@@ -387,15 +385,18 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "initialize tab (Swipe)");
 
-                //TODO might change it to only swipe to mtimeline then create it
+                //everytime the user swipe the screen, we set a new Timeline view with the latest data
                 mtimeline.initTime(recordview);
 
                 invalidateOptionsMenu();
+
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
+//                Log.d(TAG, "initialize tab (Swipe)");
+//                mtimeline.initTime(recordview);
             }
 
             @Override
@@ -423,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
         Integer loadingCount = loadingProcessCount.decrementAndGet();
         Log.d(TAG, "Decrementing loading processes count: " + loadingCount);
     }
+
 
     public class TimerOrRecordPagerAdapter extends PagerAdapter {
         private List<View> mListViews;
@@ -454,20 +456,12 @@ public class MainActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             View view = mListViews.get(position);
             switch (position){
-                case 0: //timer
+                case 0:
 
                     if(current_task.equals("PART")) {
 
                         mCounterActivity = new CounterActivity(mContext);
-
-                        String siteName = "";
-                        try{
-                            siteName = getIntent().getStringExtra("SiteName");
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                        mCounterActivity.initCounterActivity(timerview, siteName);
+//                        mCounterActivity.initCounterActivity(timerview);
                     }else{
 
                         checkPointActivity = new CheckPointActivity(mContext);
@@ -477,8 +471,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
 
-                    timeline = new Timeline(mContext); //Timeline
-                    timeline.initTime(recordview);
+                    mtimeline = new Timeline(mContext); //Timeline
+                    mtimeline.initTime(recordview);
 
                     break;
             }

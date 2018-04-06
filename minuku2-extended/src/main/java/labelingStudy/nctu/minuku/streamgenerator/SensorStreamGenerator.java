@@ -53,8 +53,6 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataRecord> implements
         SensorEventListener {
-    /**  variable declaration
-     **/
 
     private SensorStream mStream;
     private String TAG = "SensorStreamGenerator";
@@ -70,8 +68,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     private static Context mContext;
     private static SensorManager mSensorManager ;
     private static List<Sensor> SensorList;
-
-
 
     public static final String STRING_PHONE_SENSOR_ACCELEROMETER = "Sensor-Accelerometer";
     public static final String STRING_PHONE_SENSOR_LINEAR_ACCELERATION = "Sensor-LinearAcceleration";
@@ -319,7 +315,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         }
 
         data = sourceName+": "+data;
-        Log.d(TAG, "data  "+ data);
+//        Log.d(TAG, "data  "+ data);
 
         /*** Set data to SensorDataRecord **/
         //newSensorDataRecord.setData(data);

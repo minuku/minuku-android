@@ -2,11 +2,13 @@ package labelingStudy.nctu.minuku_2.controller;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -84,6 +86,29 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
         fromTimeLineFlag = true;
         this.lat = lat;
         this.lng = lng;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sharedPrefs.edit().putString("lastActivity", getClass().getName()).apply();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+            PlaceSelection.this.finish();
+
+            if(isTaskRoot()){
+                startActivity(new Intent(this, WelcomeActivity.class));
+            }
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     private Button.OnClickListener onClick = new Button.OnClickListener() {

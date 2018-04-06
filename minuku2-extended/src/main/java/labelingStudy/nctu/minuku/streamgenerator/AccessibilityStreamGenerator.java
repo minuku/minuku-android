@@ -69,7 +69,6 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         Log.d(TAG, "testing logging task and requested activateAccessibilityService");
         Intent intent = new Intent(mContext, MobileAccessibilityService.class);
         mContext.startService(intent);
-
     }
 
 

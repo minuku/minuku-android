@@ -33,7 +33,7 @@ public class MobileAccessibilityService extends AccessibilityService {
             this.accessibilityStreamGenerator = (AccessibilityStreamGenerator) MinukuStreamManager.getInstance().getStreamGeneratorFor(AccessibilityDataRecord.class);
         }catch (StreamNotFoundException e){
             this.accessibilityStreamGenerator = accessibilityStreamGenerator;
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }
@@ -170,8 +170,13 @@ public class MobileAccessibilityService extends AccessibilityService {
 
 //        Log.d(TAG,"pack = "+pack+" text = "+text+" type = "+type+" extra = "+extra);
 
-        accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra);
+        //prevent the situation that the StreamGenerator is gone but the service is still running
+        try {
 
+            accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra);
+        }catch (NullPointerException e){
+
+        }
     }
 
     @Override

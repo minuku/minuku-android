@@ -42,12 +42,6 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:name="labelingStudy.nctu.minuku.service.TransportationModeService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-
-        <service
             android:name="labelingStudy.nctu.minuku.service.ActivityRecognitionService"
             android:enabled="true"
             android:exported="true">

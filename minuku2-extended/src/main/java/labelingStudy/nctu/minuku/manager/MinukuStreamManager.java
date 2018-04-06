@@ -22,6 +22,12 @@
 
 package labelingStudy.nctu.minuku.manager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -30,11 +36,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import labelingStudy.nctu.minuku.R;
+import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
+import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku.model.Annotation;
+import labelingStudy.nctu.minuku.model.AnnotationSet;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
 import labelingStudy.nctu.minuku.model.MinukuStreamSnapshot;
+import labelingStudy.nctu.minuku.model.Session;
+import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minukucore.event.IsDataExpectedEvent;
 import labelingStudy.nctu.minukucore.event.NoDataChangeEvent;
 import labelingStudy.nctu.minukucore.event.StateChangeEvent;
@@ -215,136 +228,194 @@ public class MinukuStreamManager implements StreamManager {
         return activityRecognitionDataRecord;
     }
 
-    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord){
+    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord, Context context){
 
-        Log.d(TAG, "setTransportationModeDataRecord");
-
-        Log.d(TAG, "test trip incoming transportation: " + transportationModeDataRecord.getConfirmedActivityString());
+        Log.d(TAG, "[test triggering] incoming transportation: " + transportationModeDataRecord.getConfirmedActivityString());
 
         Boolean addSessionFlag = false;
 
         //the first time we see incoming transportation mode data
         if (this.transportationModeDataRecord==null){
             this.transportationModeDataRecord = transportationModeDataRecord;
-            Log.d(TAG, "test combine test trip original null updated to " + this.transportationModeDataRecord.getConfirmedActivityString());
+            Log.d(TAG, "[test triggering] test trip original null updated to " + this.transportationModeDataRecord.getConfirmedActivityString());
         }
         else {
 
-            Log.d(TAG, "test combine. NEW: " + transportationModeDataRecord.getConfirmedActivityString() + " vs OLD:" + this.transportationModeDataRecord.getConfirmedActivityString());
+            Log.d(TAG, "[test triggering] NEW: " + transportationModeDataRecord.getConfirmedActivityString() + " vs OLD:" + this.transportationModeDataRecord.getConfirmedActivityString());
 
             /**
              * 1. check if the new activity label is different from the previous activity label. IF it is different, we should do something
              * **/
 
-            //TODO no need this for PART
-            /*if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(transportationModeDataRecord.getConfirmedActivityString())) {
+            String currentWork = context.getResources().getString(R.string.current_task);
 
-                Log.d(TAG, "test combine test trip: the new acitivty is different from the previous!");
+            Log.d(TAG,"in setTransportationModeDataRecord, currentWork is "+currentWork);
+//            String currentWork = "PART";
 
-                *//** we first see if the this is the first session **//*
-                int sessionCount =  SessionManager.getNumOfSession();
+            //in PART, the Session is controlled by the user, no need to detect by the app.
+            if(!currentWork.equals("PART")) {
 
-                //if this is the first time seeing a session and the new transportation is neither static nor NA, we should just insert a session
-                if (sessionCount==0
-                        && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
-                        && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NA)){
+                if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(transportationModeDataRecord.getConfirmedActivityString())) {
 
-                    Log.d(TAG, "test combine addSessionFlag = true there's no session in the db");
-                    addSessionFlag = true;
-                }
-                //there's exizstint sessions in the DB
-                else if (sessionCount>0){
+                    Log.d(TAG, "[test triggering] test trip: the new acitivty is different from the previous!");
 
-                    //get the latest session (Which should be the ongoing one)
-                    Session lastSession = SessionManager.getLastSession();
-                    int sessionIdOfLastSession = lastSession.getId();
-                    AnnotationSet annotationSet = lastSession.getAnnotationsSet();
-                    long endTimeOfLastSession = lastSession.getEndTime();
-                    long startTimeOfLastSession = lastSession.getStartTime();
+                    /** we first see if the this is the first session **/
+                    int sessionCount = SessionManager.getNumOfSession();
 
-                    Log.d(TAG, "[test combine] session " + sessionIdOfLastSession + " with annotation string " + annotationSet.toString() + " end time " + endTimeOfLastSession + " startTime " + startTimeOfLastSession);
+                    //if this is the first time seeing a session and the new transportation is neither static nor NA, we should just insert a session
+                    if (sessionCount == 0
+                            && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
+                            && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
-                    *//**
-                     * 2 if the new activity is moving, we will first determine whether this is continuing the previous activity or a new activity. If it is a continutous one we will not add a new session but let the previous activity in the ongoing
-                     * **//*
+                        Log.d(TAG, "[test triggering] addSessionFlag = true there's no session in the db");
+                        addSessionFlag = true;
+                    }
+                    //there's exizstint sessions in the DB
+                    else if (sessionCount > 0) {
 
-                    if(!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
-                            && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NA)) {
+                        //get the latest session (Which should be the ongoing one)
+                        Session lastSession = SessionManager.getLastSession();
+                        int sessionIdOfLastSession = lastSession.getId();
+                        AnnotationSet annotationSet = lastSession.getAnnotationsSet();
+                        long endTimeOfLastSession = lastSession.getEndTime();
+                        long startTimeOfLastSession = lastSession.getStartTime();
 
-                        *//** check if the new activity should be combine: if the new transportation mode is the same as the mode of the previous session and the time is 5 minutes **//*
+                        Log.d(TAG, "[test triggering] session " + sessionIdOfLastSession + " with annotation string " + annotationSet.toString() + " end time " + endTimeOfLastSession + " startTime " + startTimeOfLastSession);
 
-                        boolean shouldCombineWithLastSession = false;
-                        long now = ScheduleAndSampleManager.getCurrentTimeInMillis();
-                        shouldCombineWithLastSession = SessionManager.examineSessionCombinationByActivityAndTime(lastSession, transportationModeDataRecord.getConfirmedActivityString(),now );
+                        /**
+                         * 2 if the new activity is moving, we will first determine whether this is continuing the previous activity or a new activity. If it is a continuous one we will not add a new session but let the previous activity in the ongoing
+                         * **/
 
-                        if (shouldCombineWithLastSession){
-                            Log.d(TAG, "test combine we should combine " );
+                        //TODO might no need to combine the trips, we focus on "Transportation" not "Trip"
+                        /*if (!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
+                                && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
-                            //modify the endTime of the previous session to empty (because we extend it!). we should also make the notlongenough field to be true.
-                            SessionManager.continueLastSession(lastSession);
-                        }
+                            // check if the new activity should be combine: if the new transportation mode is the same as the mode of the previous session and the time is 5 minutes
 
-                        //if the new moving should not combine, we should end the previous session, and a new session
-                        else {
-                            //1. end the previous session if the previous transportation is moving
-                            addSessionFlag = true;
-                            Log.d(TAG, "test combine: we should not combine the new transportation activity with the last session " );
+                            boolean shouldCombineWithLastSession = false;
+                            long now = ScheduleAndSampleManager.getCurrentTimeInMillis();
+                            shouldCombineWithLastSession = SessionManager.examineSessionCombinationByActivityAndTime(lastSession, transportationModeDataRecord.getConfirmedActivityString(), now);
+
+                            if (shouldCombineWithLastSession) {
+                                Log.d(TAG, "test triggering we should combine ");
+
+                                //modify the endTime of the previous session to empty (because we extend it!). we should also make the notlongenough field to be true.
+                                SessionManager.continueLastSession(lastSession);
+                            }
+
+                            //if the new moving should not combine, we should end the previous session, and a new session
+                            else {
+                                //1. end the previous session if the previous transportation is moving
+                                addSessionFlag = true;
+                                Log.d(TAG, "test triggering: we should not combine the new transportation activity with the last session ");
+
+                            }
+                        }*/
+
+                        //to end a session (the previous is moving)
+                        //we first need to check whether the previous is a transportation
+                        if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
+                                && !this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
+
+                            //TODO convert the LongEnough into UserPressOrNot
+                            //first get the last session id, which is the same as the count of the session in the database (it should
+//                            Log.d(TAG, "test triggering: the previous activity is moving, we're going to end the last session id " + sessionIdOfLastSession);
+//                            boolean isSessionLongEnough = SessionManager.isSessionLongEnough(SessionManager.SESSION_LONGENOUGH_THRESHOLD_DISTANCE, sessionIdOfLastSession);
+
+                            //if we end the current session, we should update its time and set a long enough flag
+                            long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+                            lastSession.setEndTime(endTime);
+
+                            //TODO CAR need to be in the start of the session, after a threshold of the time, send the notification to remind the user
+                            if(currentWork.equals("CAR")){
+
+                                //TODO detect the user has pressed the current trip(Session) or not.
+
+                                //TODO if the user hasn't pressed the current trip(Session); after ending a trip(session), send a notification to the user
+
+                            }
+//                            lastSession.setUserPressOrNot(isSessionLongEnough);
+
+                            //end the current session
+                            SessionManager.endCurSession(lastSession);
+                            Log.d(TAG, "test triggering: after remove, now the session manager session list has  " + SessionManager.getInstance().getOngoingSessionList());
 
 
                         }
 
                     }
 
-                    //to end a session (the previous is moving)
-                    //we first need to check whether the previous is a transportation
-                    if(!this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
-                            && !this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NA)){
+                    Log.d(TAG, "[test triggering] addSessionFlag : "+addSessionFlag);
+                    Log.d(TAG, "[test triggering] is static ? : "+!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION));
+                    Log.d(TAG, "[test triggering] is NA ? : "+!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA));
 
-                        //first get the last session id, which is the same as the count of the session in the database (it should
-                        Log.d(TAG, "test combine: the previous activity is moving, we're going to end the last session id " + sessionIdOfLastSession );
-                        boolean isSessionLongEnough = SessionManager.isSessionLongEnough(SessionManager.SESSION_LONGENOUGH_THRESHOLD_DISTANCE, sessionIdOfLastSession);
+                    //if we need to add a session
+                    if (!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
+                            && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
+                        Log.d(TAG, "[test triggering] we should add session " + ((int) sessionCount + 1));
 
-                        //if we end the current session, we should update its time and set a long enough flag
-                        long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
-                        lastSession.setEndTime(endTime);
-                        lastSession.setUserPressOrNot(isSessionLongEnough);
+                        //insert into the session table;
+                        int sessionId = (int) sessionCount + 1;
+                        Session session = new Session(sessionId);
+                        session.setStartTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+                        Annotation annotation = new Annotation();
+                        annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
+                        annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
+                        session.addAnnotation(annotation);
 
-                        //end the current session
-                        SessionManager.endCurSession(lastSession);
-                        Log.d(TAG, "test combine: after revmove, now the sesssion manager session list has  " + SessionManager.getInstance().getOngoingSessionList());
+                        Log.d(TAG, "[test triggering] insert the session is with annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
+
+                        SessionManager.startNewSession(session);
+
+                        if(currentWork.equals("ESM")){
+
+                            //TODO after starting a trip(session), send a notification to the user
+                            sendNotification(context);
+
+                            Log.d(TAG, "[test triggering] Esm Notification");
+                        }
                     }
-
                 }
-
-                //if we need to add a session
-                if (addSessionFlag && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)
-                        && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeService.TRANSPORTATION_MODE_NAME_NA) ){
-                    Log.d(TAG, "[test combine] we should add session " + ((int) sessionCount + 1));
-
-                    //insert into the session table;
-                    int sessionId = (int) sessionCount + 1;
-                    Session session = new Session(sessionId);
-                    session.setStartTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
-                    Annotation annotation = new Annotation();
-                    annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
-                    annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
-                    session.addAnnotation(annotation);
-
-                    Log.d(TAG, "[test combine] insert the session is with annotation " +session.getAnnotationsSet().toJSONObject().toString());
-
-
-                    SessionManager.startNewSession(session);
-
-                }
-
-
-            }*/
+            }
         }
 
         this.transportationModeDataRecord = transportationModeDataRecord;
-
     }
+
+    private void sendNotification(Context context){
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String notificationText = "您有新的移動紀錄";
+        Notification notification = getNotification(notificationText, context);
+
+        mNotificationManager.notify(MinukuNotificationManager.reminderNotificationID, notification);
+    }
+
+    private Notification getNotification(String text, Context context){
+
+        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+        bigTextStyle.setBigContentTitle("LS");
+        bigTextStyle.bigText(text);
+
+        //launch the Timeline Page, check the action in the app's AndroidManifest.xml
+        Intent resultIntent = new Intent("app.intent.action.Launch"); //MinukuNotificationManager.toTimeline;
+        PendingIntent pending = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder noti = new Notification.Builder(context);
+
+        return noti.setContentTitle(Constants.APP_FULL_NAME)
+                .setContentText(text)
+                .setStyle(bigTextStyle)
+                .setSmallIcon(MinukuNotificationManager.getNotificationIcon(noti))
+                .setContentIntent(pending)
+                .setAutoCancel(true)
+                .build();
+    }
+
+
 
     public TransportationModeDataRecord getTransportationModeDataRecord(){
         return transportationModeDataRecord;

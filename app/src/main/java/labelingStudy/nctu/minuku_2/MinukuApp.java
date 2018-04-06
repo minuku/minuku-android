@@ -25,10 +25,13 @@ package labelingStudy.nctu.minuku_2;
 import android.content.Context;
 
 //import com.bugfender.sdk.Bugfender;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.firebase.client.Config;
 import com.instabug.library.IBGInvocationEvent;
 import com.instabug.library.Instabug;
 
+import io.fabric.sdk.android.Fabric;
 import labelingStudy.nctu.minuku.config.UserPreferences;
 
 /**
@@ -50,6 +53,7 @@ public class MinukuApp extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         Config mConfig = new Config();
         mConfig.setPersistenceEnabled(true);
         long cacheSizeOfHundredMB = 100 * 1024 * 1024;

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import labelingStudy.nctu.minuku.DBHelper.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.DBManager;
-import labelingStudy.nctu.minuku_2.MainActivity;
 import labelingStudy.nctu.minuku_2.R;
 
 //import edu.ohio.minuku_2.R;
@@ -56,6 +56,29 @@ public class Timer_site extends AppCompatActivity {
 
         Log.d(TAG, " dataSize : " + dataSize);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sharedPrefs.edit().putString("lastActivity", getClass().getName()).apply();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+            Timer_site.this.finish();
+
+            if(isTaskRoot()){
+                startActivity(new Intent(this, WelcomeActivity.class));
+            }
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -107,7 +130,10 @@ public class Timer_site extends AppCompatActivity {
 
                     Log.d(TAG, "SiteName : " + sitename);
 
-                    Intent intent = new Intent(Timer_site.this, MainActivity.class);
+                    //add siteName to the ongoing Session
+
+//                    Intent intent = new Intent(Timer_site.this, MainActivity.class);
+                    Intent intent = new Intent(Timer_site.this, CounterActivity.class);
                     intent.putExtra("SiteName", sitename);
                     startActivity(intent);
 

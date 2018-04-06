@@ -170,7 +170,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
                 mDAO.add(activityRecognitionDataRecord);
 
-//                mDAO.query_counting();
             } catch (DAOException e) {
                 e.printStackTrace();
                 return false;
@@ -253,7 +252,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
         setDetectedtime(detectedtime);
 
-        Log.e(TAG,detectedtime+"||"+ mostProbableActivity);
+        Log.d(TAG,detectedtime+"||"+ mostProbableActivity);
 
         // Assume isRequested.
         if(probableActivities!=null&&mostProbableActivity!=null)
@@ -301,18 +300,18 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         /**1. add record to the local pool **/
         long id = recordCount++;
         activityRecognitionDataRecord.setID(id);
-        Log.e(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime()+ " MostProbableActivity:"+activityRecognitionDataRecord.getMostProbableActivity());
+        Log.d(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime()+ " MostProbableActivity:"+activityRecognitionDataRecord.getMostProbableActivity());
 
         mLocalRecordPool.add(activityRecognitionDataRecord); //it's working.
-        Log.e(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
+        Log.d(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
 
         /**2. check whether we should remove old record **/
         removeOutDatedRecord();
         //**** update the latest ActivityRecognitionDataRecord in mLocalRecordPool to MinukuStreamManager;
         mLocalRecordPool.get(mLocalRecordPool.size()-1).setID(999);
-        Log.e(TAG,"size : "+mLocalRecordPool.size());
+        Log.d(TAG,"size : "+mLocalRecordPool.size());
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(mLocalRecordPool.get(mLocalRecordPool.size()-1));
-        Log.e(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
+        Log.d(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
 
 
         this.activityRecognitionDataRecord = activityRecognitionDataRecord;
