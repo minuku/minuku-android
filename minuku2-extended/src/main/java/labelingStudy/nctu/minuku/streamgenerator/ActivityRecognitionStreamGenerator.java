@@ -103,6 +103,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     }
 
     public static ActivityRecognitionStreamGenerator getInstance(Context applicationContext) {
+
         if(ActivityRecognitionStreamGenerator.instance == null) {
             try {
                 Log.e(TAG,"creating new ActivityRecognitionStreamGenerator.");
@@ -129,8 +130,8 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     @Override
     public void onStreamRegistration() {
-        buildGoogleApiClient();
 
+        buildGoogleApiClient();
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -147,7 +148,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
             mGoogleApiClient.connect();
 
         }
-
     }
 
     @Override
@@ -162,6 +162,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(activityRecognitionDataRecord);
 
         if(activityRecognitionDataRecord!=null) {
+
             mStream.add(activityRecognitionDataRecord);
 //            Log.e(TAG, "Activity to be sent to event bus" + activityRecognitionDataRecord);
 

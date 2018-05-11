@@ -74,7 +74,7 @@ public class Annotation {
 
     public JSONObject toJSONObject(){
 
-        JSONObject obj  = new JSONObject();
+        JSONObject obj = new JSONObject();
 
         try {
             //whether the annotation is for the entire session
@@ -88,11 +88,11 @@ public class Annotation {
             if (mId!=-1)
                 obj.put(SessionManager.ANNOTATION_PROPERTIES_ID, mId);
 
-            //if the annotation ahs tags
+            //if the annotation has tags
             if (mTags.size()>0){
 
                 JSONArray tags = new JSONArray();
-                for (int i=0; i<mTags.size(); i++){
+                for (int i=0; i < mTags.size(); i++){
                     if (mTags.get(i)!=null && mTags.get(i).length()>0)
                         tags.put(mTags.get(i));
                 }
@@ -114,6 +114,7 @@ public class Annotation {
     }
 
     public void addTag(String tag){
+
         if (mTags==null){
             mTags = new ArrayList<String>();
         }

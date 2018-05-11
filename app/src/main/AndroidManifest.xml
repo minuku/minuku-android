@@ -108,10 +108,6 @@
         <activity android:name="com.desmond.squarecamera.CameraActivity" />
 
         <service
-            android:name="labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
             android:name="labelingStudy.nctu.minuku_2.service.BackgroundService"
             android:enabled="true"
             android:exported="true" />
@@ -124,29 +120,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="labelingStudy.nctu.minuku_2.Receiver.ConnectivityChangeReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="labelingStudy.nctu.minuku_2.Receiver.WifiReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
         <activity android:name="labelingStudy.nctu.minuku_2.MainActivity" />
         <activity android:name="labelingStudy.nctu.minuku_2.controller.CustomDialog"></activity>
         <meta-data

@@ -54,7 +54,7 @@ public class TransportationModeDataRecord implements DataRecord{
     }
 
     public void setConfirmedActivityString(String confirmedActivityString){
-        this.confirmedActivityString =confirmedActivityString;
+        this.confirmedActivityString = confirmedActivityString;
     }
 
 }

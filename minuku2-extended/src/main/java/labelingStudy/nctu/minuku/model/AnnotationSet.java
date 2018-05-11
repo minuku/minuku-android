@@ -16,6 +16,8 @@ import labelingStudy.nctu.minuku.manager.SessionManager;
 
 public class AnnotationSet {
 
+    private String TAG = "AnnotationSet";
+
     //the id of the annotationSet for raw data is 0
     private int mId=0;
     private String mName="";
@@ -62,7 +64,7 @@ public class AnnotationSet {
 
     public ArrayList<Annotation> getAnnotationByTag(String tag){
 
-        Log.d("AnntationSet","[test show trip] searching " + tag + " inside annotationset");
+//        Log.d("AnntationSet","[test show trip] searching " + tag + " inside annotationset");
 
         ArrayList<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -70,10 +72,10 @@ public class AnnotationSet {
 
             for (Annotation annotation : mAnnotations){
 
-                Log.d("AnntationSet","[test show trip] now it's annotation " + annotation.toJSONObject().toString() );
+                Log.d(TAG,"[test show trip] now it's annotation " + annotation.toJSONObject().toString() );
 
                 if (annotation.getTags().contains(tag)){
-                    Log.d("AnntationSet", "[test show trip] found annotation containing tag " + tag + " : " + annotation.toJSONObject().toString());
+                    Log.d(TAG, "[test show trip] found annotation containing tag " + tag + " : " + annotation.toJSONObject().toString());
                     annotations.add(annotation);
                 }
 
@@ -100,7 +102,7 @@ public class AnnotationSet {
 //				Log.d("AnntationSet","[test combine] and it's content is " +annotation.getContent() );
 
                 if (annotation.getContent().equals(content)){
-                    Log.d("AnntationSet", "[test combine] found annotation with the content" + annotation.toJSONObject().toString());
+                    Log.d(TAG, "[test combine] found annotation with the content" + annotation.toJSONObject().toString());
                     annotations.add(annotation);
                 }
 
@@ -114,7 +116,7 @@ public class AnnotationSet {
 
     public JSONObject toJSONObject(){
 
-        JSONObject obj  = new JSONObject();
+        JSONObject obj = new JSONObject();
 
         try{
 
@@ -124,15 +126,12 @@ public class AnnotationSet {
                     obj.put(SessionManager.ANNOTATION_PROPERTIES_NAME, mName);
                 obj.put(SessionManager.ANNOTATION_PROPERTIES_ID, mId);
                 obj.put(SessionManager.ANNOTATION_PROPERTIES_ANNOTATION, (Object) getAnnotationsInJSONArray());
-
             }
 
         }catch(JSONException e){
 
         }
         return obj;
-
-
     }
 
     public JSONArray getAnnotationsInJSONArray() {
@@ -145,7 +144,6 @@ public class AnnotationSet {
         }
 
         return array;
-
     }
 
 

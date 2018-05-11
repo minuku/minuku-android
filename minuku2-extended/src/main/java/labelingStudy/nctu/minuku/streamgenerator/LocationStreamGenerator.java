@@ -143,7 +143,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         sharedPrefs = context.getSharedPreferences(Constants.sharedPrefString, context.MODE_PRIVATE);
 
         //for replay location record
-        startReplayLocationRecordTimer();
+//        startReplayLocationRecordTimer();
 
         this.register();
     }
@@ -175,9 +175,9 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             Log.d(TAG, "dist : " + dist);
 
             //TODO uncomment them when we stop testing
-//            this.latestLatitude.set(location.getLatitude());
-//            this.latestLongitude.set(location.getLongitude());
-//            latestAccuracy = location.getAccuracy();
+            this.latestLatitude.set(location.getLatitude());
+            this.latestLongitude.set(location.getLongitude());
+            latestAccuracy = location.getAccuracy();
 
             //the lastposition update value timestamp
             lastposupdate = new Date().getTime();
@@ -307,10 +307,10 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         // also post an event.
         EventBus.getDefault().post(newlocationDataRecord);
         try {
+
             mDAO.add(newlocationDataRecord);
             //TODO notice it
 //                SessionManager.getInstance().setTrip(newlocationDataRecord);
-
         } catch (DAOException e) {
             e.printStackTrace();
             return false;

@@ -35,6 +35,8 @@ public class Constants {
 
     public static String currentWork;
 
+    public static int siteRange = 50;
+
     public static final long MILLISECONDS_PER_SECOND = 1000;
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int MINUTES_PER_HOUR = 60;
@@ -90,7 +92,8 @@ public class Constants {
     public static final String PACKAGE_DIRECTORY_PATH = "/Android/data/labelingStudy.nctu.minuku_2/";
 
     public static final String ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY = "detected-transportation";
-    public static final String ANNOTATION_TAG_SITENAME = "Sitename";
+    public static final String ANNOTATION_TAG_DETECTED_SITENAME = "Sitename";
+    public static final String ANNOTATION_TAG_SITELOCATION = "Sitelocation";
     public static final String ANNOTATION_TAG_Label = "Label";
 
     public static final String ANNOTATION_Label_TRANSPORTATOIN = "Transportation";
@@ -194,7 +197,7 @@ public class Constants {
     public static final String BUNDLE_KEY_FOR_NOTIFICATION_SOURCE = "NOTIFICATION_SOURCE";
     public static final String APP_NAME = "LS";
     public static final String APP_FULL_NAME = "Labeling Study";
-    public static final String RUNNING_APP_DECLARATION = APP_FULL_NAME + " is running in the background";
+    public static final String RUNNING_APP_DECLARATION = "正在執行 "+ APP_FULL_NAME;
     public static final long INTERNAL_LOCATION_UPDATE_FREQUENCY = 1 * 10 * 1000; // 1 * 300 * 1000
     public static final long INTERNAL_LOCATION_LOW_UPDATE_FREQUENCY = 1 * 60 * 1000; // 1 * 300 * 1000
 

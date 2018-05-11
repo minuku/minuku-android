@@ -90,6 +90,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics-ndk:2.0.2@aar') {
         transitive = true;
     }
+
 }
 
 apply plugin: 'com.google.gms.google-services'

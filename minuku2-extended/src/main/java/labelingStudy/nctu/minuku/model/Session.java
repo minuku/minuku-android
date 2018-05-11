@@ -17,8 +17,8 @@ public class Session {
     //we need to rememeber this number in order to cancel the ongoing notification when the current session is done.
     private int mOngoingNotificationId=-1;
     protected AnnotationSet mAnnotationSet;
-    private boolean mUserPressOrNot = false ;
-    private boolean mIsModified = false;
+    private boolean mUserPressOrNot;
+    private boolean mIsModified;
     //TODO: this should be defined based on what's being activated.
     ArrayList<String> mContextSourceNames;
 
@@ -67,6 +67,10 @@ public class Session {
 
     public boolean isUserPress() {
         return mUserPressOrNot;
+    }
+
+    public boolean isModified() {
+        return mIsModified;
     }
 
     public void setUserPressOrNot(boolean userPressOrNot){

@@ -74,6 +74,7 @@ public class DeviceIdPage extends AppCompatActivity {
         TelephonyManager mngr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
         int permissionStatus= ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
         if(permissionStatus== PackageManager.PERMISSION_GRANTED){
+
             Constants.DEVICE_ID = mngr.getDeviceId();
 
             sharedPrefs.edit().putString("DEVICE_ID",  Constants.DEVICE_ID).apply();

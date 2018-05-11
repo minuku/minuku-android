@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import labelingStudy.nctu.minuku.DBHelper.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.DBManager;
 import labelingStudy.nctu.minuku_2.R;
+import labelingStudy.nctu.minuku_2.Utils;
 
 //import edu.ohio.minuku_2.R;
 
@@ -92,7 +94,7 @@ public class Timer_site extends AppCompatActivity {
 
     public void inittimer_site(){
 
-        listview = (ListView) findViewById(R.id.customizeList);
+        listview = (ListView) findViewById(R.id.convenientList);
 
         data = new ArrayList<String>();
 
@@ -100,7 +102,7 @@ public class Timer_site extends AppCompatActivity {
 
         //output their custom sites from sqlite
         SQLiteDatabase db = DBManager.getInstance().openDatabase();
-        Cursor cursor = db.rawQuery("SELECT "+ DBHelper.customsitename_col +" FROM "+ DBHelper.customsite_table, null);
+        Cursor cursor = db.rawQuery("SELECT "+ DBHelper.convenientsite_col +" FROM "+ DBHelper.convenientsite_table, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
             Log.e(TAG,"sitename : "+cursor.getString(0));
@@ -122,17 +124,19 @@ public class Timer_site extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(position == 0)
-                    startActivity(new Intent(Timer_site.this, PlaceSelection.class));
-                else{
+                if(position == 0) {
+
+                    if(!Utils.haveNetworkConnection(getApplicationContext()))
+                        Toast.makeText(Timer_site.this, "請確認您有連上網路", Toast.LENGTH_SHORT).show();
+                    else
+                        startActivity(new Intent(Timer_site.this, PlaceSelection.class));
+                }else{
 
                     String sitename = (String) parent.getItemAtPosition(position);
 
                     Log.d(TAG, "SiteName : " + sitename);
 
                     //add siteName to the ongoing Session
-
-//                    Intent intent = new Intent(Timer_site.this, MainActivity.class);
                     Intent intent = new Intent(Timer_site.this, CounterActivity.class);
                     intent.putExtra("SiteName", sitename);
                     startActivity(intent);

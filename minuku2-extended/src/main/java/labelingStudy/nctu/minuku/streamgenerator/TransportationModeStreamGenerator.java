@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
+import labelingStudy.nctu.minuku.Utilities.Utils;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
@@ -214,9 +215,6 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
             sharedPrefs.edit().putInt("CurrentState", mCurrentState).apply();
             sharedPrefs.edit().putInt("ConfirmedActivityType", mConfirmedActivityType).apply();
 
-            //write transportation mode record
-            TransportationMode_StoreToCSV(new Date().getTime(), latest_activityRecognitionDataRecord, getConfirmedActvitiyString(), mCurrentState);
-
             if(record.getMostProbableActivity().getConfidence()!=999){ //conf == 999 means it didn't receive anything from AR
 
                 latest_activityRecognitionDataRecord = record;
@@ -234,20 +232,23 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         mStream.add(transportationModeDataRecord);
         Log.d(TAG, "TransportationMode to be sent to event bus" + transportationModeDataRecord);
 
+        CSVHelper.storeToCSV(CSVHelper.file_ESM, "Transportation, update stream");
+
         MinukuStreamManager.getInstance().setTransportationModeDataRecord(transportationModeDataRecord, mContext);
 
         // also post an event.
         EventBus.getDefault().post(transportationModeDataRecord);
+
         try {
+
             mDAO.add(transportationModeDataRecord);
             mDAO.query_counting();
-
         } catch (DAOException e) {
-//            e.printStackTrace();
-//            return false;
+
         } catch (NullPointerException e) { //Sometimes no data is normal
-//            e.printStackTrace();
-//            return false;
+
+            CSVHelper.storeToCSV(CSVHelper.file_ESM, "Transportation, update stream, NullPointerException");
+            CSVHelper.storeToCSV(CSVHelper.file_ESM, Utils.getStackTrace(e));
         }
 
         return true;
@@ -1051,92 +1052,5 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
                 return TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
         }
         return TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
-    }
-
-    public void TransportationMode_StoreToCSV(long timestamp, ActivityRecognitionDataRecord latest_AR, String transportation, int currentstate){
-        //Log.d(TAG,"TransportationMode_StoreToCSV");
-
-        String sFileName = "TransportationMode.csv";
-
-
-        //get location record
-        float lat=0;
-        float lng = 0;
-        float accuracy = 0;
-
-
-        if (MinukuStreamManager.getInstance().getLocationDataRecord()!=null) {
-            lat = MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude();
-            lng = MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude();
-            accuracy = MinukuStreamManager.getInstance().getLocationDataRecord().getAccuracy();
-        }
-
-
-        Boolean TransportationModefirstOrNot = sharedPrefs.getBoolean("TransportationModefirstOrNot", true);
-
-        try{
-            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-
-            //Log.d(TAG, "root : " + root);
-
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
-
-            List<String[]> data = new ArrayList<String[]>();
-
-            String timeString = ScheduleAndSampleManager.getTimeString(timestamp);
-
-            String state = "";
-
-            if (mCurrentState == 0)
-                state = "STATE_STATIC";
-            else if (mCurrentState == 1){
-                state = "STATE_SUSPECTING_START";
-            }
-            else if (mCurrentState == 2){
-                state = "STATE_CONFIRMED";
-            }
-            else if (mCurrentState == 3){
-                state = "STATE_SUSPECTING_STOP";
-            }
-
-            String rec_AR_String = "";
-            String latest_AR_String = "";
-
-            if (latest_AR!=null){
-                for (int i=0; i<latest_AR.getProbableActivities().size(); i++){
-
-                    if (i!=0){
-                        latest_AR_String+=Constants.ACTIVITY_DELIMITER;
-                    }
-                    DetectedActivity activity =  latest_AR.getProbableActivities().get(i);
-                    latest_AR_String += ActivityRecognitionStreamGenerator.getActivityNameFromType(activity.getType());
-                    latest_AR_String += Constants.ACTIVITY_CONFIDENCE_CONNECTOR;
-                    latest_AR_String += activity.getConfidence();
-
-                }
-            }
-
-            if(TransportationModefirstOrNot) {
-                data.add(new String[]{"timestamp", "timeString", "received_AR", "latest_AR", "transportation", "state", "lat", "lng", "accuracy"});
-                sharedPrefs.edit().putBoolean("TransportationModefirstOrNot", false).apply();
-            }
-
-            //write transportation mode
-            data.add(new String[]{String.valueOf(timestamp), timeString, rec_AR_String, latest_AR_String, transportation, state, String.valueOf(lat), String.valueOf(lng), String.valueOf(accuracy)});
-
-            csv_writer.writeAll(data);
-
-            csv_writer.close();
-
-        }catch (IOException e){
-            e.printStackTrace();
-            Log.e(TAG, "exception", e);
-        }/*catch (Exception e){
-            //e.printStackTrace();
-            //Log.e(TAG, "exception", e);
-        }*/
     }
 }

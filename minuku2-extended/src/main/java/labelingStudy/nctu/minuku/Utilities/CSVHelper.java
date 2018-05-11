@@ -24,6 +24,54 @@ public class CSVHelper {
 
     public static CSVWriter csv_writer = null;
 
+    public static String file_CheckService_alive = "CheckService.csv";
+    public static String file_ESM = "CheckESM.csv";
+    public static String file_CAR = "CheckCAR.csv";
+
+
+    public static void storeToCSV(String fileName, String... texts){
+
+        try{
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+
+            //Log.d(TAG, "root : " + root);
+
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+fileName,true));
+
+            List<String[]> data = new ArrayList<String[]>();
+
+            long timestamp = ScheduleAndSampleManager.getCurrentTimeInMillis();
+
+            String timeString = ScheduleAndSampleManager.getTimeString(timestamp);
+
+
+            List<String> textInList = new ArrayList<>();
+
+            textInList.add(timeString);
+
+            for(int index = 0; index < texts.length;index++){
+
+                textInList.add(texts[index]);
+            }
+
+            String[] textInArray = textInList.toArray(new String[0]);
+
+            data.add(textInArray);
+
+            csv_writer.writeAll(data);
+
+            csv_writer.close();
+
+        }catch (IOException e){
+            //e.printStackTrace();
+        }/*catch (Exception e){
+            //e.printStackTrace();
+        }*/
+    }
+
     public static void userInformStoreToCSV(String fileName, long timestamp, JSONObject userInform){
 
 //        String sFileName = "TransportationState.csv";

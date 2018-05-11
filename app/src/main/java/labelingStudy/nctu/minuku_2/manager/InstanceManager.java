@@ -143,7 +143,7 @@ public class InstanceManager {
 
 
         // Create corresponding stream generators. Only to be created once in Main Activity
-        //creating a new stream registers it with the stream manager
+        // creating a new stream registers it with the stream manager
 
         //TODO build new StreamGenerator here.
         LocationStreamGenerator locationStreamGenerator =

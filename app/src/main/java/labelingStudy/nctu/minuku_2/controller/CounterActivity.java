@@ -139,22 +139,31 @@ public class CounterActivity extends AppCompatActivity {
             case SHOW_PLAY_BUTTON:
 
                 play_stop.setImageResource(R.drawable.icon_play);
+
                 break;
             case SHOW_STOP_BUTTON:
 
-                int ongoingId = SessionManager.getOngoingSessionIdList().get(0);
-                Session ongoingSession = SessionManager.getSession(ongoingId);
+                //prevent the situation that the app stop recording accidentally so that the ongoing id is gone
+                try {
 
-                long currentTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
-                long startTimeOngoingSession = ongoingSession.getStartTime();
-                long ongoingSec = (currentTime - startTimeOngoingSession)/Constants.MILLISECONDS_PER_SECOND;
+                    int ongoingId = SessionManager.getOngoingSessionIdList().get(0);
+                    Session ongoingSession = SessionManager.getSession(ongoingId);
 
-                tsec = (int) ongoingSec;
+                    long currentTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+                    long startTimeOngoingSession = ongoingSession.getStartTime();
+                    long ongoingSec = (currentTime - startTimeOngoingSession) / Constants.MILLISECONDS_PER_SECOND;
 
-                //if last time we leave the page with the stop button, continue the timer's work.
-                startTimer();
+                    tsec = (int) ongoingSec;
 
-                play_stop.setImageResource(R.drawable.icon_stop);
+                    //if last time we leave the page with the stop button, continue the timer's work.
+                    startTimer();
+
+                    play_stop.setImageResource(R.drawable.icon_stop);
+                }catch (IndexOutOfBoundsException e){
+
+                    play_stop.setImageResource(R.drawable.icon_play);
+                }
+
                 break;
         }
 
@@ -181,8 +190,9 @@ public class CounterActivity extends AppCompatActivity {
 
             ongoingActivity = Utils.getActivityStringType(ongoingActivity);
 
-            MinukuNotificationManager.ongoingNotificationText = ongoingActivity + " is recording";
+            MinukuNotificationManager.ongoingNotificationText = "正在為您記錄 "+getTrafficInChinese(ongoingActivity);
         }else {
+
             MinukuNotificationManager.ongoingNotificationText = Constants.RUNNING_APP_DECLARATION;
         }
 
@@ -227,6 +237,8 @@ public class CounterActivity extends AppCompatActivity {
     }
 
     private void setColorForActivity(){
+
+        Log.d(TAG, "setColorForActivity TrafficFlag : "+TrafficFlag);
 
         switch (TrafficFlag){
 
@@ -305,9 +317,7 @@ public class CounterActivity extends AppCompatActivity {
                     updateOngoingNotification();
 
                     break;
-
             }
-
         }
     };
 
@@ -339,13 +349,14 @@ public class CounterActivity extends AppCompatActivity {
 
         startTimer();
 
-        Date curDate = new Date(System.currentTimeMillis()); // 獲取當前時間
+        Date curDate = new Date(System.currentTimeMillis());
         starttime = formatter.format(curDate);
 
         ArrayList<Integer> ongoingSessionIdList = SessionManager.getOngoingSessionIdList();
 
         //if there hasn't a ongoing sessoin, start a new one.
         if(ongoingSessionIdList.size() == 0){
+
             //start new Trip
             String transportation = getTrafficActivityString();
 
@@ -365,7 +376,7 @@ public class CounterActivity extends AppCompatActivity {
 
                 Annotation annotationSiteName = new Annotation();
                 annotationSiteName.setContent(siteName);
-                annotationSiteName.addTag(Constants.ANNOTATION_TAG_SITENAME);
+                annotationSiteName.addTag(Constants.ANNOTATION_TAG_DETECTED_SITENAME);
                 session.addAnnotation(annotationSiteName);
             }
 
@@ -377,11 +388,8 @@ public class CounterActivity extends AppCompatActivity {
 
         //stop the timer first
         endTimer();
-//        timer.cancel();
-//        timer.purge();
 
         sharedPrefs.edit().putInt("tsec", 0).apply();
-
 
         Date curDate2 = new Date(System.currentTimeMillis()); // 獲取當前時間
         stoptime = formatter.format(curDate2);
@@ -398,14 +406,15 @@ public class CounterActivity extends AppCompatActivity {
         //end the current session
         //try catch the situation that no session occur
         try {
+
             SessionManager.endCurSession(lastSession);
         } catch (IndexOutOfBoundsException e) {
-//                e.printStackTrace();
-        }
 
+        }
     }
 
     public void userLeavingPage(){
+
         int play_stopTag = Integer.valueOf(play_stop.getTag().toString());
 
         sharedPrefs.edit().putInt("play_stopTag", play_stopTag).apply();
@@ -413,27 +422,30 @@ public class CounterActivity extends AppCompatActivity {
         //if there have a ongoing session, close it.
         if(play_stopTag==SHOW_STOP_BUTTON){
 
-            //close the timer, we will show the timer when the user reenter it.
+            //close the timer, we will show the timer when the user re-enter it.
             endTimer();
             sharedPrefs.edit().putInt("tsec", tsec).apply();
         }
-
     }
 
     public void onPause(){
         super.onPause();
 
-//        Log.d(TAG, "onPause");
+        Log.d(TAG, "onPause");
+
         sharedPrefs.edit().putString("lastActivity", getClass().getName()).apply();
 
-        userLeavingPage();
+//        userLeavingPage();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
+
+        Log.d(TAG, "onKeyDown");
+
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 
-            userLeavingPage();
+//            userLeavingPage();
 
             CounterActivity.this.finish();
 
@@ -450,13 +462,24 @@ public class CounterActivity extends AppCompatActivity {
     public void onUserLeaveHint() {
         super.onUserLeaveHint();
 
+        Log.d(TAG, "onUserLeaveHint");
+
+//        userLeavingPage();
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        Log.d(TAG, "onStop");
+
         userLeavingPage();
     }
 
-    //TimerTask無法直接改變元件因此要透過Handler來當橋樑
     private Handler handler = new Handler(){
+
         public  void  handleMessage(Message msg) {
             super.handleMessage(msg);
+
             switch(msg.what){
                 case 1:
                     csec=tsec%60;
@@ -483,11 +506,11 @@ public class CounterActivity extends AppCompatActivity {
                     counter.setText(s);
                     break;
             }
-
         }
     };
 
     private String getTrafficActivityString(){
+
         if(TrafficFlag.equals("walk")){
             return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_FOOT;
         }else if(TrafficFlag.equals("bike")){
@@ -497,6 +520,23 @@ public class CounterActivity extends AppCompatActivity {
         }
 
         return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
+    }
+
+    private String getTrafficInChinese(String activity){
+
+        Log.d(TAG, "getTrafficInChinese : "+ activity);
+
+        switch (activity){
+
+            case "walk":
+                return "走路";
+            case "bike":
+                return "自行車";
+            case "car":
+                return "汽車";
+        }
+
+        return siteName;
     }
 
 }

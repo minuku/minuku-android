@@ -60,9 +60,8 @@ import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku_2.controller.CheckPointActivity;
 import labelingStudy.nctu.minuku_2.controller.CounterActivity;
-import labelingStudy.nctu.minuku_2.controller.Timeline;
 import labelingStudy.nctu.minuku_2.controller.DeviceIdPage;
-import labelingStudy.nctu.minuku_2.service.BackgroundService;
+import labelingStudy.nctu.minuku_2.controller.Timeline;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -118,9 +117,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SettingViewPager();
-        startService(new Intent(getBaseContext(), BackgroundService.class));
-//        startService(new Intent(getBaseContext(), ExpSampleMethodService.class));
-//        startService(new Intent(getBaseContext(), CheckpointAndReminderService.class));
+//        startService(new Intent(getBaseContext(), BackgroundService.class));
 
         EventBus.getDefault().register(this);
 
@@ -225,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_checkingDeviceId:
+            case R.id.action_getWantedOrder:
                 startActivity(new Intent(MainActivity.this, DeviceIdPage.class));
                 return true;
 

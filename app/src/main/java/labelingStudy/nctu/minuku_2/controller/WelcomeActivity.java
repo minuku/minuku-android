@@ -21,7 +21,6 @@ import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuNotificationManager;
 import labelingStudy.nctu.minuku_2.R;
-import labelingStudy.nctu.minuku_2.service.BackgroundService;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -46,7 +45,7 @@ public class WelcomeActivity extends AppCompatActivity {
         watchMyTimeline = (Button) findViewById(R.id.watchMyTimeline);
         watchMyTimeline.setOnClickListener(watchingMyTimeline);
 
-        startService(new Intent(getBaseContext(), BackgroundService.class));
+//        startService(new Intent(getBaseContext(), BackgroundService.class));
 
         current_task = getResources().getString(R.string.current_task);
         if(current_task.equals("ESM")) {
@@ -55,8 +54,8 @@ public class WelcomeActivity extends AppCompatActivity {
             chooseMyMobility.setVisibility(View.GONE);
         }else if(current_task.equals("CAR")){
 
-            //startService(new Intent(getBaseContext(), CheckpointAndReminderService.class));
         }
+
 //        EventBus.getDefault().register(this);
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
@@ -75,6 +74,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+    public void onResume(){
+        super.onResume();
+
+        getDeviceid();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -84,54 +89,25 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_deviceid, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
-        //TODO we might not need to select date, see on pilot
-        /*if(Constants.tabpos)
-            menu.findItem(R.id.action_selectdate).setVisible(true);
-        else
-            menu.findItem(R.id.action_selectdate).setVisible(false);*/
-
         super.onPrepareOptionsMenu(menu);
 
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
-            case R.id.action_checkingDeviceId:
+
+            case R.id.action_getDeviceId:
                 startActivity(new Intent(WelcomeActivity.this, DeviceIdPage.class));
                 return true;
 
-            //TODO we might not need to select date, see on pilot
-            /*case R.id.action_selectdate:
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-                new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        String format = setDateFormat(year,month,day);
-
-                        Constants.Day = day;
-                        Constants.Year = year;
-                        Constants.Month = month+ 1;//
-
-                        Log.d(TAG,"month : " + (month) + "year : " + year + "day : " + day);
-
-                        timeline = new Timeline(); //Timeline
-                        timeline.initTime(recordview);
-                        //startdate.setText(format);
-                    }
-
-                }, mYear, mMonth, mDay).show();
-                return true;*/
         }
         return true;
     }
@@ -168,7 +144,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void checkAndRequestPermissions() {
 
-        Log.e(TAG,"checkingAndRequestingPermissions");
+        Log.d(TAG,"checkingAndRequestingPermissions");
 
         int permissionReadExternalStorage = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -200,6 +176,8 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         if (!listPermissionsNeeded.isEmpty()) {
+            Log.d(TAG, "!listPermissionsNeeded.isEmpty() : "+!listPermissionsNeeded.isEmpty() );
+
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
         }else{
             startServiceWork();
@@ -209,23 +187,24 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public void startServiceWork(){
 
+        Log.d(TAG, "startServiceWork");
+
         getDeviceid();
-
-        //Use service to catch user's log, GPS, activity;
-        //TODO Bootcomplete 復原
-
     }
 
     public void getDeviceid(){
 
+        Log.d(TAG, "getDeviceid");
+
         TelephonyManager mngr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
         int permissionStatus= ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
         if(permissionStatus==PackageManager.PERMISSION_GRANTED){
+
             Constants.DEVICE_ID = mngr.getDeviceId();
 
-            sharedPrefs.edit().putString("DEVICE_ID",  Constants.DEVICE_ID).apply();
+            sharedPrefs.edit().putString("DEVICE_ID",  mngr.getDeviceId()).apply();
 
-            Log.e(TAG,"DEVICE_ID"+Constants.DEVICE_ID+" : "+mngr.getDeviceId());
+            Log.d(TAG,"DEVICE_ID "+Constants.DEVICE_ID+" : "+mngr.getDeviceId());
 
         }
     }

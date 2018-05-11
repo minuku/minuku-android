@@ -72,6 +72,7 @@ public class Timer_move extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
+
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 
             Timer_move.this.finish();
@@ -132,7 +133,7 @@ public class Timer_move extends AppCompatActivity {
 
             if(!buttonActivity.equals(ongoingActivity)){
 
-                Toast toast = Toast.makeText(Timer_move.this, "您必須先結束目前的移動方式 : " + TrafficFlag, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(Timer_move.this, "您必須先結束目前的移動方式 : " + getActivityTypeInChinese(TrafficFlag), Toast.LENGTH_LONG);
                 toast.show();
             }else {
 
@@ -165,18 +166,6 @@ public class Timer_move extends AppCompatActivity {
             String buttonActivity = "bike";
 
             imagebuttonWork(buttonActivity);
-
-            /*BigFlag = "changedMovement";
-            if(!CountFlag && (TrafficFlag.equals("walk") || TrafficFlag.equals("car") || TrafficFlag.equals("site"))) {
-                Toast toast = Toast.makeText(Timer_move.this, "You must finish the current situation first : " + TrafficFlag, Toast.LENGTH_LONG);
-                toast.show();
-            }else{
-                TrafficFlag="bike";
-
-//                startActivity(new Intent(Timer_move.this, MainActivity.class));
-                startActivity(new Intent(Timer_move.this, CounterActivity.class));
-            }*/
-
         }
     };
 
@@ -187,19 +176,6 @@ public class Timer_move extends AppCompatActivity {
             String buttonActivity = "car";
 
             imagebuttonWork(buttonActivity);
-
-            /*BigFlag = "changedMovement";
-
-            if(!CountFlag && (TrafficFlag.equals("walk") || TrafficFlag.equals("bike") || TrafficFlag.equals("site"))){
-                Toast toast = Toast.makeText(Timer_move.this, "You must finish the current situation first : " + TrafficFlag, Toast.LENGTH_LONG);
-                toast.show();
-            }else{
-                TrafficFlag="car";
-
-//                startActivity(new Intent(Timer_move.this, MainActivity.class));
-                startActivity(new Intent(Timer_move.this, CounterActivity.class));
-            }*/
-
         }
     };
 
@@ -210,19 +186,6 @@ public class Timer_move extends AppCompatActivity {
             String buttonActivity = "walk";
 
             imagebuttonWork(buttonActivity);
-            /*
-            BigFlag = "changedMovement";
-
-            if(!CountFlag && (TrafficFlag.equals("car") || TrafficFlag.equals("bike") || TrafficFlag.equals("site"))){
-                Toast toast = Toast.makeText(Timer_move.this, "You must finish the current situation first : " + TrafficFlag, Toast.LENGTH_LONG);
-                toast.show();
-            }else{
-                TrafficFlag="walk";
-
-//                startActivity(new Intent(Timer_move.this, MainActivity.class));
-                startActivity(new Intent(Timer_move.this, CounterActivity.class));
-
-            }*/
         }
     };
 
@@ -233,19 +196,6 @@ public class Timer_move extends AppCompatActivity {
             String buttonActivity = "static";
 
             imagebuttonWork(buttonActivity);
-            /*BigFlag = "site";
-
-            Log.e(TAG,"site clicked");
-
-            if(!CountFlag && (TrafficFlag.equals("walk") || TrafficFlag.equals("bike") || TrafficFlag.equals("car"))){
-                Toast toast = Toast.makeText(Timer_move.this, "You must finish the current situation first : " + TrafficFlag, Toast.LENGTH_LONG);
-                toast.show();
-            }else{
-                TrafficFlag="site";
-
-                startActivity(new Intent(Timer_move.this, Timer_site.class));
-            }*/
-
         }
     };
 
@@ -260,6 +210,22 @@ public class Timer_move extends AppCompatActivity {
                 return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_IN_VEHICLE;
             case "static":
                 return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
+            default:
+                return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA;
+        }
+    }
+
+    private String getActivityTypeInChinese(String activityType){
+
+        switch (activityType){
+            case "walk":
+                return "走路";
+            case "bike":
+                return "自行車";
+            case "car" :
+                return "汽車";
+            case "static":
+                return "定點";
             default:
                 return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA;
         }

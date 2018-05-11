@@ -66,7 +66,7 @@ public class ActivityRecognitionService extends IntentService {
             Log.d("ARService", "[test AR service start] the servic is not running, start replay");
 
             //testing the record in csv file
-            startReplayARRecordTimer();
+//            startReplayARRecordTimer();
         }else {
             Log.d("ARService", "[test AR service start] the servic is arleady running, do not start replay");
         }
@@ -90,24 +90,24 @@ public class ActivityRecognitionService extends IntentService {
             }
             ActivityRecognitionResult activity = ActivityRecognitionResult.extractResult(intent);
 
-//            mProbableActivities = activity.getProbableActivities();
-//            mMostProbableActivity = activity.getMostProbableActivity();
-//            detectedtime = new Date().getTime(); //TODO might be wrong, be aware for it!!
-//
-//            Log.d(TAG, "[test replay] [test ActivityRecognition]" +   mMostProbableActivity.toString());
-//            try {
-//                if (mProbableActivities != null && mMostProbableActivity != null){
-//
-//                     /*  cancel setting because we want to directly feed activity data in the test file */
-//                    mActivityRecognitionStreamGenerator.setActivitiesandDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
-//
-//                    Log.d(TAG, "[test replay] before store to CSV in AR Service");
-//
-//                }
-//
-//            }catch(Exception e){
-//                e.printStackTrace();
-//            }
+            mProbableActivities = activity.getProbableActivities();
+            mMostProbableActivity = activity.getMostProbableActivity();
+            detectedtime = new Date().getTime();
+
+            Log.d(TAG, "[test replay] [test ActivityRecognition]" +   mMostProbableActivity.toString());
+            try {
+                if (mProbableActivities != null && mMostProbableActivity != null){
+
+                     /*  cancel setting because we want to directly feed activity data in the test file */
+                    mActivityRecognitionStreamGenerator.setActivitiesandDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
+
+                    Log.d(TAG, "[test replay] before store to CSV in AR Service");
+
+                }
+
+            }catch(Exception e){
+
+            }
 
             stopARRecordExpirationTimer();
 

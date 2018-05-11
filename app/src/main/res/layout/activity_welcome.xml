@@ -16,10 +16,10 @@
         android:background="@color/cardview_light_background"
         android:drawableBottom="@drawable/head"
         android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:text="Welcome to join \nour Study.\nPlease record your\nmoving action everyday."
+        android:paddingTop="20dp"
+        android:text="歡迎參與本研究\n請每天記錄\n您的移動路程"
         android:textColor="@color/black"
-        android:textSize="30sp" />
+        android:textSize="40sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

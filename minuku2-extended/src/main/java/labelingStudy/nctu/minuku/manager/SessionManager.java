@@ -2,10 +2,8 @@ package labelingStudy.nctu.minuku.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.opencsv.CSVWriter;
 
 import org.json.JSONArray;
@@ -175,7 +173,6 @@ public class SessionManager {
         return currentTimeString;
     }
 
-
     /**
      * This function convert Session String retrieved from the DB to Object Session
      * @param sessionStr
@@ -203,28 +200,54 @@ public class SessionManager {
         Log.d(TAG, "[test show trip] separated[DBHelper.COL_INDEX_SESSION_END_TIME] " + separated[DBHelper.COL_INDEX_SESSION_END_TIME]);
 
         if (!separated[DBHelper.COL_INDEX_SESSION_END_TIME].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_END_TIME].equals("")){
+
             endTime = Long.parseLong(separated[DBHelper.COL_INDEX_SESSION_END_TIME]);
         }
         //there 's no end time of the session, we take the time of the last record
         else {
-            endTime = getLastRecordTimeinSession(session.getId());
 
+            endTime = getLastRecordTimeinSession(session.getId());
         }
+
         Log.d(TAG, "[test show trip] testgetdata the end time is now:  " + ScheduleAndSampleManager.getTimeString(endTime));
 
-        boolean islongEnough= true;
-        boolean isModified = false;
-        //longEnough flag
-        if (!separated[DBHelper.COL_INDEX_SESSION_LONG_ENOUGH_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_LONG_ENOUGH_FLAG].equals("")){
-            islongEnough = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_LONG_ENOUGH_FLAG]);
+//        boolean isUserPress;
+//        boolean isModified;
+
+        int isUserPress;
+        int isModified;
+
+        if (!separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG].equals("")){
+
+//            isUserPress = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG]);
+            isUserPress = Integer.parseInt(separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG]);
+
+            Log.d(TAG, "[test show trip] testgetdata isUserPress is now:  " + isUserPress);
+
+            if(isUserPress == 1){
+
+                session.setUserPressOrNot(true);
+            }else {
+
+                session.setUserPressOrNot(false);
+            }
         }
 
         if (!separated[DBHelper.COL_INDEX_SESSION_MODIFIED_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_MODIFIED_FLAG].equals("")){
-            isModified = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_MODIFIED_FLAG]);
-        }
 
-        session.setUserPressOrNot(islongEnough);
-        session.setModified(isModified);
+//            isModified = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_MODIFIED_FLAG]);
+            isModified = Integer.parseInt(separated[DBHelper.COL_INDEX_SESSION_MODIFIED_FLAG]);
+
+            Log.d(TAG, "[test show trip] testgetdata isModified is now:  " + isModified);
+
+            if(isModified == 1){
+
+                session.setModified(true);
+            }else {
+
+                session.setModified(false);
+            }
+        }
 
         //set end time
         session.setEndTime(endTime);
@@ -233,7 +256,9 @@ public class SessionManager {
         JSONObject annotationSetJSON = null;
         JSONArray annotateionSetJSONArray = null;
         try {
+
             if (!separated[DBHelper.COL_INDEX_SESSION_ANNOTATION_SET].equals("null")){
+
                 annotationSetJSON = new JSONObject(separated[DBHelper.COL_INDEX_SESSION_ANNOTATION_SET]);
                 annotateionSetJSONArray = annotationSetJSON.getJSONArray(ANNOTATION_PROPERTIES_ANNOTATION);
             }
@@ -241,15 +266,14 @@ public class SessionManager {
             e.printStackTrace();
         }
 
-
         //set annotationset if there is one
         if (annotateionSetJSONArray!=null){
+
             AnnotationSet annotationSet =  toAnnorationSet(annotateionSetJSONArray);
             session.setAnnotationSet(annotationSet);
         }
 
         return session;
-
     }
 
     public static Session getSession (String id) {
@@ -266,7 +290,6 @@ public class SessionManager {
 
         }
 
-
         return session;
     }
 
@@ -280,7 +303,6 @@ public class SessionManager {
         Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
         return session;
-
     }
 
     public static long getLastRecordTimeinSession(int sessionId) {
@@ -302,22 +324,19 @@ public class SessionManager {
             Log.d(TAG, "test combine: the time of the last record is " + time );
             return time;
         }
-
-
     }
 
     public static Session getSession (int sessionId) {
 
-        Log.d(TAG, "[test reEnter] sessionId : "+sessionId);
+        Log.d(TAG, "sessionId : "+sessionId);
         Session session = null;
         String sessionStr =  DBHelper.querySession(sessionId).get(0);
-        Log.d(TAG, "[test combine]query session from LocalDB is " + sessionStr);
+        Log.d(TAG, "query session from LocalDB is " + sessionStr);
         session = convertStringToSession(sessionStr);
-        Log.d(TAG, " test combine  testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+        Log.d(TAG, " testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
         return session;
     }
-
 
     /**
      *
@@ -331,16 +350,20 @@ public class SessionManager {
         return num;
     }
 
-
     /**
      *
      * @param sessionId
      * @param endTime
-     * @param isLongEnough
+     * @param userPressOrNot
      */
-    public static void updateCurSessionEndInfoTo(int sessionId, long endTime, boolean isLongEnough){
+    public static void updateCurSessionEndInfoTo(int sessionId, long endTime, boolean userPressOrNot){
 
-        DBHelper.updateSessionTable(sessionId, endTime, isLongEnough);
+        DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot);
+    }
+
+    public static void updateCurSession(int sessionId, long endTime, int userPressOrNot, int modifiedOrNot){
+
+        DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot, modifiedOrNot);
     }
 
     /**
@@ -448,75 +471,47 @@ public class SessionManager {
         updateCurSessionEndInfoTo(session.getId(),session.getEndTime(),session.isUserPress());
     }
 
-    public static boolean isSessionLongEnough(String thresholdType, int sessionId){
+    public static ArrayList<Session> getSessions() {
 
+        Log.d(TAG, "[test show trip] getSessions");
 
-        boolean islongEnough = true;
+        ArrayList<Session> sessions = new ArrayList<Session>();
 
-        //we see if the session is long enough based on its distance
-        if (thresholdType.equals(SESSION_LONGENOUGH_THRESHOLD_DISTANCE)){
+        ArrayList<String> res =  DBHelper.querySessions();
 
-            Log.d(TAG, "test combine: test threshold " + SESSION_LONGENOUGH_THRESHOLD_DISTANCE  + " for session " + sessionId);
+        Log.d(TAG, "[test show trip] getRecentSessions get res: " +  res);
 
-            //get location records from the session
-            ArrayList<String> resultBySession = null;
-            resultBySession = SessionManager.getRecordsInSession(sessionId, DBHelper.location_table);
+        //we start from 1 instead of 0 because the 1st session is the background recording. We will skip it.
+        for (int i=0; i<res.size() ; i++) {
 
-            Log.d(TAG, "test combine: there are " + resultBySession.size() + " location records"  );
-
-
-            //if there's no location points, it's not long enough
-            if (resultBySession.size()==0){
-                islongEnough = false;
-            }
-
-            //there are location records, we need to examine its distance
-            else {
-                //create arraylist for storing the latlng
-                ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
-
-                /** storing location records after we obain from the database*/
-                for(int index = 0;index < resultBySession.size(); index++){
-                    String[] separated = resultBySession.get(index).split(Constants.DELIMITER);
-                    double lat = Double.valueOf(separated[2]);
-                    double lng = Double.valueOf(separated[3]);
-
-                    LatLng latLng = new LatLng(lat, lng);
-                    latLngs.add(latLng);
-                }
-
-                //get distance between the last and the previous
-                LatLng startLatLng = latLngs.get(0);
-                LatLng endLatLng = latLngs.get(latLngs.size() - 1);
-
-                Log.d(TAG, " test combine the first point is " + startLatLng + ", the end point is " + endLatLng );
-
-                //calculate the distance between the first and the last
-                float[] results = new float[1];
-                Location.distanceBetween(startLatLng.latitude,startLatLng.longitude, endLatLng.latitude, endLatLng.longitude,results);
-                float distance = results[0];
-
-                Log.d(TAG, " test combine the distance between start and end is " + distance  + " now we comapre with the threshold " + SessionManager.SESSION_MIN_DISTANCE_THRESHOLD_TRANSPORTATION );
-
-                //if the session is shorter than a threshold (now - start time < threshold), we should give it a flag, so that it wouldnot show up in the annotation list
-                if (distance<SessionManager.SESSION_MIN_DISTANCE_THRESHOLD_TRANSPORTATION){
-                    Log.d(TAG, " test combine the trip is too short  ");
-
-                    islongEnough = false;
-                }else {
-                    Log.d(TAG, " test combine the trip is long enough ");
-                }
-            }
-
-
-
+            Session session = convertStringToSession(res.get(i));
+            Log.d(TAG, "[test show trip] session id : "+ session.getId());
+            sessions.add(session);
         }
 
-        Log.d(TAG, " finally the session " + sessionId + " long enough is " + islongEnough);
-        return islongEnough;
-
+        return sessions;
     }
 
+    public static ArrayList<Session> getSessionsByOrder(String order) {
+
+        Log.d(TAG, "[test show trip] getSessionsByOrder");
+
+        ArrayList<Session> sessions = new ArrayList<Session>();
+
+        ArrayList<String> res =  DBHelper.querySessions(order);
+
+        Log.d(TAG, "[test show trip] getRecentSessions get res: " +  res);
+
+        //we start from 1 instead of 0 because the 1st session is the background recording. We will skip it.
+        for (int i=0; i<res.size() ; i++) {
+
+            Session session = convertStringToSession(res.get(i));
+            Log.d(TAG, "[test show trip] session id : "+ session.getId());
+            sessions.add(session);
+        }
+
+        return sessions;
+    }
 
     public static ArrayList<Session> getRecentSessions() {
 
@@ -531,7 +526,7 @@ public class SessionManager {
         Log.d(TAG, " [test show trip] going to query session between " + ScheduleAndSampleManager.getTimeString(queryStartTime) + " and " + ScheduleAndSampleManager.getTimeString(queryEndTime) );
 
 
-        //query//get sessions between the starTime and endTime
+        //query get sessions between the starTime and endTime
         ArrayList<String> res =  DBHelper.querySessionsBetweenTimes(queryStartTime, queryEndTime);
 
 

@@ -22,6 +22,15 @@
 
 package labelingStudy.nctu.minuku_2;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import org.javatuples.Tuple;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 
 /**
@@ -41,6 +50,52 @@ public class Utils {
     public static final String encodeEmail(String unencodedEmail) {
         if (unencodedEmail == null) return null;
         return unencodedEmail.replace(".", ",");
+    }
+
+    public static String getStackTrace(final Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
+    }
+
+    public static String toPythonTuple(Tuple tuple){
+
+        String pythontuple = "("+tuple.toString().replace("[","").replace("]","")+")";
+
+        return pythontuple;
+    }
+
+    public static boolean isEnglish(String charaString){
+
+        return charaString.matches("^[a-zA-Z]*");
+
+    }
+
+    public static String tupleConcat(Tuple tuple1, Tuple tuple2){
+
+        String pythontuple = "(" +tuple1.toString().replace("[","").replace("]","")+
+                ", "+tuple2.toString().replace("[","").replace("]","")+
+                ")";
+
+        return pythontuple;
+    }
+
+    public static boolean haveNetworkConnection(Context context) {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     public static String getActivityStringType(String activityString){

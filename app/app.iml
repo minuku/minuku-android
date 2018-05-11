@@ -152,6 +152,7 @@
     <orderEntry type="library" name="com.google.guava:guava:19.0@jar" level="project" />
     <orderEntry type="library" name="de.hdodenhof:circleimageview-2.1.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-database-connection-9.2.1" level="project" />
+    <orderEntry type="library" name="__local_aars__:/Users/Lawrence/Desktop/program/Android/MainBgAbsence/app/libs/javatuples-1.2.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-iid-9.2.1" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-storage-9.2.1" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-analytics-impl-9.2.1" level="project" />

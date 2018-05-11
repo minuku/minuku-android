@@ -13,6 +13,7 @@ import labelingStudy.nctu.minuku.model.AnnotationSet;
  */
 
 public class DataHandler {
+
     private static final DataHandler ourInstance = new DataHandler();
 
     public static DataHandler getInstance() {
@@ -86,9 +87,17 @@ public class DataHandler {
     }
 
     public static void updateSession(int id, long startTime, long endTime, AnnotationSet annotationSet){
+
         Log.d(TAG, "updateSession");
         DBHelper.updateSessionTable(id, startTime, endTime, annotationSet);
+    }
 
+    public static void updateSession(int id, AnnotationSet annotationSet){
+
+        Log.d(TAG, "[storing sitename] Sitename going to store session : "+ id);
+
+        Log.d(TAG, "updateSession");
+        DBHelper.updateSessionTable(id, annotationSet);
     }
 
 }
