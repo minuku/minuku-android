@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildTypes.each {
+        it.buildConfigField 'String', 'UNIQUE_FIREBASE_ROOT_URL', UniqueFirebaseRootUrl
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile project(':minukucore')
+
+    /* Firebase SDK */
+    compile 'com.firebase:firebase-client-android:2.4.0'
+    /* Firebase UI */
+    compile 'com.firebaseui:firebase-ui:0.2.2'
+
+    /*CSV*/
+    compile project(':opencsv-3.10')
+
+    /* For Google Play Services */
+    compile 'com.google.android.gms:play-services-safetynet:9.2.1'
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
+    /*compile 'com.google.android.gms:play-services:8.3.0'*/
+    compile 'com.google.android.gms:play-services:9.2.1'
+    /* For Google Maps */
+    /*compile 'com.google.android.gms:play-services-maps:8.3.0'*/
+    compile 'com.google.android.gms:play-services-maps:9.2.1'
+    compile 'com.google.android.gms:play-services-location:9.2.1'
+    /* Google Guava */
+    compile 'com.google.guava:guava:19.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.github.dkharrat.nexusdialog:nexusdialog:0.4.0'
+
+    /*GSON to store objects in user preferences*/
+    compile 'com.google.code.gson:gson:2.7'
+
+    /*Logger*/
+    compile 'com.bugfender.sdk:android:0.+'
+    // room library
+
+    implementation "android.arch.persistence.room:runtime:1.0.0-beta1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-beta1"
+
+}
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+        maven { url 'https://maven.google.com' }
+        google()
+    }
+}

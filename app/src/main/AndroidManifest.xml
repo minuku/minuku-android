@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016.
+  ~
+  ~ DReflect and Minuku Libraries by Shriti Raj (shritir@umich.edu) and Neeraj Kumar(neerajk@uci.edu) is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+  ~ Based on a work at https://github.com/Shriti-UCI/Minuku-2.
+  ~
+  ~
+  ~ You are free to (only if you meet the terms mentioned below) :
+  ~
+  ~ Share — copy and redistribute the material in any medium or format
+  ~ Adapt — remix, transform, and build upon the material
+  ~
+  ~ The licensor cannot revoke these freedoms as long as you follow the license terms.
+  ~
+  ~ Under the following terms:
+  ~
+  ~ Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+  ~ NonCommercial — You may not use the material for commercial purposes.
+  ~ ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+  ~ No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="labelingStudy.nctu.minuku_2">
+
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application xmlns:tools="http://schemas.android.com/tools"
+        android:name="labelingStudy.nctu.minuku_2.MinukuApp"
+        android:allowBackup="true"
+        android:icon="@drawable/muilab_icon"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:theme">
+
+        <!-- API KEY FOR PLACES -->
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDNWjTqYe9J1Nvse0IbVLciBycQGouZtUQ" />
+        <!-- It would -->
+
+
+        <!-- API KEY FOR MAPS -->
+        <!--
+            <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCiV1bU3lnapK7kJJh-C1DIsGCZsf8JK8o" />
+        -->
+
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CheckPointActivity" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.DeviceIdPage" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.PlaceSelection" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_move" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_site" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timeline">
+            <intent-filter>
+                <action android:name="app.intent.action.Launch" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="labelingStudy.nctu.minuku_2.controller.Dispatch"
+            android:theme="@android:style/Theme.NoDisplay">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="labelingStudy.nctu.minuku_2.controller.WelcomeActivity"
+            android:launchMode="singleInstance"
+            android:persistent="true">
+        </activity>
+
+        <!-- Activities included from third party libraries -->
+        <activity android:name="com.desmond.squarecamera.CameraActivity" />
+
+        <service
+            android:name="labelingStudy.nctu.minuku_2.service.CheckpointAndReminderService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="labelingStudy.nctu.minuku_2.service.BackgroundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name="labelingStudy.nctu.minuku_2.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="labelingStudy.nctu.minuku_2.Receiver.ConnectivityChangeReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="labelingStudy.nctu.minuku_2.Receiver.WifiReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
+        <activity android:name="labelingStudy.nctu.minuku_2.MainActivity" />
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.CustomDialog"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="490219889f9c5227241662e1fa307d31f82f536d" />
+    </application>
+
+</manifest>

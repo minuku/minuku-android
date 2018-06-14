@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016.
+  ~
+  ~ DReflect and Minuku Libraries by Shriti Raj (shritir@umich.edu) and Neeraj Kumar(neerajk@uci.edu) is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+  ~ Based on a work at https://github.com/Shriti-UCI/Minuku-2.
+  ~
+  ~
+  ~ You are free to (only if you meet the terms mentioned below) :
+  ~
+  ~ Share — copy and redistribute the material in any medium or format
+  ~ Adapt — remix, transform, and build upon the material
+  ~
+  ~ The licensor cannot revoke these freedoms as long as you follow the license terms.
+  ~
+  ~ Under the following terms:
+  ~
+  ~ Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+  ~ NonCommercial — You may not use the material for commercial purposes.
+  ~ ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+  ~ No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+  -->
+
+<resources>
+    <color name="colorPrimary">#418ECC</color>
+    <color name="colorPrimaryDark">#2974BA</color>
+    <color name="colorAccent">#747576</color>
+    <color name="colorPrimaryLight">#bddef5</color>
+    <color name="colorAccentLight">#BCBCBC</color>
+    <color name="colorAccentDark">#1F1F1F</color>
+
+    <color name="primary_text">#212121</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="dark_grey">#727272</color>
+    <color name="primary">#418ECC</color>
+    <color name="primary_dark">#2974BA</color>
+    <color name="divider">#B6B6B6</color>
+    <color name="accent">#747576</color>
+    <color name="accent_light">#BCBCBC</color>
+    <color name="accent_dark">#1f1f1f</color>
+    <color name ="reject_button">#f19898</color>
+    <color name ="customize_button">#EAF2E3</color>
+    <color name ="accept_button">#8edaad</color>
+    <color name="accent_lightest">#dcdbdb</color>
+    <color name="common_plus_signin_btn_text_dark_pressed">#000000</color>
+    <color name="custom">#eaeef7</color>
+    <color name="stroke">#EF767A</color>
+
+
+
+</resources>

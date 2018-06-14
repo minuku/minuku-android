@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    android:weightSum="1">
+    <!--
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.07" />
+
+    <TextView
+        android:text="開始日期"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/startTime"
+        android:textSize="36sp"
+        android:paddingLeft="16dp"
+        android:layout_weight="0.14" />
+
+    <Button
+        android:text="請選擇日期"
+        android:layout_width="232dp"
+        android:layout_height="37dp"
+        android:id="@+id/startdate"
+        android:layout_marginLeft="16dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.07" />
+
+    <TextView
+        android:text="結束日期"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/endtime"
+        android:layout_weight="0.15"
+        android:textSize="36sp"
+        android:paddingLeft="16dp" />
+
+    <Button
+        android:text="請選擇日期"
+        android:layout_width="232dp"
+        android:layout_height="37dp"
+        android:id="@+id/enddate"
+        android:layout_marginLeft="16dp" />
+-->
+
+    <TextView
+        android:id="@+id/showingDeviceID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.07"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:text="Device ID = "
+        android:textSize="32sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="87dp"
+        android:layout_weight="0.07" />
+    <!--
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_weight="0.50" />
+
+    <Button
+        android:text="創建"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/buildreport"
+        android:layout_marginLeft="226dp" />
+-->
+</LinearLayout>

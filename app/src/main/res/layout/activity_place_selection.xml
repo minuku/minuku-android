@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="labelingStudy.nctu.minuku_2.controller.PlaceSelection"
+    android:weightSum="1">
+<!--
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="261dp" />
+-->
+
+    <fragment
+        android:id="@+id/Mapfragment"
+        class="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="431dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btn_addplace"
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        android:background="@color/instabug_annotation_color_yellow"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="新增地點"
+        android:textSize="24sp" />
+
+    <!--Button
+        android:id="@+id/btn_addplace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="新增地點" />
+
+    <Button
+        android:id="@+id/btn_secRes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="第二餐廳" />
+
+    <Button
+        android:id="@+id/btn_muf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="鬆餅屋" />
+
+    <Button
+        android:id="@+id/btn_third"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="工程三館" /-->
+</LinearLayout>

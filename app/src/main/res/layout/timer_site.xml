@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="151dp"
+        android:background="@color/black"
+        android:gravity="center"
+        android:text="請選擇您自訂的定點"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="30sp" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/customizeList"
+        android:visibility="visible" />
+
+    <!--LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        &lt;!&ndash;ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="77dp"
+            android:src="@drawable/place"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="20dp"
+            android:background="@android:color/background_light"
+            android:id="@+id/site_1" />
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="77dp"
+            android:src="@drawable/place"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="20dp"
+            android:background="@android:color/background_light"
+            android:id="@+id/site_2"
+            android:layout_weight="0.02" /&ndash;&gt;
+
+        &lt;!&ndash;ImageButton
+            android:layout_width="72dp"
+            android:layout_height="77dp"
+            android:src="@drawable/place"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="20dp"
+            android:background="@android:color/background_light"
+            android:id="@+id/customize"
+            android:layout_weight="0.02" /&ndash;&gt;
+
+    </LinearLayout-->
+
+    <!--LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:id="@+id/fortext"
+        android:weightSum="1">
+
+        <TextView
+            android:text="清大"
+            android:layout_width="77dp"
+            android:layout_height="match_parent"
+            android:id="@+id/textView4"
+            android:textSize="24sp"
+            android:gravity="center" />
+
+        <TextView
+            android:text="交大"
+            android:layout_width="77dp"
+            android:layout_height="match_parent"
+            android:id="@+id/textView5"
+            android:textSize="24sp"
+            android:gravity="center" />
+
+        <TextView
+            android:text="自訂"
+            android:layout_width="77dp"
+            android:layout_height="match_parent"
+            android:id="@+id/textView6"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_weight="0.01" />
+    </LinearLayout-->
+
+    <!--LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fourthblock"
+        android:gravity="center">
+
+
+        <Button
+            android:text="移動"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:id="@changedMovementmove" />
+    </LinearLayout-->
+
+</LinearLayout>
