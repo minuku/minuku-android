@@ -14,7 +14,6 @@ import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
 import labelingStudy.nctu.minuku.service.MobileAccessibilityService;
 import labelingStudy.nctu.minuku.stream.AccessibilityStream;
-import labelingStudy.nctu.minuku.stream.BatteryStream;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;

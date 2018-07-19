@@ -88,13 +88,13 @@ public class WifiReceiver extends BroadcastReceiver {
 
 //    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/labelingStudy.nctu.minuku_2/";
 
-    private static final String postDumpUrl_insert = "http://52.14.68.199:5000/find_latest_and_insert?collection=dump&action=insert&id=";//&action=insert, search
-    private static final String postDumpUrl_search = "http://52.14.68.199:5000/find_latest_and_insert?collection=dump&action=search&id=";//&action=insert, search
+    private static final String postDumpUrl_insert = "http://18.219.118.106:5000/find_latest_and_insert?collection=dump&action=insert&id=";//&action=insert, search
+    private static final String postDumpUrl_search = "http://18.219.118.106:5000/find_latest_and_insert?collection=dump&action=search&id=";//&action=insert, search
 
-    private static final String postTripUrl_insert = "http://52.14.68.199:5000/find_latest_and_insert?collection=trip&action=insert&id=";//&action=insert, search
-    private static final String postTripUrl_search = "http://52.14.68.199:5000/find_latest_and_insert?collection=trip&action=search&id=";//&action=insert, search
+    private static final String postTripUrl_insert = "http://18.219.118.106:5000/find_latest_and_insert?collection=trip&action=insert&id=";//&action=insert, search
+    private static final String postTripUrl_search = "http://18.219.118.106:5000/find_latest_and_insert?collection=trip&action=search&id=";//&action=insert, search
 
-    private static final String postIsAliveUrl_insert = "http://52.14.68.199:5000/find_latest_and_insert?collection=isalive&action=insert&id=";//&action=insert, search
+    private static final String postIsAliveUrl_insert = "http://18.219.118.106:5000/find_latest_and_insert?collection=isalive&action=insert&id=";//&action=insert, search
 
 
     public static int mainThreadUpdateFrequencyInSeconds = 10;

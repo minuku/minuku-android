@@ -7,16 +7,17 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
-
 /**
- * Created by chiaenchiang on 08/03/2018.
+ * Created by tingwei on 2018/7/19.
  */
+
 @Dao
-public interface AccessibilityDataRecordDAO {
+public interface AccessibilityDataRecordDao {
     @Query("SELECT * FROM AccessibilityDataRecord")
     List<AccessibilityDataRecord> getAll();
 
     @Insert
     void insertAll(AccessibilityDataRecord accessibilityDataRecord);
 }
+
 

@@ -3,7 +3,7 @@ package labelingStudy.nctu.minuku.DBHelper;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
+import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDao;
 import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDao;
 import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDao;
 import labelingStudy.nctu.minuku.dao.BatteryDataRecordDao;
@@ -39,7 +39,7 @@ import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
         TransportationModeDataRecord.class, LocationNoGoogleDataRecord.class},version =1)
 public abstract class appDatabase extends RoomDatabase {
 
-    public abstract AccessibilityDataRecordDAO accessibilityDataRecordDao();
+    public abstract AccessibilityDataRecordDao accessibilityDataRecordDao();
     public abstract ActivityRecognitionDataRecordDao activityRecognitionDataRecordDao();
     public abstract AppUsageDataRecordDao appUsageDataRecordDao();
     public abstract BatteryDataRecordDao batteryDataRecordDao();
