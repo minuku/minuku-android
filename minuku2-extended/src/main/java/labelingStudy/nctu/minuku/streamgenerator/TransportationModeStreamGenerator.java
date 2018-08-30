@@ -66,7 +66,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static final int STATE_SUSPECTING_STOP = 3;
 
     //
-    private static final float CONFIRM_START_ACTIVITY_THRESHOLD_IN_VEHICLE = (float) 0.6;
+    private static final float CONFIRM_START_ACTIVITY_THRESHOLD_IN_VEHICLE = (float) 0.8; //TODO origin為 0.6
     private static final float CONFIRM_START_ACTIVITY_THRESHOLD_ON_FOOT = (float)0.6;
     private static final float CONFIRM_START_ACTIVITY_THRESHOLD_ON_BICYCLE =(float) 0.6;
     private static final float CONFIRM_STOP_ACTIVITY_THRESHOLD_IN_VEHICLE = (float)0.3; //0.2
@@ -95,13 +95,15 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static final String TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION = "static";
     public static final String TRANSPORTATION_MODE_NAME_NA = "NA";
 
+    public static final String TRANSPORTATION_MODE_HASNT_DETECTED_FLAG = "未知";
+
     private static final long WINDOW_LENGTH_START_ACTIVITY_DEFAULT = 20 * Constants.MILLISECONDS_PER_SECOND;
     private static final long WINDOW_LENGTH_STOP_ACTIVITY_DEFAULT = 20 * Constants.MILLISECONDS_PER_SECOND;
-    private static final long WINDOW_LENGTH_START_ACTIVITY_IN_VEHICLE = 20 * Constants.MILLISECONDS_PER_SECOND; //TODO origin為10s
+    private static final long WINDOW_LENGTH_START_ACTIVITY_IN_VEHICLE = 60 * Constants.MILLISECONDS_PER_SECOND; //TODO origin為20s
     private static final long WINDOW_LENGTH_START_ACTIVITY_ON_FOOT = 10 * Constants.MILLISECONDS_PER_SECOND;
     private static final long WINDOW_LENGTH_START_ACTIVITY_ON_BICYCLE = 20 * Constants.MILLISECONDS_PER_SECOND;
     private static final long WINDOW_LENGTH_STOP_ACTIVITY_IN_VEHICLE = 150 * Constants.MILLISECONDS_PER_SECOND;
-    private static final long WINDOW_LENGTH_STOP_ACTIVITY_ON_FOOT = 30 * Constants.MILLISECONDS_PER_SECOND; //TODO origin為60s
+    private static final long WINDOW_LENGTH_STOP_ACTIVITY_ON_FOOT = 30 * Constants.MILLISECONDS_PER_SECOND;
     private static final long WINDOW_LENGTH_STOP_ACTIVITY_ON_BICYCLE = 90 * Constants.MILLISECONDS_PER_SECOND;
 
     private static final long WINDOW_LENGTH_TRANSITION_START_ACTIVITY_IN_VEHICLE = 5 * Constants.MILLISECONDS_PER_SECOND;
@@ -145,7 +147,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static int mCurrentState = STATE_STATIC;
 
 
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.ohio.minuku_2/";
+    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/labelingStudy.nctu.minuku_2/";
     private CSVWriter csv_writer = null;
 
     private ActivityRecognitionDataRecord latest_activityRecognitionDataRecord;
@@ -223,18 +225,26 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
             }
         }
 
-        //store the Transportation to the SQLlite
+        String suspectedStartActivity = getActivityNameFromType(getSuspectedStartActivityType());
+        String suspectedEndActivity = getActivityNameFromType(getSuspectedStopActivityType());
+
         TransportationModeDataRecord transportationModeDataRecord =
-                new TransportationModeDataRecord(getConfirmedActvitiyString());
+                new TransportationModeDataRecord(getConfirmedActvitiyString(), getSuspectTime(), suspectedStartActivity, suspectedEndActivity);
 
         Log.d(TAG,"updateStream transportationModeDataRecord : " + getConfirmedActvitiyString());
 
         mStream.add(transportationModeDataRecord);
         Log.d(TAG, "TransportationMode to be sent to event bus" + transportationModeDataRecord);
 
-        CSVHelper.storeToCSV(CSVHelper.file_ESM, "Transportation, update stream");
+        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "Transportation, update stream");
+        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_TRANSPORTATION,
+                ScheduleAndSampleManager.getTimeString(transportationModeDataRecord.getCreationTime()),
+                transportationModeDataRecord.getConfirmedActivityString(),
+                ScheduleAndSampleManager.getTimeString(transportationModeDataRecord.getSuspectedTime()),
+                transportationModeDataRecord.getSuspectedStartActivityString(),
+                transportationModeDataRecord.getSuspectedStopActivityString());
 
-        MinukuStreamManager.getInstance().setTransportationModeDataRecord(transportationModeDataRecord, mContext);
+        MinukuStreamManager.getInstance().setTransportationModeDataRecord(transportationModeDataRecord, mContext, sharedPrefs);
 
         // also post an event.
         EventBus.getDefault().post(transportationModeDataRecord);
@@ -242,13 +252,12 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         try {
 
             mDAO.add(transportationModeDataRecord);
-            mDAO.query_counting();
         } catch (DAOException e) {
 
         } catch (NullPointerException e) { //Sometimes no data is normal
 
-            CSVHelper.storeToCSV(CSVHelper.file_ESM, "Transportation, update stream, NullPointerException");
-            CSVHelper.storeToCSV(CSVHelper.file_ESM, Utils.getStackTrace(e));
+            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "Transportation, update stream, NullPointerException");
+            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, Utils.getStackTrace(e));
         }
 
         return true;

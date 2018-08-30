@@ -74,7 +74,7 @@ public class DataParser {
         JSONArray jsonArray = null;
         JSONObject jsonObject;
 
-        Log.d("json data", jsonData);
+        Log.d("json availSite", jsonData);
 
         try {
             jsonObject = new JSONObject(jsonData);

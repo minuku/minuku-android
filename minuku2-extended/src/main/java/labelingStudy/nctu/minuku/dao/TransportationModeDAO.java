@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.DBManager;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
@@ -66,9 +66,10 @@ public class TransportationModeDAO implements DAO<TransportationModeDataRecord>{
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
             values.put(DBHelper.TIME, entity.getCreationTime());
-//            values.put(DBHelper.TaskDayCount, entity.getTaskDayCount());
-//            values.put(DBHelper.HOUR, entity.getHour());
             values.put(DBHelper.confirmTransportation_col, entity.getConfirmedActivityString());
+            values.put(DBHelper.suspectedTransportation_Time_col, entity.getSuspectedTime());
+            values.put(DBHelper.suspectedStartTransportation_col, entity.getSuspectedStartActivityString());
+            values.put(DBHelper.suspectedStopTransportation_col, entity.getSuspectedStopActivityString());
 
             db.insert(DBHelper.transportationMode_table, null, values);
         }

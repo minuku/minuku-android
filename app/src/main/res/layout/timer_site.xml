@@ -6,7 +6,7 @@
     android:weightSum="1">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/blackTextView"
         android:layout_width="match_parent"
         android:layout_height="151dp"
         android:background="@color/black"

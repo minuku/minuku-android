@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "initialize tab (Swipe)");
 
-                //everytime the user swipe the screen, we set a new Timeline view with the latest data
+                //everytime the user swipe the screen, we set a new Timeline view with the latest availSite
                 mtimeline.initTime(recordview);
 
                 invalidateOptionsMenu();

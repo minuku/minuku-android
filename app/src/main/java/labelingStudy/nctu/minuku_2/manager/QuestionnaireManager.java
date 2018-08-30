@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku_2.R;
-//import edu.ohio.minuku_2.R;
 
 /**
  * Created by Lawrence on 2017/6/5.

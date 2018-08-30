@@ -79,9 +79,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     private LocationStream mStream;
     private String TAG = "LocationStreamGenerator";
-
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.ohio.minuku_2/";
-
+    
     private CSVWriter csv_writer = null;
 
     private GoogleApiClient mGoogleApiClient;
@@ -336,9 +334,6 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     /**
      * Location Listener events start here.
      */
-
-
-
     public static void setStartIndoorOutdoor(boolean value){
         startIndoorOutdoor = value;
     }
@@ -350,12 +345,12 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         String sFileName = "LocationOnChange.csv";
 
         try{
-            File root = new File(Environment.getExternalStorageDirectory() + PACKAGE_DIRECTORY_PATH);
+            File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
             if (!root.exists()) {
                 root.mkdirs();
             }
 
-            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+PACKAGE_DIRECTORY_PATH+sFileName,true));
+            csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH+sFileName,true));
 
             List<String[]> data = new ArrayList<String[]>();
 

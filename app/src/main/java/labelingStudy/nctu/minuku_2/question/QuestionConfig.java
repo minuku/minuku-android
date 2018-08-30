@@ -69,7 +69,7 @@ public class QuestionConfig {
             "To help us understand better, check all that apply.";
     public static final String[] MISSED_REPORT_QU_3_VALUES = {
             "I have done diabetes related activities but did not have time to log them",
-            "I missed my diabetes related activities so I do not have my data"};
+            "I missed my diabetes related activities so I do not have my availSite"};
     public static final Question MISSED_REPORT_QU_3 = new MultipleChoice(MISSED_REPORT_QU_3_STRING,
             2,
             MISSED_REPORT_QU_3_VALUES);

@@ -18,13 +18,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.DBManager;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.Utils;
-
-//import edu.ohio.minuku_2.R;
 
 
 /**
@@ -38,9 +36,8 @@ public class Timer_site extends AppCompatActivity {
     ImageButton site_1,site_2,Customize;
     private Button move;
     private ListView listview;
-    public static ArrayList<String> data;
+    public static ArrayList<String> availSite;
 
-    public static int dataSize;
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
 
@@ -53,10 +50,7 @@ public class Timer_site extends AppCompatActivity {
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
         editor = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE).edit();
 
-        data = new ArrayList<String>();
-        dataSize = sharedPrefs.getInt("dataSize", 1);
-
-        Log.d(TAG, " dataSize : " + dataSize);
+        availSite = new ArrayList<String>();
 
     }
 
@@ -96,26 +90,27 @@ public class Timer_site extends AppCompatActivity {
 
         listview = (ListView) findViewById(R.id.convenientList);
 
-        data = new ArrayList<String>();
+        availSite = new ArrayList<String>();
 
-        data.add("新增地點");
+        availSite.add("新增地點");
 
         //output their custom sites from sqlite
         SQLiteDatabase db = DBManager.getInstance().openDatabase();
         Cursor cursor = db.rawQuery("SELECT "+ DBHelper.convenientsite_col +" FROM "+ DBHelper.convenientsite_table, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
+
             Log.e(TAG,"sitename : "+cursor.getString(0));
-            data.add(cursor.getString(0));
+            availSite.add(cursor.getString(0));
             cursor.moveToNext();
         }
 
-        Log.d(TAG, "data : "+ data);
+        Log.d(TAG, "availSite : "+ availSite);
 
         Timer_site_ListAdapter timer_site_ListAdapter = new Timer_site_ListAdapter(
                 this,
                 R.id.recording_list,
-                data
+                availSite
         );
 
         listview.setAdapter(timer_site_ListAdapter);

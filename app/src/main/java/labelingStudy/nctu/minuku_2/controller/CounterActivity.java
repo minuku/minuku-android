@@ -26,7 +26,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
@@ -38,10 +41,6 @@ import labelingStudy.nctu.minuku.model.Session;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.Utils;
-
-import static labelingStudy.nctu.minuku_2.controller.Timer_move.TrafficFlag;
-
-//import edu.ohio.minuku_2.R;
 
 /**
  * Created by Lawrence on 2017/4/20.
@@ -63,6 +62,8 @@ public class CounterActivity extends AppCompatActivity {
     public static ImageButton play_stop;
     public static ImageView traffic;
 
+    private String trafficType;
+
     Timer timer;
 
     public static Button changedMovement;
@@ -71,6 +72,9 @@ public class CounterActivity extends AppCompatActivity {
 
     private final int SHOW_PLAY_BUTTON = 1;
     private final int SHOW_STOP_BUTTON = 2;
+
+    private ScheduledExecutorService mScheduledExecutorService;
+    ScheduledFuture<?> mScheduledFuture;
 
     private final String NotASite = "NotASite";
 
@@ -94,7 +98,7 @@ public class CounterActivity extends AppCompatActivity {
         setContentView(R.layout.counteractivtiy);
 
         mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
+        mScheduledExecutorService = Executors.newScheduledThreadPool(Constants.TIMER_UPDATE_THREAD_SIZE);
     }
 
     @Override
@@ -109,6 +113,18 @@ public class CounterActivity extends AppCompatActivity {
     public void initCounterActivity(){
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
+
+        try {
+
+            Bundle bundle = this.getIntent().getExtras();
+            trafficType = bundle.getString("trafficType");
+
+            sharedPrefs.edit().putString("trafficType", trafficType).apply();
+        }catch (NullPointerException e){
+
+//            Log.e(TAG, "Exception detail", e);
+            trafficType = sharedPrefs.getString("trafficType", trafficType);
+        }
 
         try {
 
@@ -146,12 +162,15 @@ public class CounterActivity extends AppCompatActivity {
                 //prevent the situation that the app stop recording accidentally so that the ongoing id is gone
                 try {
 
+                    //TODO we need to store the ongoing session id before shutdown
                     int ongoingId = SessionManager.getOngoingSessionIdList().get(0);
                     Session ongoingSession = SessionManager.getSession(ongoingId);
 
                     long currentTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
                     long startTimeOngoingSession = ongoingSession.getStartTime();
-                    long ongoingSec = (currentTime - startTimeOngoingSession) / Constants.MILLISECONDS_PER_SECOND;
+
+                    //notice the work
+                    long ongoingSec = Math.abs(currentTime - startTimeOngoingSession) / Constants.MILLISECONDS_PER_SECOND;
 
                     tsec = (int) ongoingSec;
 
@@ -160,6 +179,8 @@ public class CounterActivity extends AppCompatActivity {
 
                     play_stop.setImageResource(R.drawable.icon_stop);
                 }catch (IndexOutOfBoundsException e){
+
+                    Log.e(TAG, "IndexOutOfBoundsException", e);
 
                     play_stop.setImageResource(R.drawable.icon_play);
                 }
@@ -184,7 +205,7 @@ public class CounterActivity extends AppCompatActivity {
             Session ongoingSession = SessionManager.getSession(sessionId);
 
             AnnotationSet ongoingAnnotationSet = ongoingSession.getAnnotationsSet();
-            ArrayList<Annotation> ongoingAnnotations = ongoingAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
+            ArrayList<Annotation> ongoingAnnotations = ongoingAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
             Annotation ongoingAnnotation = ongoingAnnotations.get(ongoingAnnotations.size()-1);
             String ongoingActivity = ongoingAnnotation.getContent();
 
@@ -238,9 +259,9 @@ public class CounterActivity extends AppCompatActivity {
 
     private void setColorForActivity(){
 
-        Log.d(TAG, "setColorForActivity TrafficFlag : "+TrafficFlag);
+        Log.d(TAG, "setColorForActivity trafficType : "+ trafficType);
 
-        switch (TrafficFlag){
+        switch (trafficType){
 
             case "walk":
                 traffic.setImageResource(R.drawable.walk);
@@ -321,9 +342,28 @@ public class CounterActivity extends AppCompatActivity {
         }
     };
 
+    Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            tsec++;
+            sharedPrefs.edit().putInt("tsec", tsec).apply();
+
+            Message message = new Message();
+            message.what =1;
+            handler.sendMessage(message);
+        }
+    };
+
     private void startTimer(){
 
-        timer = new Timer();
+        mScheduledFuture = mScheduledExecutorService.scheduleAtFixedRate(
+                timerRunnable,
+                0,
+                Constants.MILLISECONDS_PER_SECOND,
+                TimeUnit.MILLISECONDS);
+
+        /*timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run() {
@@ -335,12 +375,19 @@ public class CounterActivity extends AppCompatActivity {
                 message.what =1;
                 handler.sendMessage(message);
             }
-        }, 0,1000);
+        }, 0,1000);*/
     }
 
     private void endTimer(){
 
-        timer.cancel();
+        if(mScheduledFuture != null){
+            mScheduledFuture.cancel(false);
+        }
+
+        /*if(timer!=null) {
+
+            timer.cancel();
+        }*/
     }
 
     private void playSession(){
@@ -354,7 +401,7 @@ public class CounterActivity extends AppCompatActivity {
 
         ArrayList<Integer> ongoingSessionIdList = SessionManager.getOngoingSessionIdList();
 
-        //if there hasn't a ongoing sessoin, start a new one.
+        //if there hasn't a ongoing session, start a new one.
         if(ongoingSessionIdList.size() == 0){
 
             //start new Trip
@@ -366,10 +413,14 @@ public class CounterActivity extends AppCompatActivity {
             int sessionId = sessionCount + 1;
             Session session = new Session(sessionId);
             session.setStartTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+            session.setCreatedTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
+
             Annotation annotation = new Annotation();
             annotation.setContent(transportation);
-            annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
+            annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
             session.addAnnotation(annotation);
+            session.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
+            session.setType(Constants.SESSION_TYPE_DETECTED_BY_USER);
 
             //if there is a sitename, add into the session
             if(transportation.equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)){
@@ -381,6 +432,8 @@ public class CounterActivity extends AppCompatActivity {
             }
 
             SessionManager.startNewSession(session);
+
+            sharedPrefs.edit().putInt("ongoingSessionid", session.getId()).apply();
         }
     }
 
@@ -397,17 +450,18 @@ public class CounterActivity extends AppCompatActivity {
         counter.setText("00:00:00");
 
         //stop the session
-        Session lastSession = SessionManager.getLastSession();
-        long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
-        lastSession.setEndTime(endTime);
+        Session ongoingSession = SessionManager.getSession(SessionManager.getOngoingSessionIdList().get(0));
 
-        Log.d(TAG, "[test show trip] lastSession id : "+lastSession.getId());
+        long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+        ongoingSession.setEndTime(endTime);
+
+        Log.d(TAG, "[test show trip] lastSession id : "+ongoingSession.getId());
 
         //end the current session
         //try catch the situation that no session occur
         try {
 
-            SessionManager.endCurSession(lastSession);
+            SessionManager.endCurSession(ongoingSession);
         } catch (IndexOutOfBoundsException e) {
 
         }
@@ -475,6 +529,7 @@ public class CounterActivity extends AppCompatActivity {
         userLeavingPage();
     }
 
+    //TODO change to runnable thread
     private Handler handler = new Handler(){
 
         public  void  handleMessage(Message msg) {
@@ -483,8 +538,8 @@ public class CounterActivity extends AppCompatActivity {
             switch(msg.what){
                 case 1:
                     csec=tsec%60;
-                    cmin=tsec/60;
-                    chour=tsec/3600;
+                    cmin=(tsec/60)%60;
+                    chour=(tsec/3600)%24;
                     String s="";
                     if(chour < 10){
                         s="0"+chour;
@@ -502,7 +557,7 @@ public class CounterActivity extends AppCompatActivity {
                         s=s+":"+csec;
                     }
 
-                    //s字串為00:00:00格式
+                    //00:00:00
                     counter.setText(s);
                     break;
             }
@@ -511,11 +566,11 @@ public class CounterActivity extends AppCompatActivity {
 
     private String getTrafficActivityString(){
 
-        if(TrafficFlag.equals("walk")){
+        if(trafficType.equals("walk")){
             return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_FOOT;
-        }else if(TrafficFlag.equals("bike")){
+        }else if(trafficType.equals("bike")){
             return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_BICYCLE;
-        }else if(TrafficFlag.equals("car")){
+        }else if(trafficType.equals("car")){
             return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_IN_VEHICLE;
         }
 

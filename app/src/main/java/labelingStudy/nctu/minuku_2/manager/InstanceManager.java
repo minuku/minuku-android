@@ -30,7 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Calendar;
 import java.util.Date;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
@@ -41,6 +41,7 @@ import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
+import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
@@ -54,6 +55,7 @@ import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.SensorDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
+import labelingStudy.nctu.minuku.model.DataRecord.UserInteractionDataRecord;
 import labelingStudy.nctu.minuku.model.UserSubmissionStats;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
@@ -65,6 +67,7 @@ import labelingStudy.nctu.minuku.streamgenerator.RingerStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.SensorStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TelephonyStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
+import labelingStudy.nctu.minuku.streamgenerator.UserInteractionStreamGenerator;
 import labelingStudy.nctu.minuku_2.question.QuestionConfig;
 
 /**
@@ -141,11 +144,12 @@ public class InstanceManager {
         SensorDataRecordDAO sensorDataRecordDAO = new SensorDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(SensorDataRecord.class, sensorDataRecordDAO);
 
+        UserInteractionDataRecordDAO userInteractionDataRecordDAO = new UserInteractionDataRecordDAO(getApplicationContext());
+        daoManager.registerDaoFor(UserInteractionDataRecord.class, userInteractionDataRecordDAO);
+
 
         // Create corresponding stream generators. Only to be created once in Main Activity
         // creating a new stream registers it with the stream manager
-
-        //TODO build new StreamGenerator here.
         LocationStreamGenerator locationStreamGenerator =
                 new LocationStreamGenerator(getApplicationContext());
 
@@ -175,6 +179,9 @@ public class InstanceManager {
 
         SensorStreamGenerator sensorStreamGenerator =
                 new SensorStreamGenerator(getApplicationContext());
+
+        UserInteractionStreamGenerator userInteractionStreamGenerator =
+                new UserInteractionStreamGenerator(getApplicationContext());
 
 
         // All situations must be registered AFTER the stream generators are registers.

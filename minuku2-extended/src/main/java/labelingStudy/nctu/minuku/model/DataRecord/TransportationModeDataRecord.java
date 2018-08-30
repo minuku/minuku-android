@@ -14,15 +14,51 @@ public class TransportationModeDataRecord implements DataRecord{
     public long creationTime;
     private int taskDayCount;
     private long hour;
-    public String confirmedActivityString; //
+
+    private long suspectedTime;
+    public String confirmedActivityString;
+    public String suspectedStartActivityString;
+    public String suspectedStopActivityString;
+
+    public String getSuspectedStopActivityString() {
+        return suspectedStopActivityString;
+    }
+
+    public void setSuspectedStopActivityString(String suspectedStopActivityString) {
+        this.suspectedStopActivityString = suspectedStopActivityString;
+    }
+
+    public long getSuspectedTime() {
+        return suspectedTime;
+    }
+
+    public void setSuspectedTime(long suspectedTime) {
+        this.suspectedTime = suspectedTime;
+    }
+
+    public String getSuspectedStartActivityString() {
+        return suspectedStartActivityString;
+    }
+
+    public void setSuspectedStartActivityString(String suspectedStartActivityString) {
+        this.suspectedStartActivityString = suspectedStartActivityString;
+    }
 
     public TransportationModeDataRecord(){}
 
     public TransportationModeDataRecord(String confirmedActivityString){
+
         this.creationTime = new Date().getTime();
-//        this.taskDayCount = Constants.TaskDayCount;
-//        this.hour = getmillisecondToHour(creationTime);
         this.confirmedActivityString = confirmedActivityString;
+    }
+
+    public TransportationModeDataRecord(String confirmedActivityString, long suspectedTime, String suspectedStartActivityString, String suspectedStopActivityString){
+
+        this.creationTime = new Date().getTime();
+        this.confirmedActivityString = confirmedActivityString;
+        this.suspectedTime = suspectedTime;
+        this.suspectedStartActivityString = suspectedStartActivityString;
+        this.suspectedStopActivityString = suspectedStopActivityString;
     }
 
     private long getmillisecondToHour(long timeStamp){

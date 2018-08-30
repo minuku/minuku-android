@@ -53,7 +53,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         } catch (StreamNotFoundException streamNotFoundException) {
             Log.e(TAG, "One of the streams on which" +
                     "BatteryDataRecord/BatteryStream depends in not found.");
-        } catch (StreamAlreadyExistsException streamAlreadyExsistsException) {
+        } catch (StreamAlreadyExistsException streamAlreadyExistsException) {
             Log.e(TAG, "Another stream which provides" +
                     " BatteryDataRecord/BatteryStream is already registered.");
         }
@@ -76,7 +76,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         EventBus.getDefault().post(batteryDataRecord);
         try {
             mDAO.add(batteryDataRecord);
-            mDAO.query_counting();
+//            mDAO.query_counting();
         } catch (DAOException e) {
             e.printStackTrace();
             return false;
@@ -129,7 +129,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                         status == BatteryManager.BATTERY_STATUS_FULL;
 
-                mBatteryPercentage = mBatteryLevel /(float)scale;
+                mBatteryPercentage = mBatteryLevel / (float)scale;
 //                int icon_small = intent.getIntExtra("icon-small", 0);
 //                int plugged = intent.getIntExtra("plugged", 0);
 //                int voltage = intent.getIntExtra("voltage", 0);

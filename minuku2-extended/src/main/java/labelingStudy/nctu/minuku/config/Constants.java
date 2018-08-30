@@ -37,6 +37,15 @@ public class Constants {
 
     public static int siteRange = 50;
 
+    public static final String ACTION_CONNECTIVITY_CHANGE = "CONNECTIVITY_CHANGE";
+
+    public static final String ONGOING_CHANNEL_NAME = "LS";
+    public static final String ONGOING_CHANNEL_ID = "LabelingStudy_id";
+    public static final String SURVEY_CHANNEL_NAME = "LS";
+    public static final String SURVEY_CHANNEL_ID = "Survey_id";
+
+    public static final String CHECK_SERVICE_ACTION = "checkService";
+
     public static final long MILLISECONDS_PER_SECOND = 1000;
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int MINUTES_PER_HOUR = 60;
@@ -70,8 +79,15 @@ public class Constants {
     public static final int DATA_FORMAT_TYPE_DAY=1;
     public static final int DATA_FORMAT_TYPE_HOUR=2;
 
+    public static final String SESSION_TYPE_DETECTED_BY_SYSTEM = "system";
+    public static final String SESSION_TYPE_DETECTED_BY_USER = "user";
+
+    public static final int SESSION_SHOULDNT_BEEN_SENT_FLAG = -1;
+    public static final int SESSION_SHOULD_BE_SENT_FLAG = 0;
+    public static final int SESSION_IS_ALREADY_SENT_FLAG = 1;
 
     public static final String DELIMITER = ";;;";
+    public static final String SESSION_DELIMITER = ",";
     public static final String ACTIVITY_DELIMITER = ";;";
     public static final String CONTEXT_SOURCE_DELIMITER = ":";
     public static final String DELIMITER_IN_COLUMN = "::";
@@ -91,9 +107,9 @@ public class Constants {
     //file path
     public static final String PACKAGE_DIRECTORY_PATH = "/Android/data/labelingStudy.nctu.minuku_2/";
 
-    public static final String ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY = "detected-transportation";
-    public static final String ANNOTATION_TAG_DETECTED_SITENAME = "Sitename";
-    public static final String ANNOTATION_TAG_SITELOCATION = "Sitelocation";
+    public static final String ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY = "detected-transportation";
+    public static final String ANNOTATION_TAG_DETECTED_SITENAME = "detected-sitename";
+    public static final String ANNOTATION_TAG_DETECTED_SITELOCATION = "detected-sitelocation";
     public static final String ANNOTATION_TAG_Label = "Label";
 
     public static final String ANNOTATION_Label_TRANSPORTATOIN = "Transportation";
@@ -124,7 +140,8 @@ public class Constants {
     public static final String FIREBASE_URL_DIARYSCREENSHOT = FIREBASE_URL + "/diary_screenshot";
 
 
-
+    public static final String DESC = "DESC";
+    public static final String ASC = "ASC";
 
     // Provider stuff
     public static final String GOOGLE_AUTH_PROVIDER = "google";
@@ -223,6 +240,7 @@ public class Constants {
     public static String GROUP_NUM = "A";
     public static int TaskDayCount = -1;
 
+    public static final int TIMER_UPDATE_THREAD_SIZE = 1;
     public static final int NOTIFICATION_UPDATE_THREAD_SIZE = 1;
     public static final int STREAM_UPDATE_FREQUENCY = 10;
 

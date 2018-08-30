@@ -6,4 +6,10 @@
         android:title="從舊到新"
         android:icon="@android:drawable/ic_menu_save"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selectdate"
+        android:title="日期選擇"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        app:showAsAction="always" />
 </menu>

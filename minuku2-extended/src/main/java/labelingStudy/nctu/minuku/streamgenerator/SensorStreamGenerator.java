@@ -135,7 +135,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         mMagneticField_x = mMagneticField_y = mMagneticField_z = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mLinearAcceleration_x = mLinearAcceleration_y = mLinearAcceleration_z = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mRotationVector_x_sin = mRotationVector_y_sin =  mRotationVector_z_sin = mRotationVector_cos = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
-        mHeartRate = mStepCount = mStepDetect =CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
+        mHeartRate = mStepCount = mStepDetect = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mLight = mPressure = mRelativeHumidity = mProximity = mAmbientTemperature = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
 
         //initiate registered sensor list

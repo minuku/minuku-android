@@ -39,7 +39,7 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku_2.NearbyPlaces.GetUrl;
@@ -219,7 +219,7 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
                     lng = bundle.getDouble("lng", MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude());
                 } catch (NullPointerException e){
 
-                    //if there are no data corresponding to the session; get the current one.
+                    //if there are no availSite corresponding to the session; get the current one.
                     lat = MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude();
                     lng = MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude();
                 } catch(Exception e) {
@@ -435,10 +435,10 @@ public class PlaceSelection extends FragmentActivity implements OnMapReadyCallba
         if(!fromTimeLineFlag) {
 
             //Timer_site is initialized or alive or not.
-            Timer_site.data.add(sitename);
+            Timer_site.availSite.add(sitename);
 
-            Log.d(TAG, " data : "+ Timer_site.data);
-            Log.d(TAG, " dataSize : "+ Timer_site.data.size());
+            Log.d(TAG, " availSite : "+ Timer_site.availSite);
+            Log.d(TAG, " dataSize : "+ Timer_site.availSite.size());
         }else{
 
             Timeline.selectedSiteName = sitename;

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.opencsv.CSVWriter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +11,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.model.Annotation;
@@ -28,11 +26,6 @@ import labelingStudy.nctu.minuku.model.Session;
 public class SessionManager {
 
     private final static String TAG = "SessionManager";
-
-    public static int sessionid_unStatic;
-    private static int trip_size;
-    private long lastSessiontime;
-    private long lastSessionIDtime;
 
     private String sessionid;
     private String transportation;
@@ -53,7 +46,7 @@ public class SessionManager {
 
     public static final String SESSION_LONGENOUGH_THRESHOLD_DISTANCE = "distance";
 
-    public static final long SESSION_MIN_INTERVAL_THRESHOLD_TRANSPORTATION = 3 * Constants.MILLISECONDS_PER_MINUTE;
+    public static final long SESSION_MIN_INTERVAL_THRESHOLD_TRANSPORTATION = 2 * Constants.MILLISECONDS_PER_MINUTE;
     public static final long SESSION_MIN_DURATION_THRESHOLD_TRANSPORTATION = 3 * Constants.MILLISECONDS_PER_MINUTE;
     public static final long SESSION_MIN_DISTANCE_THRESHOLD_TRANSPORTATION = 100;  // meters;
 
@@ -63,13 +56,14 @@ public class SessionManager {
     private ArrayList<LocationDataRecord> LocationToTrip;
 
     private static Context mContext;
-    private static final String PACKAGE_DIRECTORY_PATH="/Android/data/edu.ohio.minuku_2/";
-    private CSVWriter csv_writer = null;
-    private static CSVWriter csv_writer2 = null;
 
     private static SessionManager instance;
 
     private static ArrayList<Integer> mOngoingSessionIdList;
+    private static ArrayList<Integer> mEmptyOngoingSessionIdList;
+    private static boolean emptySessionOngoing;
+
+    public static boolean sessionIsWaiting;
 
     private SharedPreferences sharedPrefs;
     private static SharedPreferences.Editor editor;
@@ -87,19 +81,17 @@ public class SessionManager {
 
         mOngoingSessionIdList = new ArrayList<Integer>();
 
+        mEmptyOngoingSessionIdList = new ArrayList<Integer>();
 
-        sessionid_unStatic = sharedPrefs.getInt("sessionid_unStatic",0);
-        trip_size = sharedPrefs.getInt("trip_size",0);
+        emptySessionOngoing = false;
+
+        sessionIsWaiting = false;
 
         transportation = "NA";
 
         lasttime_transportation = sharedPrefs.getString("","NA");
 
         lasttime_trip_transportation = sharedPrefs.getString("lasttime_trip_transportation","NA");
-
-        lastSessiontime = sharedPrefs.getLong("lastSessiontime", -1);
-//        testing_count = 0;
-        lastSessionIDtime = sharedPrefs.getLong("lastSessionIDtime", -1);
     }
 
     public static SessionManager getInstance() {
@@ -145,7 +137,7 @@ public class SessionManager {
         return mOngoingSessionIdList;
     }
 
-    public void setmOngoingSessionIdList(ArrayList<Integer> ongoingSessionIdList) {
+    public void setOngoingSessionIdList(ArrayList<Integer> ongoingSessionIdList) {
         mOngoingSessionIdList = ongoingSessionIdList;
     }
 
@@ -160,9 +152,47 @@ public class SessionManager {
     }
 
     public void removeOngoingSessionid(int id) {
-        Log.d(TAG, "test replay: inside removeongogint seesion renove " + id );
+        Log.d(TAG, "test replay: inside removeongogint session renove " + id );
         this.mOngoingSessionIdList.remove(id);
-        Log.d(TAG, "test replay: inside removeongogint seesion the ongoiong list is  " + mOngoingSessionIdList.toString() );
+        Log.d(TAG, "test replay: inside removeongogint session the ongoiong list is  " + mOngoingSessionIdList.toString() );
+    }
+
+
+    public static boolean isSessionEmptyOngoing(int sessionId) {
+
+        Log.d(TAG, " [test combine] tyring to see if the session is ongoing:" + sessionId);
+
+        for (int i = 0; i< mEmptyOngoingSessionIdList.size(); i++){
+
+            if (mEmptyOngoingSessionIdList.get(i)==sessionId){
+                return true;
+            }
+        }
+        Log.d(TAG, " [test combine] the session is not ongoing:" + sessionId);
+
+        return false;
+    }
+
+    public static boolean isEmptySessionOngoing() {
+        return emptySessionOngoing;
+    }
+
+    public static void setEmptySessionOngoing(boolean emptySessionOngoing) {
+        SessionManager.emptySessionOngoing = emptySessionOngoing;
+    }
+
+    public static void setEmptyOngoingSessionIdList(ArrayList<Integer> mEmptyOngoingSessionIdList) {
+        SessionManager.mEmptyOngoingSessionIdList = mEmptyOngoingSessionIdList;
+    }
+
+    public static ArrayList<Integer> getEmptyOngoingSessionIdList() {
+        return mEmptyOngoingSessionIdList;
+    }
+
+    public static void addEmptyOngoingSessionid(int id) {
+        Log.d(TAG, "test combine: adding ongonig session " + id );
+        mEmptyOngoingSessionIdList.add(id);
+
     }
 
     public static String getTimeString(long time){
@@ -178,7 +208,7 @@ public class SessionManager {
      * @param sessionStr
      * @return
      */
-    private static Session convertStringToSession(String sessionStr) {
+    public static Session convertStringToSession(String sessionStr) {
 
         Session session = null;
 
@@ -194,8 +224,8 @@ public class SessionManager {
         session = new Session(id, startTime);
 
         /**2. get end time (or time of the last record) of the sesison**/
-
         long endTime = 0;
+
         //the session could be still ongoing..so we need to check where's endTime
         Log.d(TAG, "[test show trip] separated[DBHelper.COL_INDEX_SESSION_END_TIME] " + separated[DBHelper.COL_INDEX_SESSION_END_TIME]);
 
@@ -211,8 +241,8 @@ public class SessionManager {
 
         Log.d(TAG, "[test show trip] testgetdata the end time is now:  " + ScheduleAndSampleManager.getTimeString(endTime));
 
-//        boolean isUserPress;
-//        boolean isModified;
+        long createdTime = Long.parseLong(separated[DBHelper.COL_INDEX_SESSION_CREATED_TIME]);
+        session.setCreatedTime(createdTime);
 
         int isUserPress;
         int isModified;
@@ -247,6 +277,16 @@ public class SessionManager {
 
                 session.setModified(false);
             }
+        }
+
+        if (!separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG].equals("")) {
+
+            session.setIsSent(Integer.valueOf(separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG]));
+        }
+
+        if (!separated[DBHelper.COL_INDEX_SESSION_TYPE].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_TYPE].equals("")) {
+
+            session.setType(separated[DBHelper.COL_INDEX_SESSION_TYPE]);
         }
 
         //set end time
@@ -296,14 +336,43 @@ public class SessionManager {
     public static Session getLastSession() {
 
         Session session = null;
-        String sessionStr = DBHelper.queryLastSession().get(0);
-        Log.d(TAG, "test show trip lastsession " + sessionStr );
-        session = convertStringToSession(sessionStr);
+
+        ArrayList<String> sessions = DBHelper.queryLastSession();
+        if(sessions.size()!=0) {
+            String sessionStr = sessions.get(0);
+            Log.d(TAG, "test show trip lastsession " + sessionStr);
+            session = convertStringToSession(sessionStr);
 //        Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
-        Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+            Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+        }else{
+
+            session = new Session(1);
+        }
 
         return session;
     }
+
+    public static Session getLast2Session() {
+
+        Session session = null;
+
+        ArrayList<String> sessions = DBHelper.queryLast2Sessions();
+        if(sessions.size() >= 2) { //sessions.size() != 0
+
+            String sessionStr = sessions.get(1);
+            Log.d(TAG, "test show trip lastsession " + sessionStr);
+            session = convertStringToSession(sessionStr);
+//        Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+            Log.d(TAG, " test show trip  testgetdata id " + session.getId() + " startTime " + ScheduleAndSampleManager.getTimeString(session.getStartTime()) + " end time " + ScheduleAndSampleManager.getTimeString(session.getEndTime()) + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+        }else{
+
+            session = new Session(1);
+        }
+
+        return session;
+    }
+
+
 
     public static long getLastRecordTimeinSession(int sessionId) {
 
@@ -361,6 +430,11 @@ public class SessionManager {
         DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot);
     }
 
+    public static void updateCurSession(int sessionId, long endTime, boolean userPressOrNot){
+
+        DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot);
+    }
+
     public static void updateCurSession(int sessionId, long endTime, int userPressOrNot, int modifiedOrNot){
 
         DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot, modifiedOrNot);
@@ -381,12 +455,12 @@ public class SessionManager {
 
     }
 
-    public static boolean examineSessionCombinationByActivityAndTime(Session lastSession, String activity, long time){
+    public static boolean examineSessionCombinationByActivityAndTime(Session secondLastSession, String activity, long time){
 
         boolean combine = false;
 
         //get annotaitons that has the transportation mode tag
-        ArrayList<Annotation> annotations = lastSession.getAnnotationsSet().getAnnotationByContent(activity);
+        ArrayList<Annotation> annotations = secondLastSession.getAnnotationsSet().getAnnotationByContent(activity);
 
 
         //check if the last session has endtime. It is possible that it ends unexpectedly
@@ -404,17 +478,22 @@ public class SessionManager {
             Log.d(TAG, "[test combine] we found the last session with the same activity");
             //check its interval to see if it's within 5 minutes
 
-            Log.d(TAG, "[test combine] the previous session ends at " +  lastSession.getEndTime() + " and the current activity starts at " + time  +
-                    " the difference is " + (time - lastSession.getEndTime()) / Constants.MILLISECONDS_PER_MINUTE + " minutes");
+            Log.d(TAG, "[test combine] the previous session ends at " +  secondLastSession.getEndTime() + " and the current activity starts at " + time  +
+                    " the difference is " + (time - secondLastSession.getEndTime()) / Constants.MILLISECONDS_PER_MINUTE + " minutes");
 
             //if the current session is too close from the previous one in terms of time, we should combine
-            if (time - lastSession.getEndTime() <= SessionManager.SESSION_MIN_INTERVAL_THRESHOLD_TRANSPORTATION) {
+            if (time - secondLastSession.getEndTime() <= SessionManager.SESSION_MIN_INTERVAL_THRESHOLD_TRANSPORTATION) {
 
                 Log.d(TAG, "[test combine] the current activity is too close from the previous trip, continue the last session! the difference is "
-                        + (time - lastSession.getEndTime()) / Constants.MILLISECONDS_PER_MINUTE + " minutes");
+                        + (time - secondLastSession.getEndTime()) / Constants.MILLISECONDS_PER_MINUTE + " minutes");
 
                 combine = true;
 
+                //TODO delete the last session?
+
+                Session lastSession = SessionManager.getLastSession();
+
+                DBHelper.deleteSession(lastSession.getId());
             }
             //the session is far from the previous one, it should be a new session. we should not combine
             else {
@@ -438,7 +517,7 @@ public class SessionManager {
      *
      * @param session
      */
-    public static void continueLastSession(Session session) {
+    public static void continue2ndLastSession(Session session) {
 
         //remove the ongoing session
         getOngoingSessionIdList().add(session.getId());
@@ -499,6 +578,27 @@ public class SessionManager {
         ArrayList<Session> sessions = new ArrayList<Session>();
 
         ArrayList<String> res =  DBHelper.querySessions(order);
+
+        Log.d(TAG, "[test show trip] getRecentSessions get res: " +  res);
+
+        //we start from 1 instead of 0 because the 1st session is the background recording. We will skip it.
+        for (int i=0; i<res.size() ; i++) {
+
+            Session session = convertStringToSession(res.get(i));
+            Log.d(TAG, "[test show trip] session id : "+ session.getId());
+            sessions.add(session);
+        }
+
+        return sessions;
+    }
+
+    public static ArrayList<Session> getSessionsBetweenTimesAndOrder(long startTime, long endTime, String order) {
+
+        Log.d(TAG, "[test show trip] getSessionsByOrder");
+
+        ArrayList<Session> sessions = new ArrayList<Session>();
+
+        ArrayList<String> res =  DBHelper.querySessionsBetweenTimesAndOrder(startTime, endTime, order);
 
         Log.d(TAG, "[test show trip] getRecentSessions get res: " +  res);
 

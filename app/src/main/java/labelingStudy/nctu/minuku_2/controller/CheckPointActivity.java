@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.SessionManager;
@@ -114,48 +115,82 @@ public class CheckPointActivity extends AppCompatActivity {
     }
 
     private Button.OnClickListener checkpointing = new Button.OnClickListener() {
+
         public void onClick(View v) {
 
             Log.d(TAG,"checkpointing clicked");
 
             try {
 
-                int ongoingSessionid = SessionManager.getOngoingSessionIdList().get(0);
+                Session lastSession = SessionManager.getLastSession();
 
-                Session ongoingSession = SessionManager.getSession(ongoingSessionid);
+                if( SessionManager.sessionIsWaiting ){
 
-                Log.d(TAG, "[test triggering] before updating session isUserPress ? " + ongoingSession.isUserPress());
-                Log.d(TAG, "[test triggering] before updating session isModified ? " + ongoingSession.isModified());
+                    lastSession.setUserPressOrNot(true);
 
-                if(ongoingSession.isModified()){
+                    SessionManager.updateCurSession(lastSession.getId(), ScheduleAndSampleManager.getCurrentTimeInMillis(), lastSession.isUserPress());
+
+                    SessionManager.sessionIsWaiting = false;
+
+                    return;
+                }
+
+                boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(Integer.valueOf(lastSession.getId()));
+
+                if(emptySessionOn){
 
                     Toast.makeText(CheckPointActivity.this, "當前活動已經Checkpoint過了", Toast.LENGTH_SHORT).show();
-                }else {
-
-                    ongoingSession.setUserPressOrNot(true);
-                    ongoingSession.setModified(true);
-
-                    Log.d(TAG, "[test triggering] going to update session id : " + ongoingSession.getId());
-
-                    int ongoingIsUserPress = 0, ongoingIsModified = 0;
-
-                    if(ongoingSession.isUserPress())
-                        ongoingIsUserPress = 1;
-
-                    if(ongoingSession.isModified())
-                        ongoingIsModified = 1;
-
-                    //update it into the SQLite
-                    SessionManager.updateCurSession(ongoingSession.getId(), ScheduleAndSampleManager.getCurrentTimeInMillis(), ongoingIsUserPress, ongoingIsModified);
-
-                    Toast.makeText(CheckPointActivity.this, "成功Checkpoint！", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                //end the ongoing session first
+                long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+                lastSession.setEndTime(endTime);
+
+                //end the current session
+                SessionManager.endCurSession(lastSession);
+
+                //if the current session is empty ongoing, remove it from the empty ongoing list
+                //then add a new session for the future activity
+                addEmptySession();
+
             }catch (IndexOutOfBoundsException e){
 
                 Log.d(TAG, "[test triggering] No ongoing session now");
 
-                Toast.makeText(CheckPointActivity.this, "尚未有進行中的活動", Toast.LENGTH_SHORT).show();
+                addEmptySession();
+
+//                Toast.makeText(CheckPointActivity.this, "尚未有進行中的活動", Toast.LENGTH_SHORT).show();
             }
+
+            Toast.makeText(CheckPointActivity.this, "成功Checkpoint！", Toast.LENGTH_SHORT).show();
+
         }
     };
+
+    private void addEmptySession(){
+
+        int sessionCount = SessionManager.getNumOfSession();
+        int sessionId = (int) sessionCount + 1;
+        Session sessionEmptyActivity = new Session(sessionId);
+
+        long initTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+        sessionEmptyActivity.setStartTime(initTime);
+        sessionEmptyActivity.setCreatedTime(initTime);
+
+        //don't add transportation here
+
+        //set the UserPressOrNot true, because it's the checkpointed session
+        sessionEmptyActivity.setUserPressOrNot(true);
+
+        sessionEmptyActivity.setModified(false);
+        sessionEmptyActivity.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
+        sessionEmptyActivity.setType(Constants.SESSION_TYPE_DETECTED_BY_USER);
+
+        SessionManager.addEmptyOngoingSessionid(sessionId);
+        SessionManager.getOngoingSessionIdList().add(sessionId);
+
+        DBHelper.insertSessionTable(sessionEmptyActivity);
+    }
+
 }

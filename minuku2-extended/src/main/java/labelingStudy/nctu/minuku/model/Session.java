@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Session {
 
+    private long mCreatedTime=0;
     private long mStartTime=0;
     private long mEndtime=0;
     private int mId;
@@ -19,7 +20,10 @@ public class Session {
     protected AnnotationSet mAnnotationSet;
     private boolean mUserPressOrNot;
     private boolean mIsModified;
-    //TODO: this should be defined based on what's being activated.
+    private boolean hidedOrNot;
+    private int mIsSent;
+    private String type;
+
     ArrayList<String> mContextSourceNames;
 
     public Session (int sessionId){
@@ -29,11 +33,13 @@ public class Session {
 
     public Session (long timestamp){
         mStartTime = timestamp;
+        mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
     public Session (long timestamp, int sessionId){
         mStartTime = timestamp;
+        mCreatedTime = timestamp;
         mId = sessionId;
         mAnnotationSet = new AnnotationSet();
     }
@@ -41,6 +47,7 @@ public class Session {
     public Session (int id, long timestamp){
         mId = id;
         mStartTime = timestamp;
+        mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
@@ -81,6 +88,30 @@ public class Session {
         mIsModified = isModified;
     }
 
+    public boolean isHide(){
+        return hidedOrNot;
+    }
+
+    public void setHidedOrNot(boolean hidedOrNot){
+        this.hidedOrNot = hidedOrNot;
+    }
+
+    public void setIsSent(int isSent){
+        mIsSent = isSent;
+    }
+
+    public int getIsSent(){
+        return mIsSent;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getType(){
+        return type;
+    }
+
     public boolean isPaused() {
         return mPaused;
     }
@@ -119,8 +150,8 @@ public class Session {
     }
 
 
-    public void setStartTime(long t){
-        mStartTime = t;
+    public void setStartTime(long startTime){
+        mStartTime = startTime;
     }
 
     public long getStartTime(){
@@ -161,4 +192,11 @@ public class Session {
 
     }
 
+    public long getCreatedTime() {
+        return mCreatedTime;
+    }
+
+    public void setCreatedTime(long mCreatedTime) {
+        this.mCreatedTime = mCreatedTime;
+    }
 }

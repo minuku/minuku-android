@@ -1,12 +1,14 @@
 package labelingStudy.nctu.minuku_2.controller;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -17,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +39,18 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.vipulasri.timelineview.TimelineView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,13 +63,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
-import labelingStudy.nctu.minuku.DBHelper.DataHandler;
+import labelingStudy.nctu.minuku.Data.DBHelper;
+import labelingStudy.nctu.minuku.Data.DataHandler;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.manager.SessionManager;
@@ -63,7 +81,6 @@ import labelingStudy.nctu.minuku.model.Session;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minuku_2.NearbyPlaces.GetUrl;
 import labelingStudy.nctu.minuku_2.R;
-import labelingStudy.nctu.minuku_2.Utils;
 
 
 public class Timeline extends AppCompatActivity {
@@ -82,6 +99,8 @@ public class Timeline extends AppCompatActivity {
 
     private View recordview;
 
+    private int mYear, mMonth, mDay;
+
     ArrayList<Session> mSessions;
 
     private SharedPreferences sharedPrefs;
@@ -89,6 +108,8 @@ public class Timeline extends AppCompatActivity {
     private boolean firstTimeOrNot;
 
     private String timelineOrder;
+
+    private String dateToQuery;
 
     public Timeline(){}
     public Timeline(Context mContext){
@@ -105,13 +126,17 @@ public class Timeline extends AppCompatActivity {
         firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
         android.util.Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
 
-        timelineOrder = sharedPrefs.getString("timelineOrder", "DESC");
+        timelineOrder = sharedPrefs.getString("timelineOrder", "ASC");
 
         if(firstTimeOrNot) {
             startpermission();
             firstTimeOrNot = false;
             sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
         }
+
+        SimpleDateFormat sdf_date = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_DAY);
+        dateToQuery = ScheduleAndSampleManager.getTimeString(ScheduleAndSampleManager.getCurrentTimeInMillis(), sdf_date);
+        Log.d(TAG, "init dateToQuery : " + dateToQuery);
 
     }
 
@@ -165,10 +190,10 @@ public class Timeline extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.action_getWantedOrder);
 
-        if(timelineOrder.equals("DESC")){
+        if(timelineOrder.equals(Constants.DESC)){
 
             item.setTitle("從舊到新");
-        }else if (timelineOrder.equals("ASC")) {
+        }else if (timelineOrder.equals(Constants.ASC)) {
 
             item.setTitle("從新到舊");
         }
@@ -177,24 +202,88 @@ public class Timeline extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
+
             case R.id.action_getWantedOrder:
 
                 if(item.getTitle().equals("從舊到新")){
 
-                    sharedPrefs.edit().putString("timelineOrder", "ASC").apply();
+                    sharedPrefs.edit().putString("timelineOrder", Constants.ASC).apply();
 
                     item.setTitle("從新到舊");
                 }else if (item.getTitle().equals("從新到舊")){
 
-                    sharedPrefs.edit().putString("timelineOrder", "DESC").apply();
+                    sharedPrefs.edit().putString("timelineOrder", Constants.DESC).apply();
 
                     item.setTitle("從舊到新");
                 }
 
-                timelineOrder = sharedPrefs.getString("timelineOrder", "DESC");
+                timelineOrder = sharedPrefs.getString("timelineOrder", Constants.DESC);
 
+                //reset the timeline
                 initTime();
+
+                return true;
+
+            case R.id.action_selectdate:
+                final Calendar c = Calendar.getInstance();
+
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                final DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+
+                    public void onDateSet(DatePicker view, int year,
+                                          int month, int day) {
+
+                            Log.d(TAG,"month : " + month + ", year : " + year + ", day : " + day);
+
+                            String monthString = String.valueOf(month+1);
+
+                            if((month + 1) < 10){
+                                monthString = "0"+monthString;
+                            }
+
+                            String dayString = String.valueOf(day);
+
+                            if(day < 10){
+                                dayString = "0"+day;
+                            }
+
+                            dateToQuery = year + "-" + monthString + "-" + dayString;
+
+                            Log.d(TAG, "dateToQuery : " + dateToQuery);
+                    }
+                };
+
+                final DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        this, datePickerListener,
+                        mYear, mMonth, mDay);
+
+                datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                        "OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+
+                                    DatePicker datePicker = datePickerDialog
+                                            .getDatePicker();
+                                    datePickerListener.onDateSet(datePicker,
+                                            datePicker.getYear(),
+                                            datePicker.getMonth(),
+                                            datePicker.getDayOfMonth());
+
+                                    Log.d(TAG, "dateToQuery onClick : " + dateToQuery);
+
+                                    //reset the timeline
+                                    initTime();
+                                }
+                            }
+                        });
+
+                datePickerDialog.show();
 
                 return true;
         }
@@ -217,16 +306,24 @@ public class Timeline extends AppCompatActivity {
 
         try{
 
+            mSessions = new ArrayList<>();
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                 mSessions = new ListSessionAsyncTask(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
             else
                 mSessions = new ListSessionAsyncTask(mContext).execute().get();
 
-            //TODO find better method
+            Log.d(TAG, "mSessions size : " + mSessions.size());
+
             if(mSessions.size() > 0){
 
                 TimelineAdapter timelineAdapter = new TimelineAdapter(mSessions);
                 RecyclerView mList = (RecyclerView) findViewById(R.id.list_view);
+                mList.setVisibility(View.VISIBLE);
+
+                //TODO if there have some new availSite, start from the top (reset)
+                int currentposition = sharedPrefs.getInt("currentposition", 0);
+                mList.scrollToPosition(currentposition);
 
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(Timeline.this);
 
@@ -247,7 +344,6 @@ public class Timeline extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
     }
 
     public void initTime(View v){
@@ -265,6 +361,7 @@ public class Timeline extends AppCompatActivity {
 
             //TODO find better method
             if(mSessions != null){
+
                 TimelineAdapter timelineAdapter = new TimelineAdapter(mSessions);
                 RecyclerView mList = (RecyclerView) v.findViewById(R.id.list_view);
 
@@ -289,25 +386,34 @@ public class Timeline extends AppCompatActivity {
         private List<Session> mSessions;
         public String detectedSiteName = "";
 
+        //split
+        private LatLng splittingLatlng = new LatLng(-999, -999);
+        private long splittingTime = -9999;
+        private boolean IsSplitLocationChosen = false;
+        private HashMap<Integer, Marker> addedSplitMarker = new HashMap<>();
+        private int currentMarkerKey = -1;
+
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            public TextView time, duration, date;
+            public TextView time, duration, date, sessionType;
             public TimelineView lineView;
             public LinearLayout cardbackground;
             public android.support.v7.widget.CardView cardView;
             public ImageView traffic;
-            public View car_line;
+            public View car_line, car_line_down;
             public ViewHolder(View v) {
                 super(v);
 
                 time = (TextView) v.findViewById(R.id.tv_time);
                 duration = (TextView) v.findViewById(R.id.tv_duration);
                 date = (TextView) v.findViewById(R.id.tv_date);
+                sessionType = (TextView) v.findViewById(R.id.sessionType);
                 traffic = (ImageView) v.findViewById(R.id.iv_traffic);
                 lineView = (TimelineView) v.findViewById(R.id.time_marker);
                 cardView = (android.support.v7.widget.CardView) v.findViewById(R.id.cardview);
                 cardbackground = (LinearLayout) v.findViewById(R.id.cardbackground);
                 car_line = (View) v.findViewById(R.id.CAR_line);
+                car_line_down = (View) v.findViewById(R.id.CAR_line_down);
             }
         }
 
@@ -336,13 +442,13 @@ public class Timeline extends AppCompatActivity {
             final long endTime;
 
             //if the session is still ongoing, set the endTime with the current time.
-            if(SessionManager.getOngoingSessionIdList().contains(session.getId())){
+            if(SessionManager.isSessionOngoing(session.getId()) || SessionManager.isSessionEmptyOngoing(session.getId())){
 
                 endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
 
                 SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_NO_ZONE_Slash);
                 Log.d(TAG, "[test show Timeline] ongoing endTime : "+ ScheduleAndSampleManager.getTimeString(endTime, sdf));
-            }else{
+            } else{
 
                 endTime = session.getEndTime();
 
@@ -350,10 +456,10 @@ public class Timeline extends AppCompatActivity {
                 Log.d(TAG, "[test show Timeline] endTime : "+ ScheduleAndSampleManager.getTimeString(endTime, sdf));
             }
 
-            SimpleDateFormat sdf_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
+            SimpleDateFormat sdf_a_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
 
-            final String startTimeString = ScheduleAndSampleManager.getTimeString(startTime, sdf_hhmm);
-            final String endTimeString = ScheduleAndSampleManager.getTimeString(endTime, sdf_hhmm);
+            final String startTimeString = ScheduleAndSampleManager.getTimeString(startTime, sdf_a_hhmm);
+            final String endTimeString = ScheduleAndSampleManager.getTimeString(endTime, sdf_a_hhmm);
 
             holder.time.setText(startTimeString+"-"+endTimeString);
 
@@ -362,15 +468,27 @@ public class Timeline extends AppCompatActivity {
 
             holder.date.setText(date);
 
-            SimpleDateFormat sdf_date = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_DAY);
+            final SimpleDateFormat sdf_date = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_DAY);
 
             final String startTimeDate = ScheduleAndSampleManager.getTimeString(startTime, sdf_date);
             final String endTimeDate = ScheduleAndSampleManager.getTimeString(endTime, sdf_date);
 
 
             //if it was pressed by the user show the line
-            if(session.isUserPress())
-                holder.car_line.setVisibility(View.VISIBLE);
+            if(session.isUserPress()) {
+
+                if(timelineOrder.equals(Constants.ASC)) {
+
+                    holder.car_line.setVisibility(View.VISIBLE);
+
+                    holder.car_line_down.setVisibility(View.INVISIBLE);
+                }else{
+
+                    holder.car_line_down.setVisibility(View.VISIBLE);
+
+                    holder.car_line.setVisibility(View.INVISIBLE);
+                }
+            }
 
             Log.d(TAG, "[test triggering] timeline session id : "+ session.getId());
             Log.d(TAG, "[test triggering] timeline session isUserPress ? "+session.isUserPress());
@@ -392,7 +510,7 @@ public class Timeline extends AppCompatActivity {
 
                 Annotation annotation_label = annotations_label.get(annotations_label.size() - 1);
                 String label = annotation_label.getContent();
-                String label_Transportation = "";
+                String label_Transportation;
                 labelJson = new JSONObject(label);
 
                 label_Transportation = labelJson.getString(Constants.ANNOTATION_Label_TRANSPORTATOIN);
@@ -428,12 +546,20 @@ public class Timeline extends AppCompatActivity {
             //if the user hasn't labeled, check the detected one
             if(!labelJson.has(Constants.ANNOTATION_Label_TRANSPORTATOIN)){
 
-                ArrayList<Annotation> annotations = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
-                Annotation annotation = annotations.get(annotations.size()-1);
-                String transportation = annotation.getContent();
+                ArrayList<Annotation> annotations = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
+
+                String transportation;
+
+                if(annotations.size()==0)
+                    transportation = TransportationModeStreamGenerator.TRANSPORTATION_MODE_HASNT_DETECTED_FLAG;
+                else {
+                    Annotation annotation = annotations.get(annotations.size() - 1);
+                    transportation = annotation.getContent();
+                }
 
                 //if it is static check the sitename
                 if(transportation.equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)){
+
                     ArrayList<Annotation> annotations_sitename = annotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_SITENAME);
 
                     //if there is no sitename has been stored
@@ -540,6 +666,12 @@ public class Timeline extends AppCompatActivity {
                     }
 
                     //if it isn't static set the text and icon directly
+                }else if(transportation.equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_HASNT_DETECTED_FLAG)){
+
+                    holder.duration.setText(transportation);
+
+                    int icon = getIconToShowTransportation(transportation);
+                    holder.traffic.setImageResource(icon);
                 }else {
 
                     //set the transportation (from detected) icon and text
@@ -563,20 +695,21 @@ public class Timeline extends AppCompatActivity {
                 sd.setColor(backgroundColor);
                 sd.setStroke(10, strokeColor);
                 holder.cardView.setBackground(sd);
+            }
+            //TODO deprecated
 
-                //if the trip is "此移動不存在", do not show it
-            }else if(labelJson.has(Constants.ANNOTATION_Label_TRANSPORTATOIN)){
-                try{
+            String currentWork = getResources().getString(labelingStudy.nctu.minuku.R.string.current_task);
 
-                    String label_transportation = labelJson.getString(Constants.ANNOTATION_Label_TRANSPORTATOIN);
+            if(currentWork.equals("CAR")){
 
-                    if(label_transportation.equals("此移動不存在")){
+                holder.sessionType.setVisibility(View.VISIBLE);
 
-                        holder.cardbackground.setVisibility(View.GONE);
-                    }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+                String typeNameInCHI = getSessionTypeNameInChinese(session.getType());
+
+                holder.sessionType.setText(typeNameInCHI);
+            }else{
+
+                holder.sessionType.setVisibility(View.GONE);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -590,14 +723,22 @@ public class Timeline extends AppCompatActivity {
                     final View layout = inflater.inflate(R.layout.custom_dialog,null);
                     final Spinner Dspinner = (Spinner) layout.findViewById(R.id.spinner);
                     DchoosingSite = (Button) layout.findViewById(R.id.choosingSite);
-                    final Button DstartTime = (Button) layout.findViewById(R.id.startTime);
-                    final Button DendTime = (Button) layout.findViewById(R.id.endTime);
+                    final Button showMapButton = (Button) layout.findViewById(R.id.showMap);
+                    final Button startTimeButton = (Button) layout.findViewById(R.id.startTime);
+                    final Button endTimeButton = (Button) layout.findViewById(R.id.endTime);
                     final String[] activity = {"請選擇交通模式", "走路", "自行車", "汽車", "定點", "此移動不存在", "與上一個相同"};
                     final ArrayAdapter<String> activityList = new ArrayAdapter<>(mContext,
                             android.R.layout.simple_spinner_dropdown_item,
                             activity);
 
-                    //get the data from the label
+                    //Trick: https://stackoverflow.com/questions/5977735/setting-outer-variable-from-anonymous-inner-class
+                    final Long[] modifiedStartTime = new Long[1];
+                    modifiedStartTime[0] = startTime;
+
+                    final Long[] modifiedEndTime = new Long[1];
+                    modifiedEndTime[0] = endTime;
+
+                    //get the availSite from the label
                     final String labeled_transportation = holder.duration.getText().toString();
 
                     Dspinner.setAdapter(activityList);
@@ -615,14 +756,14 @@ public class Timeline extends AppCompatActivity {
 
                                 DchoosingSite.setVisibility(View.VISIBLE);
 
-                                String testFromDuration = holder.duration.getText().toString();
+                                String textFromDuration = holder.duration.getText().toString();
 
-                                if(checkTheTextInSpinner(Dspinner, testFromDuration)){
+                                if(checkTheTextInSpinner(Dspinner, textFromDuration)){
 
                                     DchoosingSite.setText("請選擇地點");
                                 }else{
 
-                                    DchoosingSite.setText(holder.duration.getText()); //+"請選擇地點"
+                                    DchoosingSite.setText(holder.duration.getText());
                                 }
 
                                 DchoosingSite.setOnClickListener(new Button.OnClickListener() {
@@ -670,8 +811,85 @@ public class Timeline extends AppCompatActivity {
                         }
                     });
 
-                    DstartTime.setText(startTimeString);
-                    DstartTime.setOnClickListener(new Button.OnClickListener() {
+                    showMapButton.setOnClickListener(new Button.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+
+                            final LayoutInflater inflater = LayoutInflater.from(Timeline.this);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(Timeline.this);
+                            final View layout = inflater.inflate(R.layout.splitedmap_dialog,null);
+
+                            builder.setView(layout)
+                                    .setPositiveButton("確認", null)
+                                    .setNegativeButton("取消", null);
+
+                            final AlertDialog mAlertDialog = builder.create();
+                            mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                                @Override
+                                public void onShow(final DialogInterface dialogInterface) {
+
+                                    showMapInDialog(mAlertDialog, layout, session);
+
+                                    Log.d(TAG, "splittingLatlng : " + splittingLatlng);
+
+                                    Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                    button.setOnClickListener(new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View view) {
+
+                                            if(IsSplitLocationChosen) {
+
+                                                try {
+
+                                                    //update the session into two different sessions
+                                                    //1st session
+                                                    DBHelper.updateSessionTable(session.getId(), session.getStartTime(), splittingTime);
+
+                                                    //2nd session
+                                                    Session lastSession = SessionManager.getLastSession();
+                                                    int sessionCount = lastSession.getId();
+
+                                                    int sessionId = (int) sessionCount + 1;
+                                                    Session addedSession = session;
+                                                    addedSession.setStartTime(splittingTime);
+                                                    addedSession.setId(sessionId);
+
+                                                    DBHelper.insertSessionTable(addedSession);
+
+                                                    Log.d(TAG, "Current session id : "+session.getId());
+                                                    Log.d(TAG, "Added session id : "+addedSession.getId());
+
+                                                    //update session locations' session id,
+                                                    //set the time after splittingTime to the new id
+                                                    DBHelper.updateRecordsInSession(DBHelper.location_table, splittingTime, session.getId(), addedSession.getId());
+                                                }catch (ArrayIndexOutOfBoundsException e){
+
+                                                }
+
+                                                Toast.makeText(Timeline.this, "您的旅程已成功分開", Toast.LENGTH_SHORT).show();
+
+                                                //reset the Timeline
+                                                initTime();
+
+                                                dialogInterface.dismiss();
+
+                                            }else {
+
+                                                Toast.makeText(Timeline.this, "請點擊地圖以選擇中斷點", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+
+                            mAlertDialog.show();
+                        }
+                    });
+
+                    startTimeButton.setText(startTimeString);
+                    startTimeButton.setOnClickListener(new Button.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Log.d(TAG,"startTime clicked");
@@ -701,15 +919,26 @@ public class Timeline extends AppCompatActivity {
                                     final SimpleDateFormat sdf_a_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
                                     String a_hhmm = ScheduleAndSampleManager.getTimeString(time, sdf_a_hhmm);
 
-                                    DstartTime.setText(a_hhmm);
+                                    startTimeButton.setText(a_hhmm);
+
+                                    String startTimeString = startTimeDate + " " + a_hhmm;
+
+                                    SimpleDateFormat sdf_date_HHmma = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_AMPM_HOUR_MIN);
+
+                                    long startTimeLabel = ScheduleAndSampleManager.getTimeInMillis(startTimeString, sdf_date_HHmma);
+
+                                    modifiedStartTime[0] = startTimeLabel;
+
+                                    Log.d(TAG, "[check time setting] StartTime " + ScheduleAndSampleManager.getTimeString(time));
+                                    Log.d(TAG, "[check time setting] modified StartTime " + ScheduleAndSampleManager.getTimeString(modifiedStartTime[0]));
 
                                 }
                             }, hour, minute, false).show();
                         }
                     });
 
-                    DendTime.setText(endTimeString);
-                    DendTime.setOnClickListener(new Button.OnClickListener() {
+                    endTimeButton.setText(endTimeString);
+                    endTimeButton.setOnClickListener(new Button.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
@@ -739,7 +968,18 @@ public class Timeline extends AppCompatActivity {
                                     final SimpleDateFormat sdf_a_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
                                     String a_hhmm = ScheduleAndSampleManager.getTimeString(time, sdf_a_hhmm);
 
-                                    DendTime.setText(a_hhmm);
+                                    endTimeButton.setText(a_hhmm);
+
+                                    String endTimeString = endTimeDate + " " + a_hhmm;
+
+                                    SimpleDateFormat sdf_date_HHmma = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_AMPM_HOUR_MIN);
+
+                                    long endTimeLabel = ScheduleAndSampleManager.getTimeInMillis(endTimeString, sdf_date_HHmma);
+
+                                    modifiedEndTime[0] = endTimeLabel;
+
+                                    Log.d(TAG, "[check time setting] EndTime " + ScheduleAndSampleManager.getTimeString(time));
+                                    Log.d(TAG, "[check time setting] modified EndTime " + ScheduleAndSampleManager.getTimeString(modifiedEndTime[0]));
 
                                 }
                             }, hour, minute, false).show();
@@ -778,15 +1018,16 @@ public class Timeline extends AppCompatActivity {
                     }
 
                     builder.setView(layout)
-                            .setPositiveButton(R.string.ok, null);
+                            .setPositiveButton(R.string.ok, null)
+                            .setNegativeButton("Cancel", null);
 
                     final AlertDialog mAlertDialog = builder.create();
                     mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
                         @Override
                         public void onShow(final DialogInterface dialogInterface) {
-                            Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            button.setOnClickListener(new View.OnClickListener() {
+                            Button posButton = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            posButton.setOnClickListener(new View.OnClickListener() {
 
                                 @Override
                                 public void onClick(View view) {
@@ -804,13 +1045,22 @@ public class Timeline extends AppCompatActivity {
                                         Log.d(TAG, "[storing sitename] Sitename going to store : "+ sitename);
                                     }
 
+                                    long timeRangeCheck = modifiedStartTime[0] - modifiedEndTime[0];
+
+                                    Log.d(TAG, "[check time setting] timeRangeCheck, modifiedStartTime = "+ ScheduleAndSampleManager.getTimeString(modifiedStartTime[0]));
+                                    Log.d(TAG, "[check time setting] timeRangeCheck, modifiedEndTime = "+ ScheduleAndSampleManager.getTimeString(modifiedEndTime[0]));
+                                    Log.d(TAG, "[check time setting] timeRangeCheck, timeRangeCheck > 0 ? "+ (timeRangeCheck > 0));
+
                                     if (selectedActivityString.equals("請選擇交通模式")) {
 
                                         Toast.makeText(mContext, "請選擇一項交通模式", Toast.LENGTH_SHORT).show();
+                                    } else if(timeRangeCheck > 0){
+
+                                        Toast.makeText(mContext, "請檢查您的時間設定", Toast.LENGTH_SHORT).show();
                                     } else {
 
-                                        String startTimeaHHmmString = DstartTime.getText().toString();
-                                        String endTimeaHHmmString = DendTime.getText().toString();
+                                        String startTimeaHHmmString = startTimeButton.getText().toString();
+                                        String endTimeaHHmmString = endTimeButton.getText().toString();
 
                                         String startTimeString = startTimeDate + " " + startTimeaHHmmString;
                                         String endTimeString = endTimeDate + " " + endTimeaHHmmString;
@@ -855,11 +1105,14 @@ public class Timeline extends AppCompatActivity {
                                         labeledAnnotation.addTag(Constants.ANNOTATION_TAG_Label);
                                         annotationSet.addAnnotation(labeledAnnotation);
 
-                                        DataHandler.updateSession(sessionId, startTimeLabel, endTimeLabel, annotationSet);
+                                        DataHandler.updateSession(sessionId, startTimeLabel, endTimeLabel, annotationSet, Constants.SESSION_SHOULD_BE_SENT_FLAG);
 
 
-                                        //preparing the updated data to show after the notifyDataSetChanged
-                                        try {
+                                        //TODO deprecated
+                                        //preparing the updated availSite to show after the notifyDataSetChanged
+                                        /*try {
+
+                                            mSessions = new ArrayList<>();
 
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                                                 mSessions = new ListSessionAsyncTask(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
@@ -875,13 +1128,17 @@ public class Timeline extends AppCompatActivity {
 
                                         } catch (InterruptedException e) {
                                             Log.d(TAG, "InterruptedException");
-                                            e.printStackTrace();
+//                                            e.printStackTrace();
                                         } catch (ExecutionException e) {
                                             Log.d(TAG, "ExecutionException");
-                                            e.printStackTrace();
-                                        }
+//                                            e.printStackTrace();
+                                        }*/
 
-                                        notifyDataSetChanged();
+                                        initTime();
+
+//                                        notifyDataSetChanged();
+
+                                        sharedPrefs.edit().putInt("currentposition", position).apply();
 
                                         DchoosingSite.setVisibility(View.INVISIBLE); // set back to default
 
@@ -900,7 +1157,287 @@ public class Timeline extends AppCompatActivity {
 
         }
 
+
+        private void showMapInDialog(Dialog dialog, final View view, final Session currentSession){
+
+            MapView mapView = (MapView) view.findViewById(R.id.mapView);
+            Log.d(TAG, "mapView is existed ? " + (mapView != null));
+            MapsInitializer.initialize(Timeline.this);
+
+            mapView.onCreate(dialog.onSaveInstanceState());
+            mapView.onResume();
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(final GoogleMap googleMap) {
+
+                    Log.d(TAG, "MapView onMapReady");
+                    Log.d(TAG, "Is mSession existed ? " + (currentSession!=null));
+
+                    if (currentSession!=null) {
+
+                        showRecordingVizualization((int) currentSession.getId(), googleMap);
+
+                        ArrayList<LatLng> points = getLocationPointsToDrawOnMap(currentSession.getId());
+                        Log.d(TAG, "[test show trip] in onPostExecute, the poitns obtained are : " + points.size());
+                        if (points.size()>0){
+
+                            LatLng startLatLng  = points.get(0);
+                            LatLng endLatLng = points.get(points.size()-1);
+                            LatLng middleLagLng = points.get((points.size()/2));
+
+                            Log.d(TAG, "[test show trips] the session is not in the currently recording session");
+                            //we first need to know what visualization we want to use, then we get availSite for that visualization
+
+                            //show maps with path (draw polylines)
+                            showMapWithPaths(googleMap, points, middleLagLng, startLatLng, endLatLng);
+                        }
+
+                        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                            @Override
+                            public void onMapClick(LatLng latLng) {
+
+                                //remove the current marker
+                                if(currentMarkerKey != -1){
+
+                                    try{
+
+                                        Marker currentMarker = addedSplitMarker.get(currentMarkerKey);
+                                        currentMarker.remove();
+                                        addedSplitMarker.remove(currentMarkerKey);
+                                    }catch (Exception e){
+
+                                    }
+                                }
+
+                                Pair<Long, LatLng> closestLocationAndTime = getSplitTimeAndClosestLocation(latLng, currentSession);
+
+                                splittingTime = closestLocationAndTime.first;
+                                splittingLatlng = closestLocationAndTime.second;
+
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
+                                        .position(splittingLatlng)
+                                        .draggable(true).visible(true));;
+
+                                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
+                                currentMarkerKey++;
+                                addedSplitMarker.put(currentMarkerKey, marker);
+
+                                IsSplitLocationChosen = true;
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }
+
+        private Pair<Long, LatLng> getSplitTimeAndClosestLocation(final LatLng latLng, final Session currentSession){
+
+            ArrayList<String> data = DataHandler.getDataBySession(currentSession.getId(), DBHelper.location_table);
+            Log.d(TAG, "[test show trip] get availSite id: " + currentSession.getId());
+
+            Log.d(TAG, "[test show trip] get availSite: " + data.size() + " rows");
+
+            long chosenTime = -999;
+
+            double cutpointLat = latLng.latitude;
+            double cutpointLng = latLng.longitude;
+            double shortestDist = -1;
+
+            double chosenLat = cutpointLat, chosenLng = cutpointLng;
+
+            for (int i=0; i < data.size(); i++){
+
+                String[] record = data.get(i).split(Constants.DELIMITER);
+
+                double lat = Double.parseDouble(record[2]);
+                double lng = Double.parseDouble(record[3]);
+
+                float[] results = new float[1];
+                Location.distanceBetween(cutpointLat, cutpointLng, lat, lng, results);
+
+                if(shortestDist < 0){
+
+                    shortestDist = results[0];
+                    chosenLat = lat;
+                    chosenLng = lng;
+                    chosenTime = Long.valueOf(record[1]);
+                }else{
+
+                    Location.distanceBetween(cutpointLat, cutpointLng, lat, lng, results);
+                    double currDist = results[0];
+
+                    if(shortestDist > currDist){
+
+                        shortestDist = currDist;
+                        chosenLat = lat;
+                        chosenLng = lng;
+                        chosenTime = Long.valueOf(record[1]);
+                    }
+                }
+            }
+
+            final LatLng chosenLatlng = new LatLng(chosenLat, chosenLng);
+
+            Pair<Long, LatLng> pair = new Pair<>(chosenTime, chosenLatlng);
+
+
+            return pair;
+        }
+
+        public void showMapWithPaths(GoogleMap map, ArrayList<LatLng> points, LatLng cameraCenter, LatLng startLatLng, LatLng endLatLng) {
+
+            //map option
+            GoogleMapOptions options = new GoogleMapOptions();
+            options.tiltGesturesEnabled(false);
+            options.rotateGesturesEnabled(false);
+
+            //center the map
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraCenter, 13));
+
+            //draw linges between points and add end and start points
+            PolylineOptions pathPolyLineOption = new PolylineOptions().color(Color.RED).geodesic(true);
+            pathPolyLineOption.addAll(points);
+
+            //draw lines
+            Polyline path = map.addPolyline(pathPolyLineOption);
+
+            //after getting the start and ened point of location trace, we put a marker
+            map.addMarker(new MarkerOptions().position(startLatLng).title("Start"))
+                    .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            map.addMarker(new MarkerOptions().position(endLatLng).title("End"));
+        }
+
+        private void showRecordingVizualization(final int sessionId, GoogleMap mGoogleMap){
+
+            //draw map
+            if (mGoogleMap!=null){
+
+                //if we're reviewing a previous session ( the trip is not ongoing), get session from the database (note that we have to use session id to check instead of a session instance)
+                if (!SessionManager.isSessionOngoing(sessionId)) {
+
+                    //because there could be many points for already ended trace, so we use asynch to download the annotations
+                    try{
+
+                        ArrayList<LatLng> points = new ArrayList<>();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                            points = new LoadLocationsAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sessionId).get();
+                        else
+                            points = new LoadLocationsAsyncTask().execute(sessionId).get();
+
+                        if (points.size()>0){
+
+                            LatLng startLatLng  = points.get(0);
+                            LatLng endLatLng = points.get(points.size()-1);
+                            LatLng middleLagLng = points.get((points.size()/2));
+
+                            Log.d(TAG, "[test show trips] the session is not in the currently recording session");
+                            //we first need to know what visualization we want to use, then we get availSite for that visualization
+
+                            //show maps with path (draw polylines)
+                            showMapWithPaths(mGoogleMap, points, middleLagLng, startLatLng, endLatLng);
+                        }
+
+                    } catch(InterruptedException e) {
+
+                    } catch (ExecutionException e) {
+
+                    }
+                }
+                //the recording is ongoing, so we periodically query the database to show the latest path
+                else {
+
+                    try{
+
+                        //get location points to draw on the map..
+                        ArrayList<LatLng> points = getLocationPointsToDrawOnMap(sessionId);
+
+                        //we use endLatLng, which is the user's current location as the center of the camera
+                        LatLng startLatLng, endLatLng;
+
+                        //only has one point
+                        if (points.size()==1){
+
+                            startLatLng  = points.get(0);
+                            endLatLng = points.get(0);
+
+                            showMapWithPathsAndCurLocation(mGoogleMap, points, endLatLng);
+                        }
+                        //when have multiple locaiton points
+                        else if (points.size()>1) {
+
+                            startLatLng  = points.get(0);
+                            endLatLng = points.get(points.size()-1);
+
+                            showMapWithPathsAndCurLocation(mGoogleMap, points, endLatLng);
+                        }
+
+
+                    }catch (IllegalArgumentException e){
+
+                    }
+                }
+            }
+        }
+
+        public ArrayList<LatLng> getLocationPointsToDrawOnMap(int sessionId) {
+
+            ArrayList<LatLng> points = new ArrayList<>();
+
+            //get availSite from the database
+            ArrayList<String> data = DataHandler.getDataBySession(sessionId, DBHelper.location_table);
+            Log.d(TAG, "[test show trip] getLocationPointsToDrawOnMap get availSite:" + data.size() + "rows");
+
+            for (int i=0; i<data.size(); i++){
+
+                String[] record = data.get(i).split(Constants.DELIMITER);
+
+                double lat = Double.parseDouble(record[2]);
+                double lng = Double.parseDouble(record[3]);
+
+                points.add(new LatLng(lat, lng));
+            }
+
+            return points;
+        }
+
+        public void showMapWithPathsAndCurLocation(GoogleMap map, ArrayList<LatLng> points, LatLng curLoc) {
+
+            map.clear();
+
+            //map option
+            GoogleMapOptions options = new GoogleMapOptions();
+            options.tiltGesturesEnabled(false);
+            options.rotateGesturesEnabled(false);
+
+            //get current zoom level
+            float zoomlevel = map.getCameraPosition().zoom;
+
+            //center the map
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
+
+            Marker me =  map.addMarker(new MarkerOptions()
+                    .position(curLoc)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocation))
+
+            );
+
+            //draw linges between points and add end and start points
+            PolylineOptions pathPolyLineOption = new PolylineOptions().color(Color.RED).geodesic(true);
+            pathPolyLineOption.addAll(points);
+
+            //draw lines
+            Polyline path = map.addPolyline(pathPolyLineOption);
+
+        }
+
         private int getIndex(Spinner spinner, String myString){
+
+            if(myString.equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_HASNT_DETECTED_FLAG))
+                return 0;
 
             int index;
 
@@ -931,39 +1468,6 @@ public class Timeline extends AppCompatActivity {
             return false;
         }
 
-        public String textShortenIfTooLong(String name){
-
-            String shortenedName = "";
-
-            if(name.length() < 6){
-
-                return name;
-            }else{
-
-                String subname = name.substring(0, 6);
-
-                if(Utils.isEnglish(subname)){
-
-                    if(name.length() == 6){
-
-                        shortenedName = subname;
-                    }else{
-
-                        shortenedName = subname + "...";
-                    }
-
-                    return shortenedName;
-
-                    //only show first five words in Chinese
-                }else{
-
-                    shortenedName = name.substring(0, 5)+"...";
-                }
-            }
-
-            return shortenedName;
-        }
-
         public String getSiteNameFromNet(double lat, double lng) throws InterruptedException, ExecutionException, JSONException{
 
             String jsonInString, name;
@@ -991,6 +1495,48 @@ public class Timeline extends AppCompatActivity {
             return mSessions.size();
         }
 
+
+        //use Asynk task to load sessions
+        private class LoadLocationsAsyncTask extends AsyncTask<Integer, Void, ArrayList<LatLng>> {
+
+            @Override
+            protected ArrayList<LatLng> doInBackground(Integer... params) {
+
+                int sessionId = params[0];
+
+                ArrayList<LatLng> points = getLocationPointsToDrawOnMap(sessionId);
+
+                return points;
+            }
+
+            // can use UI thread here
+            @Override
+            protected void onPreExecute() {
+                //Log.d(TAG, "[test show trip] onPreExecute ");
+            }
+
+            // onPostExecute displays the results of the AsyncTask.
+            @Override
+            protected void onPostExecute(ArrayList<LatLng> points) {
+                super.onPostExecute(points);
+
+                Log.d(TAG, "[test show trip] in onPostExecute, the poitns obtained are : " + points.size());
+            }
+        }
+
+    }
+
+    private String getSessionTypeNameInChinese(String selectedItem){
+
+        switch (selectedItem){
+
+            case Constants.SESSION_TYPE_DETECTED_BY_SYSTEM:
+                return "系統偵測";
+            case Constants.SESSION_TYPE_DETECTED_BY_USER:
+                return "手動偵測";
+            default:
+                return "未知";
+        }
     }
 
     private String getTransportationFromSelectedItem(String selectedItem){
@@ -1078,6 +1624,10 @@ public class Timeline extends AppCompatActivity {
                 return R.drawable.car;
             case "與上一個相同":
                 return R.drawable.transparent;
+            case TransportationModeStreamGenerator.TRANSPORTATION_MODE_HASNT_DETECTED_FLAG:
+                return R.drawable.question_mark;
+            case "此移動不存在":
+                return R.drawable.close_black;
             default:
                 return R.drawable.if_94_171453;
         }
@@ -1148,7 +1698,6 @@ public class Timeline extends AppCompatActivity {
      */
     private class ListSessionAsyncTask extends AsyncTask<String, Void, ArrayList<Session> > {
 
-        private ProgressDialog dialog;
         private Context mContext;
 
         public ListSessionAsyncTask(Context context){
@@ -1163,16 +1712,11 @@ public class Timeline extends AppCompatActivity {
         protected void onPreExecute() {
 
             Log.d(TAG,"[test show trip] onPreExecute");
-            dialog = ProgressDialog.show(mContext, "","Loading...",true,false);
         }
 
 
         @Override
         protected void onPostExecute(ArrayList<Session> sessions) {
-
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
 
             mSessions = sessions;
 
@@ -1188,7 +1732,18 @@ public class Timeline extends AppCompatActivity {
             try {
 
 //                sessions = SessionManager.getRecentSessions();
-                sessions = SessionManager.getSessionsByOrder(timelineOrder);
+
+                SimpleDateFormat sdf_date = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_DAY);
+                long todayStartLong = ScheduleAndSampleManager.getTimeInMillis(dateToQuery, sdf_date);
+                long todayEndLong = todayStartLong + Constants.MILLISECONDS_PER_DAY;
+
+                Log.d(TAG, "todayStart : " + ScheduleAndSampleManager.getTimeString(todayStartLong));
+                Log.d(TAG, "todayEnd : " + ScheduleAndSampleManager.getTimeString(todayEndLong));
+
+                sessions = SessionManager.getSessionsBetweenTimesAndOrder(todayStartLong, todayEndLong, timelineOrder);
+
+                Log.d(TAG, "queried sessions size : " + sessions.size());
+
             }catch (Exception e) {
                 Log.d(TAG,"Exception");
                 e.printStackTrace();
@@ -1197,4 +1752,5 @@ public class Timeline extends AppCompatActivity {
             return sessions;
         }
     }
+
 }

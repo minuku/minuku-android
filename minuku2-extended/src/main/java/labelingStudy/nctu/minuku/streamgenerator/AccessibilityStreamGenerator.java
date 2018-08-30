@@ -79,6 +79,7 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
 
     @Override
     public boolean updateStream() {
+
         Log.d(TAG, "updateStream called");
 
         AccessibilityDataRecord accessibilityDataRecord

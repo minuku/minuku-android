@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.config.UserPreferences;
 import labelingStudy.nctu.minuku.logger.Log;

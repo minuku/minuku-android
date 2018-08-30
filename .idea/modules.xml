@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MainBgAbsence.iml" filepath="$PROJECT_DIR$/MainBgAbsence.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LabelingStudy.iml" filepath="$PROJECT_DIR$/LabelingStudy.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/minuku2-extended/minuku2-extended.iml" filepath="$PROJECT_DIR$/minuku2-extended/minuku2-extended.iml" />
       <module fileurl="file://$PROJECT_DIR$/minukucore/minukucore.iml" filepath="$PROJECT_DIR$/minukucore/minukucore.iml" />

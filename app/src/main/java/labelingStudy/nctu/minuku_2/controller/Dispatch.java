@@ -3,6 +3,7 @@ package labelingStudy.nctu.minuku_2.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 
@@ -32,11 +33,17 @@ public class Dispatch extends Activity {
 
         boolean firstStartBackGround = sharedPrefs.getBoolean("firstStartBackGround", true);
 
+
         if(firstStartBackGround) {
 
-            startService(new Intent(getBaseContext(), BackgroundService.class));
+            startBackgroundService();
 
             sharedPrefs.edit().putBoolean("firstStartBackGround", false).apply();
+        }
+
+        if(!firstStartBackGround && !BackgroundService.isBackgroundServiceRunning){
+
+            startBackgroundService();
         }
 
         try {
@@ -55,6 +62,17 @@ public class Dispatch extends Activity {
         startActivity(intent);
 
         Dispatch.this.finish();
+    }
+
+    private void startBackgroundService(){
+
+        Intent intentToStartBackground = new Intent(getBaseContext(), BackgroundService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intentToStartBackground);
+        } else {
+            startService(intentToStartBackground);
+        }
     }
 
 }

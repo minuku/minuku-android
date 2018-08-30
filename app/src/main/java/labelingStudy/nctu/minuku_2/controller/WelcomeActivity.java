@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPrefs;
 
+    private boolean firstTimeOrNot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,7 @@ public class WelcomeActivity extends AppCompatActivity {
             chooseMyMobility.setVisibility(View.GONE);
         }else if(current_task.equals("CAR")){
 
+            chooseMyMobility.setText("切換移動方式");
         }
 
 //        EventBus.getDefault().register(this);
@@ -71,7 +75,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), Timeline.class);
         MinukuNotificationManager.setIntentToTimeline(intent);
-
     }
 
     public void onResume(){
@@ -108,6 +111,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(new Intent(WelcomeActivity.this, DeviceIdPage.class));
                 return true;
 
+            case R.id.action_permissions:
+                startpermission();
+                sharedPrefs.edit().putBoolean("firstTimeOrNot", false).apply();
+                return true;
+
         }
         return true;
     }
@@ -141,6 +149,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
         }
     };
+
+    public void startpermission(){
+
+        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));  // 協助工具
+
+        Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
+        startActivity(intent1);
+
+//        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
+//        startActivity(intent);
+
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
+    }
 
     private void checkAndRequestPermissions() {
 
@@ -190,6 +211,15 @@ public class WelcomeActivity extends AppCompatActivity {
         Log.d(TAG, "startServiceWork");
 
         getDeviceid();
+
+        firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
+
+        if(firstTimeOrNot) {
+
+            startpermission();
+            firstTimeOrNot = false;
+            sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
+        }
     }
 
     public void getDeviceid(){

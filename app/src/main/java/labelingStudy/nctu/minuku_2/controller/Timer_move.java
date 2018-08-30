@@ -10,11 +10,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.manager.MinukuNotificationManager;
 import labelingStudy.nctu.minuku.manager.SessionManager;
 import labelingStudy.nctu.minuku.model.Annotation;
 import labelingStudy.nctu.minuku.model.AnnotationSet;
@@ -35,7 +37,10 @@ public class Timer_move extends AppCompatActivity {
 
     private Button walk, bike, car, site;
 
-    public static String TrafficFlag;
+    private TextView blackTextView;
+    private String blackTextViewDefault = "請選擇您的移動方式";
+
+    public static String trafficType;
 
     static String BigFlag = "";
 
@@ -59,6 +64,13 @@ public class Timer_move extends AppCompatActivity {
             firstTimeOrNot = false;
             sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
         }
+
+        inittimer_move();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
 
         inittimer_move();
     }
@@ -112,6 +124,16 @@ public class Timer_move extends AppCompatActivity {
         car.setOnClickListener(carTime);
         site.setOnClickListener(siting);
 
+        blackTextView = (TextView) findViewById(R.id.blackTextView);
+
+        if(!MinukuNotificationManager.ongoingNotificationText.equals(Constants.RUNNING_APP_DECLARATION)){
+
+            blackTextView.setText(MinukuNotificationManager.ongoingNotificationText);
+        }else{
+
+            blackTextView.setText(blackTextViewDefault);
+        }
+
     }
 
     private void imagebuttonWork(String activityType){
@@ -125,7 +147,7 @@ public class Timer_move extends AppCompatActivity {
             Session ongoingSession = SessionManager.getSession(sessionId);
 
             AnnotationSet ongoingAnnotationSet = ongoingSession.getAnnotationsSet();
-            ArrayList<Annotation> ongoingAnnotations = ongoingAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATOIN_ACTIVITY);
+            ArrayList<Annotation> ongoingAnnotations = ongoingAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
             Annotation ongoingAnnotation = ongoingAnnotations.get(ongoingAnnotations.size()-1);
             String ongoingActivity = ongoingAnnotation.getContent();
 
@@ -133,7 +155,7 @@ public class Timer_move extends AppCompatActivity {
 
             if(!buttonActivity.equals(ongoingActivity)){
 
-                Toast toast = Toast.makeText(Timer_move.this, "您必須先結束目前的移動方式 : " + getActivityTypeInChinese(TrafficFlag), Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(Timer_move.this, "您必須先結束目前的移動方式 : " + getActivityTypeInChinese(trafficType), Toast.LENGTH_SHORT);
                 toast.show();
             }else {
 
@@ -149,12 +171,19 @@ public class Timer_move extends AppCompatActivity {
 
         if(activityType.equals("static")){
 
-            TrafficFlag = "site";
+            trafficType = "site";
             startActivity(new Intent(Timer_move.this, Timer_site.class));
         }else {
 
-            TrafficFlag = activityType;
-            startActivity(new Intent(Timer_move.this, CounterActivity.class));
+            trafficType = activityType;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("trafficType", trafficType);
+
+            Intent intentToRecord = new Intent(Timer_move.this, CounterActivity.class);
+            intentToRecord.putExtras(bundle);
+
+            startActivity(intentToRecord);
         }
     }
 

@@ -24,10 +24,13 @@ public class CSVHelper {
 
     public static CSVWriter csv_writer = null;
 
-    public static String file_CheckService_alive = "CheckService.csv";
-    public static String file_ESM = "CheckESM.csv";
-    public static String file_CAR = "CheckCAR.csv";
-
+    public static final String CSV_UserInteract = "UserInteraction.csv";
+    public static final String CSV_CheckService_alive = "CheckService.csv";
+    public static final String CSV_ESM = "CheckESM.csv";
+    public static final String CSV_CAR = "CheckCAR.csv";
+    public static final String CSV_CHECK_TRANSPORTATION = "CheckTransportationMode.csv";
+    public static final String CSV_RUNNABLE_CHECK = "Runnable_check.csv";
+    public static final String CSV_WIFI_RECEIVER_CHECK = "Wifi_Receiver_check.csv";
 
     public static void storeToCSV(String fileName, String... texts){
 
