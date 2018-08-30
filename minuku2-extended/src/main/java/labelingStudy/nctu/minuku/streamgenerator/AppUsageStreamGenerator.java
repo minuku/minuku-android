@@ -141,13 +141,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         if(appUsageDataRecord!=null) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//                    AppUsageDataRecord newappUsageDataRecord = new AppUsageDataRecord("NA","NA","NA","NA");
-//                    Log.e(TAG, "Here:" + appUsageDataRecord);
-//                            newappUsageDataRecord.getScreenStatus();
-//                            newappUsageDataRecord.getLatestUsedApp();
-//                            newappUsageDataRecord.getLatestUsedAppTime();
-//                            newappUsageDataRecord.getRecentApps();
-                //appUsageDataRecord.getUsers());
 
                 mStream.add(appUsageDataRecord);
                 Log.e(TAG, "AppUsage to be sent to event bus" + appUsageDataRecord);
@@ -157,7 +150,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
                 try {
                     mDAO.add(appUsageDataRecord);
-                    mDAO.query_counting();
                 } catch (DAOException e) {
                     e.printStackTrace();
                     return false;
@@ -178,7 +170,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
                 try {
                     mDAO.add(appUsageDataRecord);
-                    mDAO.query_counting();
                 } catch (DAOException e) {
                     e.printStackTrace();
                     return false;
@@ -432,32 +423,5 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
         return Screen_Status;
     }
-
-//    private void loadAppAndPackage() {
-//
-//        if (mAppPackageNameHmap==null){
-//            mAppPackageNameHmap = new HashMap<String, String>();
-//        }
-//
-//        Resources res = mContext.getResources();
-//
-//        String[] appNames = res.getStringArray(R.array.app);
-//
-//        for (int i=0; i<appNames.length; i++){
-//
-//            String app_package = appNames[i];
-//
-//            String [] strs = app_package.split(":");
-//
-//            String appName = strs[0];
-//            String packageName = strs[1];
-//            Log.d(TAG, "the app names are puting key: " + packageName + " value: " + appName);
-//            mAppPackageNameHmap.put(packageName, appName);
-//
-//        }
-//
-//
-//    }
-
 
 }

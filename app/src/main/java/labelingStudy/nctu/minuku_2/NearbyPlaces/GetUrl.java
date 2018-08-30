@@ -2,6 +2,8 @@ package labelingStudy.nctu.minuku_2.NearbyPlaces;
 
 import android.util.Log;
 
+import labelingStudy.nctu.minuku.config.Constants;
+
 /**
  * Created by Lawrence on 2017/10/18.
  */
@@ -10,9 +12,9 @@ public class GetUrl {
 
     private final static String TAG = "GetUrl";
 
-    static final int PROXIMITY_RADIUS = 100;
+    static final int PROXIMITY_RADIUS = Constants.siteRange;
 
-    public static String getUrl(double latitude , double longitude) { // , String nearbyPlace
+    public static String getUrl(double latitude , double longitude) {
 
         StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlaceUrl.append("location="+latitude+","+longitude);

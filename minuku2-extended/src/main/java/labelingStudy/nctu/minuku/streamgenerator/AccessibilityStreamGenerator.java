@@ -69,7 +69,6 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         Log.d(TAG, "testing logging task and requested activateAccessibilityService");
         Intent intent = new Intent(mContext, MobileAccessibilityService.class);
         mContext.startService(intent);
-
     }
 
 
@@ -80,6 +79,7 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
 
     @Override
     public boolean updateStream() {
+
         Log.d(TAG, "updateStream called");
 
         AccessibilityDataRecord accessibilityDataRecord

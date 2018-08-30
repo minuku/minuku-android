@@ -21,8 +21,8 @@
   -->
 
 <resources>
-    <string name="app_name">Labeling Study </string>
+    <string name="app_name">Labeling Study</string>
 
     <!--  current_task: PART ESM CAR  -->
-    <string name="current_task">CAR</string>
+    <string name="current_task">ESM</string>
 </resources>

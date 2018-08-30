@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 
 
 /**
@@ -58,11 +57,12 @@ public class MobilityManager {
     }
 
     //use transportation mode and location to determine the current mobility
-    public static void updateMobility() {
+    /*public static void updateMobility() {
 
         //we get transportation mode from TransportationModeManager and then determine whether
         // we want to adjust the frequency of location updates.
-        int transportation = TransportationModeStreamGenerator.getConfirmedActivityType();
+
+        int transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
 
         if (transportation == TransportationModeStreamGenerator.NO_ACTIVITY_TYPE &&
                 TransportationModeStreamGenerator.getCurrentState()== TransportationModeStreamGenerator.STATE_STATIC) {
@@ -73,7 +73,7 @@ public class MobilityManager {
             sStaticCountDown -=1;
         }
 
-        /**the user is found to be mobile (moving), make location update frequency back to normal**/
+        *//**the user is found to be mobile (moving), make location update frequency back to normal**//*
         else {
             mobility = MOBILE;
 
@@ -106,7 +106,7 @@ public class MobilityManager {
 
         preMobility = mobility;
 
-    }
+    }*/
 
     private static void setStaticLocationUpdateFrequency() {
 

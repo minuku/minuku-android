@@ -53,8 +53,6 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataRecord> implements
         SensorEventListener {
-    /**  variable declaration
-     **/
 
     private SensorStream mStream;
     private String TAG = "SensorStreamGenerator";
@@ -70,8 +68,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     private static Context mContext;
     private static SensorManager mSensorManager ;
     private static List<Sensor> SensorList;
-
-
 
     public static final String STRING_PHONE_SENSOR_ACCELEROMETER = "Sensor-Accelerometer";
     public static final String STRING_PHONE_SENSOR_LINEAR_ACCELERATION = "Sensor-LinearAcceleration";
@@ -139,7 +135,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         mMagneticField_x = mMagneticField_y = mMagneticField_z = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mLinearAcceleration_x = mLinearAcceleration_y = mLinearAcceleration_z = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mRotationVector_x_sin = mRotationVector_y_sin =  mRotationVector_z_sin = mRotationVector_cos = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
-        mHeartRate = mStepCount = mStepDetect =CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
+        mHeartRate = mStepCount = mStepDetect = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mLight = mPressure = mRelativeHumidity = mProximity = mAmbientTemperature = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
 
         //initiate registered sensor list
@@ -319,7 +315,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         }
 
         data = sourceName+": "+data;
-        Log.d(TAG, "data  "+ data);
+//        Log.d(TAG, "data  "+ data);
 
         /*** Set data to SensorDataRecord **/
         //newSensorDataRecord.setData(data);

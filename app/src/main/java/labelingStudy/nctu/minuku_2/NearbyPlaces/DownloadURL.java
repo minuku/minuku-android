@@ -48,7 +48,7 @@ public class DownloadURL {
             inputStream.close();
             urlConnection.disconnect();
         }
-        Log.d("DownloadURL","Returning data= "+data);
+        Log.d("DownloadURL","Returning availSite= "+data);
 
         return data;
     }

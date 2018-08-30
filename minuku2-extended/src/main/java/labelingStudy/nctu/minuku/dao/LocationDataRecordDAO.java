@@ -28,7 +28,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.common.util.concurrent.SettableFuture;
 
 import org.json.JSONException;
@@ -38,12 +37,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.config.UserPreferences;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -112,8 +110,6 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
             values.put(DBHelper.TIME, entity.getCreationTime());
-//            values.put(DBHelper.TaskDayCount, entity.getTaskDayCount());
-//            values.put(DBHelper.HOUR, entity.getHour());
             values.put(DBHelper.latitude_col, entity.getLatitude());
             values.put(DBHelper.longitude_col, entity.getLongitude());
             values.put(DBHelper.Accuracy_col, entity.getAccuracy());
@@ -121,6 +117,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
             values.put(DBHelper.Speed_col, entity.getSpeed());
             values.put(DBHelper.Bearing_col, entity.getBearing());
             values.put(DBHelper.Provider_col, entity.getProvider());
+            values.put(DBHelper.COL_SESSION_ID, entity.getSessionid());
 
             db.insert(DBHelper.location_table, null, values);
         }
@@ -301,189 +298,6 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
             return String.valueOf("0"+date);
         else
             return String.valueOf(date);
-    }
-
-    public static ArrayList<String> getTripDatafromSQLite(){
-
-        Log.d("getTripDatafromSQLite","test1");
-
-        ArrayList<String> rows = new ArrayList<String>();
-
-        try {
-            SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor tripCursor = db.rawQuery("SELECT * FROM " + DBHelper.trip_table, null);
-
-//        int columnCount = tripCursor.getColumnCount();
-
-            Log.d("getTripDatafromSQLite while","test2");
-
-            while (tripCursor.moveToNext()) {
-                String curRow = "";
-            /*for (int i=0; i<columnCount; i++){
-
-                Log.d("getTripDatafromSQLite", "tripCursor.getString(i) : "+ tripCursor.getString(i));
-
-                curRow = tripCursor.getString(i);
-            }*/
-                Log.d("getTripDatafromSQLite", "tripCursor.getString(i) : " + tripCursor.getString(1));
-
-                JSONObject data = new JSONObject(tripCursor.getString(1));
-
-                Iterator<String> keys = data.keys();
-               /* // get some_name_i_wont_know in str_Name
-                String str_Name=keys.next();
-                // get the value i care about
-                String value = data.optString(str_Name);*/
-
-                Log.d("getTripDatafromSQLite while2","test3");
-
-                while (keys.hasNext()){
-
-                    String key =keys.next();
-                    String value = data.getString(key);
-
-                    Log.d("getTripDatafromSQLite while2", "tripCursor.getString(i) : " + key +":"+value);
-
-                    JSONObject toList = new JSONObject(value);
-
-                    Log.d("getTripDatafromSQLite while3","toList : " + toList);
-
-                    Log.d("getTripDatafromSQLite while3","test4");
-
-                    Iterator<String> timekeys = toList.keys();
-                    while (timekeys.hasNext()){
-
-                        String timekey = timekeys.next();
-                        String timevalue = toList.getString(timekey);
-                        //timekey = 2017/6/26 15:42:34-2017/6/26 15:47:31
-                        Log.d("getTripDatafromSQLite while3", "toList : " + timekey +":"+new JSONObject(timevalue));
-
-                        /*//TODO maybe change to annotateohio
-                        JSONObject EachLoctoList = new JSONObject(timevalue);
-                        Iterator<String> EachLockeys = EachLoctoList.keys();
-                        while (EachLockeys.hasNext()){
-                            String EachLockey = EachLockeys.next();
-                            String EachLocValue = EachLoctoList.getString(EachLockey);
-
-                            JSONObject EachLoc = new JSONObject(EachLocValue);
-
-
-                        }*/
-
-                        rows.add(timekey);
-
-                    }
-
-
-                }
-
-            }
-            tripCursor.close();
-
-            DBManager.getInstance().closeDatabase();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return rows;
-    }
-
-    public static ArrayList<LatLng> getTripLocToDrawOnMap(String timekey){
-
-        Log.d("getTripandLocDatafromSQLite","test1");
-
-        ArrayList<LatLng> rows = new ArrayList<LatLng>();
-
-        try {
-            SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor tripCursor = db.rawQuery("SELECT * FROM " + DBHelper.trip_table, null);
-
-            Log.d("getTripandLocDatafromSQLite while","test2");
-
-            while (tripCursor.moveToNext()) {
-                String curRow = "";
-
-                Log.d("getTripandLocDatafromSQLite", "tripCursor.getString(i) : " + tripCursor.getString(1).replace("\\",""));
-
-                JSONObject data = new JSONObject(tripCursor.getString(1).replace("\\",""));
-
-                Log.d("getTripandLocDatafromSQLite","data : " + data.toString());
-
-                String timevalue = data.getString(timekey);
-
-                Log.d("getTripandLocDatafromSQLite","data.getString(timekey) : " + data.getString(timekey));
-
-                JSONObject EachLoctoList = new JSONObject(timevalue);
-                Iterator<String> EachLockeys = EachLoctoList.keys();
-                while (EachLockeys.hasNext()){
-                    String EachLockey = EachLockeys.next();
-                    String EachLocValue = EachLoctoList.getString(EachLockey);
-
-                    JSONObject EachLoc = new JSONObject(EachLocValue);
-                    double lat = Double.valueOf(EachLoc.getString("Latitude"));
-                    double lng = Double.valueOf(EachLoc.getString("Longtitude"));
-                    LatLng latLng = new LatLng(lat,lng);
-
-                    rows.add(latLng);
-
-                }
-
-               /* Iterator<String> keys = data.keys();
-                // get some_name_i_wont_know in str_Name
-                String str_Name=keys.next();
-                // get the value i care about
-                String value = data.optString(str_Name);
-
-                Log.d("getTripDatafromSQLite while2","test3");
-
-                *//*while (keys.hasNext()){
-
-                    String key =keys.next();
-                    String value = data.getString(key);
-
-                    Log.d("getTripDatafromSQLite while2", "tripCursor.getString(i) : " + key +":"+value);
-
-                    JSONObject toList = new JSONObject(value);
-
-                    Log.d("getTripDatafromSQLite while3","toList : " + toList);
-
-                    Log.d("getTripDatafromSQLite while3","test4");
-
-                    Iterator<String> timekeys = toList.keys();
-                    while (timekeys.hasNext()){
-
-                        String timekey = timekeys.next();
-                        String timevalue = toList.getString(timekey);
-                        //timekey = 2017/6/26 15:42:34-2017/6/26 15:47:31
-                        Log.d("getTripDatafromSQLite while3", "toList : " + timekey +":"+new JSONObject(timevalue));
-
-                        //TODO maybe change to annotateohio
-                        JSONObject EachLoctoList = new JSONObject(timevalue);
-                        Iterator<String> EachLockeys = EachLoctoList.keys();
-                        while (EachLockeys.hasNext()){
-                            String EachLockey = EachLockeys.next();
-                            String EachLocValue = EachLoctoList.getString(EachLockey);
-
-                            JSONObject EachLoc = new JSONObject(EachLocValue);
-
-
-                        }
-
-                        rows.add(timekey);
-
-                    }
-
-                }*/
-
-            }
-            tripCursor.close();
-
-            DBManager.getInstance().closeDatabase();
-        }catch (Exception e){
-
-        }
-
-        return rows;
     }
 
     @Override

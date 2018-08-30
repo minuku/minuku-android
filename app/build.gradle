@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
@@ -33,6 +43,7 @@ android {
 repositories {
     jcenter()
     maven { url "https://jitpack.io" }
+    maven { url 'https://maven.fabric.io/public' }
 
 }
 dependencies {
@@ -73,6 +84,13 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.vipulasri:timelineview:1.0.5'
     testCompile 'junit:junit:4.12'
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+        transitive = true;
+    }
+    compile('com.crashlytics.sdk.android:crashlytics-ndk:2.0.2@aar') {
+        transitive = true;
+    }
+
 }
 
 apply plugin: 'com.google.gms.google-services'
@@ -83,4 +101,9 @@ allprojects {
         maven { url "https://jitpack.io" }
         google()
     }
+}
+crashlytics {
+    enableNdk true
+    androidNdkOut 'src/main/obj'
+    androidNdkLibsOut 'src/main/libs'
 }

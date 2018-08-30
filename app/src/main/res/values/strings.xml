@@ -22,7 +22,9 @@
 
 <resources>
     <!--  current_task: PART ESM CAR  -->
-    <string name="current_task">CAR</string>
+    <string name="current_task">ESM</string>
+
+    <string name="no_activity">未知</string>
 
     <string name="app_name">Labeling Study</string>
     <string name="ok">OK</string>

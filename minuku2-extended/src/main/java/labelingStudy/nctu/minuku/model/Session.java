@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Session {
 
+    private long mCreatedTime=0;
     private long mStartTime=0;
     private long mEndtime=0;
     private int mId;
@@ -16,31 +17,38 @@ public class Session {
     private float mBatteryLife = -1;
     //we need to rememeber this number in order to cancel the ongoing notification when the current session is done.
     private int mOngoingNotificationId=-1;
-    //protected AnnotationSet mAnnotationSet;
-    //TODO: this should be defined based on what's being activated.
+    protected AnnotationSet mAnnotationSet;
+    private boolean mUserPressOrNot;
+    private boolean mIsModified;
+    private boolean hidedOrNot;
+    private int mIsSent;
+    private String type;
+
     ArrayList<String> mContextSourceNames;
 
-    public Session (int taskId){
-        mTaskId = taskId;
-        //mAnnotationSet = new AnnotationSet();
+    public Session (int sessionId){
+        mId = sessionId;
+        mAnnotationSet = new AnnotationSet();
     }
 
     public Session (long timestamp){
         mStartTime = timestamp;
-        // mAnnotationSet = new AnnotationSet();
+        mCreatedTime = timestamp;
+        mAnnotationSet = new AnnotationSet();
     }
 
-    public Session (long timestamp, int taskId){
+    public Session (long timestamp, int sessionId){
         mStartTime = timestamp;
-        mTaskId = taskId;
-        //mAnnotationSet = new AnnotationSet();
+        mCreatedTime = timestamp;
+        mId = sessionId;
+        mAnnotationSet = new AnnotationSet();
     }
 
-    public Session (int id, long timestamp, int taskId){
+    public Session (int id, long timestamp){
         mId = id;
         mStartTime = timestamp;
-        mTaskId = taskId;
-        // mAnnotationSet = new AnnotationSet();
+        mCreatedTime = timestamp;
+        mAnnotationSet = new AnnotationSet();
     }
 
     public ArrayList<String> getContextSourceNames() {
@@ -64,6 +72,45 @@ public class Session {
         }
     }
 
+    public boolean isUserPress() {
+        return mUserPressOrNot;
+    }
+
+    public boolean isModified() {
+        return mIsModified;
+    }
+
+    public void setUserPressOrNot(boolean userPressOrNot){
+        mUserPressOrNot = userPressOrNot;
+    }
+
+    public void setModified(boolean isModified){
+        mIsModified = isModified;
+    }
+
+    public boolean isHide(){
+        return hidedOrNot;
+    }
+
+    public void setHidedOrNot(boolean hidedOrNot){
+        this.hidedOrNot = hidedOrNot;
+    }
+
+    public void setIsSent(int isSent){
+        mIsSent = isSent;
+    }
+
+    public int getIsSent(){
+        return mIsSent;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getType(){
+        return type;
+    }
 
     public boolean isPaused() {
         return mPaused;
@@ -77,7 +124,7 @@ public class Session {
         mId = id;
     }
 
-    public long getId(){
+    public int getId(){
         return mId;
     }
 
@@ -103,8 +150,8 @@ public class Session {
     }
 
 
-    public void setStartTime(long t){
-        mStartTime = t;
+    public void setStartTime(long startTime){
+        mStartTime = startTime;
     }
 
     public long getStartTime(){
@@ -119,10 +166,10 @@ public class Session {
         this.mEndtime = endtime;
     }
 
-    /**  public AnnotationSet getAnnotationsSet(){
+    public AnnotationSet getAnnotationsSet(){
 
-     return mAnnotationSet;
-     }**/
+        return mAnnotationSet;
+    }
 
     public float getBatteryLife() {
         return mBatteryLife;
@@ -132,19 +179,24 @@ public class Session {
         this.mBatteryLife = batteryStatus;
     }
 
-    /**   public void setAnnotationSet(AnnotationSet annotationSet){
+    public void setAnnotationSet(AnnotationSet annotationSet){
+        mAnnotationSet = annotationSet;
+    }
 
-     mAnnotationSet = annotationSet;
-     }
+    public void addAnnotation (Annotation annotation) {
 
-     public void addAnnotaiton (Annotation annotation) {
+        if (mAnnotationSet==null){
+            mAnnotationSet = new AnnotationSet();
+        }
+        mAnnotationSet.addAnnotation(annotation);
 
-     if (mAnnotationSet==null){
-     mAnnotationSet = new AnnotationSet();
-     }
-     mAnnotationSet.addAnnotation(annotation);
+    }
 
-     }
-     **/
+    public long getCreatedTime() {
+        return mCreatedTime;
+    }
 
+    public void setCreatedTime(long mCreatedTime) {
+        this.mCreatedTime = mCreatedTime;
+    }
 }

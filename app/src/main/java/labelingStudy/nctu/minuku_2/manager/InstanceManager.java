@@ -24,16 +24,13 @@ package labelingStudy.nctu.minuku_2.manager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import labelingStudy.nctu.minuku.DBHelper.DBHelper;
+import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
@@ -44,9 +41,7 @@ import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
-import labelingStudy.nctu.minuku.dao.UserSubmissionStatsDAO;
-import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
-import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
+import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
@@ -60,6 +55,7 @@ import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.SensorDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
+import labelingStudy.nctu.minuku.model.DataRecord.UserInteractionDataRecord;
 import labelingStudy.nctu.minuku.model.UserSubmissionStats;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
@@ -71,10 +67,8 @@ import labelingStudy.nctu.minuku.streamgenerator.RingerStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.SensorStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TelephonyStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
-import labelingStudy.nctu.minuku_2.dao.SessionDataRecordDAO;
-import labelingStudy.nctu.minuku_2.model.SessionDataRecord;
+import labelingStudy.nctu.minuku.streamgenerator.UserInteractionStreamGenerator;
 import labelingStudy.nctu.minuku_2.question.QuestionConfig;
-import labelingStudy.nctu.minuku_2.streamgenerator.SessionStreamGenerator;
 
 /**
  * Created by neerajkumar on 8/28/16.
@@ -118,47 +112,11 @@ public class InstanceManager {
         DBHelper dBHelper = new DBHelper(getApplicationContext());
 
         MinukuDAOManager daoManager = MinukuDAOManager.getInstance();
-        //For location
+
+        //build new DAO here.
         LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
-/*
-        // SemanticLocation
-        SemanticLocationDataRecordDAO semanticLocationDataRecordDAO = new SemanticLocationDataRecordDAO();
-        daoManager.registerDaoFor(SemanticLocationDataRecord.class, semanticLocationDataRecordDAO);
 
-        //For mood
-        MoodDataRecordDAO moodDataRecordDAO = new MoodDataRecordDAO();
-        daoManager.registerDaoFor(MoodDataRecord.class, moodDataRecordDAO);
-
-        //Free Response questions
-        FreeResponseQuestionDAO freeResponseQuestionDAO = new FreeResponseQuestionDAO();
-        daoManager.registerDaoFor(FreeResponse.class, freeResponseQuestionDAO);
-
-        //Questionnaire DAO
-        MultipleChoiceQuestionDAO multipleChoiceQuestionDAO = new MultipleChoiceQuestionDAO();
-        daoManager.registerDaoFor(MultipleChoice.class, multipleChoiceQuestionDAO);
-
-        //Diabetes Log Data Record DAO
-        DiabetesLogDAO diabetesLogDAO = new DiabetesLogDAO();
-        daoManager.registerDaoFor(DiabetesLogDataRecord.class, diabetesLogDAO);
-
-        //Notification DAO
-        NotificationDAO notificationDAO = new NotificationDAO();
-        daoManager.registerDaoFor(ShowNotificationEvent.class, notificationDAO);
-
-        //UserSubmissionStats DAO
-        UserSubmissionStatsDAO userSubmissionStatsDAO = new UserSubmissionStatsDAO();
-        daoManager.registerDaoFor(UserSubmissionStats.class, userSubmissionStatsDAO);
-
-        //Patch data record DAO
-        TimelinePatchDataRecordDAO timelinePatchDataRecordDAO = new TimelinePatchDataRecordDAO();
-        daoManager.registerDaoFor(TimelinePatchDataRecord.class, timelinePatchDataRecordDAO);
-
-        //PromptsMissedReportQnA data record DAO
-        PromptMissedReportsQnADAO promptMissedReportsQnADAO = new PromptMissedReportsQnADAO();
-        daoManager.registerDaoFor(PromptMissedReportsQnADataRecord.class, promptMissedReportsQnADAO);
-*/
-        //TODO build new DAO here.
         ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
 
@@ -186,24 +144,12 @@ public class InstanceManager {
         SensorDataRecordDAO sensorDataRecordDAO = new SensorDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(SensorDataRecord.class, sensorDataRecordDAO);
 
-        SessionDataRecordDAO sessionDataRecordDAO = new SessionDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(SessionDataRecord.class, sessionDataRecordDAO);
+        UserInteractionDataRecordDAO userInteractionDataRecordDAO = new UserInteractionDataRecordDAO(getApplicationContext());
+        daoManager.registerDaoFor(UserInteractionDataRecord.class, userInteractionDataRecordDAO);
 
 
         // Create corresponding stream generators. Only to be created once in Main Activity
-        //creating a new stream registers it with the stream manager
-        /*SemanticLocationStreamGenerator semanticLocationStreamGenerator =  //TODO we might not need these StreamGenerator, yet.
-                new SemanticLocationStreamGenerator(getApplicationContext());
-        FreeResponseQuestionStreamGenerator freeResponseQuestionStreamGenerator =
-                new FreeResponseQuestionStreamGenerator(getApplicationContext());
-        MultipleChoiceQuestionStreamGenerator multipleChoiceQuestionStreamGenerator =
-                new MultipleChoiceQuestionStreamGenerator(getApplicationContext());
-        MoodStreamGenerator moodStreamGenerator =
-                new MoodStreamGenerator(getApplicationContext());
-        DiabetesLogStreamGenerator diabetesLogStreamGenerator =
-                new DiabetesLogStreamGenerator(getApplicationContext(), DiabetesLogDataRecord.class);*/
-
-        //TODO build new StreamGenerator here.
+        // creating a new stream registers it with the stream manager
         LocationStreamGenerator locationStreamGenerator =
                 new LocationStreamGenerator(getApplicationContext());
 
@@ -234,17 +180,13 @@ public class InstanceManager {
         SensorStreamGenerator sensorStreamGenerator =
                 new SensorStreamGenerator(getApplicationContext());
 
-        SessionStreamGenerator sessionStreamGenerator =
-                new SessionStreamGenerator(getApplicationContext());
+        UserInteractionStreamGenerator userInteractionStreamGenerator =
+                new UserInteractionStreamGenerator(getApplicationContext());
+
 
         // All situations must be registered AFTER the stream generators are registers.
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();
 
-        /*MoodDataExpectedSituation moodDataExpectedSituation = new MoodDataExpectedSituation();
-        MoodDataExpectedAction moodDataExpectedAction = new MoodDataExpectedAction();
-
-        MissedReportsSituation missedReportsSituation = new MissedReportsSituation(getApplicationContext());
-        MissedReportsAction missedReportsAction = new MissedReportsAction();*/
 
         //TODO additional function
         //for testing to trigger qualtrics
@@ -256,7 +198,7 @@ public class InstanceManager {
         // Fetch tags
 //        Model tagsModel = Model.getInstance();
 
-        AsyncTask.execute(new Runnable() {
+        /*AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 Future<UserSubmissionStats> submissionStatsFuture = ((UserSubmissionStatsDAO)
@@ -298,7 +240,7 @@ public class InstanceManager {
                     EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
                 }
             }
-        });
+        });*/
 
     }
 

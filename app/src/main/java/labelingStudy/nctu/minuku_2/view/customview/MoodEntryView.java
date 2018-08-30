@@ -33,7 +33,6 @@ import android.view.View;
 
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku_2.R;
-//import edu.ohio.minuku_2.R;
 
 public class MoodEntryView extends View
 {

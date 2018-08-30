@@ -30,23 +30,24 @@ public class MobileAccessibilityService extends AccessibilityService {
         super();
 
         try {
+
             this.accessibilityStreamGenerator = (AccessibilityStreamGenerator) MinukuStreamManager.getInstance().getStreamGeneratorFor(AccessibilityDataRecord.class);
         }catch (StreamNotFoundException e){
-            this.accessibilityStreamGenerator = accessibilityStreamGenerator;
-            e.printStackTrace();
-        }
 
+            this.accessibilityStreamGenerator = accessibilityStreamGenerator;
+//            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onServiceConnected() {
+
         Log.d("in access", "config success!");
         AccessibilityServiceInfo accessibilityServiceInfo = new AccessibilityServiceInfo();
         accessibilityServiceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
         accessibilityServiceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_SPOKEN;
         accessibilityServiceInfo.notificationTimeout = 1000;
         setServiceInfo(accessibilityServiceInfo);
-
     }
 
     @Override
@@ -170,8 +171,13 @@ public class MobileAccessibilityService extends AccessibilityService {
 
 //        Log.d(TAG,"pack = "+pack+" text = "+text+" type = "+type+" extra = "+extra);
 
-        accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra);
+        //prevent the situation that the StreamGenerator is gone but the service is still running
+        try {
 
+            accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra);
+        }catch (NullPointerException e){
+
+        }
     }
 
     @Override

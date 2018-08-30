@@ -101,24 +101,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
         this.register();
     }
-    /*
-        public void setContext(Context Context){
-            mContext = Context;
-        }
-
-        public static ActivityRecognitionStreamGenerator getInstance() {
-            if(ActivityRecognitionStreamGenerator.instance == null) {
-                try {
-                    ActivityRecognitionStreamGenerator.instance = new ActivityRecognitionStreamGenerator();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return ActivityRecognitionStreamGenerator.instance;
-        }
-    */
 
     public static ActivityRecognitionStreamGenerator getInstance(Context applicationContext) {
+
         if(ActivityRecognitionStreamGenerator.instance == null) {
             try {
                 Log.e(TAG,"creating new ActivityRecognitionStreamGenerator.");
@@ -145,36 +130,8 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     @Override
     public void onStreamRegistration() {
+
         buildGoogleApiClient();
-/*
-        EventBus.getDefault().post(new IncrementLoadingProcessCountEvent());
-
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    Log.d(TAG, "Stream " + TAG + "initialized from previous state");
-                    Future<List<ActivityRecognitionDataRecord>> listFuture =
-                            mDAO.getLast(Constants.LOCATION_QUEUE_SIZE); //TODO Constants.LOCATION_QUEUE_SIZE must be replaced.
-                    while(!listFuture.isDone()) {
-                        Thread.sleep(1000);
-                    }
-                    Log.d(TAG, "Received data from Future for " + TAG);
-                    mStream.addAll(new LinkedList<>(listFuture.get()));
-                } catch (DAOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } finally {
-                    EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
-                }
-            }
-        });
-
-        */
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -191,7 +148,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
             mGoogleApiClient.connect();
 
         }
-
     }
 
     @Override
@@ -203,21 +159,18 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     public boolean updateStream() {
         Log.e(TAG, "Update stream called.");
 
-//        ActivityRecognitionDataRecord activityRecognitionDataRecord
-//               = new ActivityRecognitionDataRecord(sMostProbableActivity,sProbableActivities);
-
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(activityRecognitionDataRecord);
 
         if(activityRecognitionDataRecord!=null) {
+
             mStream.add(activityRecognitionDataRecord);
-            Log.e(TAG, "Location to be sent to event bus" + activityRecognitionDataRecord);
+//            Log.e(TAG, "Activity to be sent to event bus" + activityRecognitionDataRecord);
 
             EventBus.getDefault().post(activityRecognitionDataRecord);
             try {
 
                 mDAO.add(activityRecognitionDataRecord);
 
-                mDAO.query_counting();
             } catch (DAOException e) {
                 e.printStackTrace();
                 return false;
@@ -236,8 +189,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     public void sendStateChangeEvent() {
 
     }
-
-
 
     @Override
     public void offer(ActivityRecognitionDataRecord dataRecord) {
@@ -261,11 +212,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         //request activity recognition update
         if (com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi!=null && !ActivityRecognitionService.isServiceRunning()){
             com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                    mGoogleApiClient,                    //GoogleApiClient client
+                    mGoogleApiClient,
                     ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL,//detectionIntervalMillis
                     mActivityRecognitionPendingIntent);   //callbackIntent
-
-            //Log.d(TAG, "[com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi] is running!!!");
 
         }
 
@@ -303,17 +252,8 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         setMostProbableActivity(mostProbableActivity);
 
         setDetectedtime(detectedtime);
-        /*
-        ActivityRecognitionRecord record = ContextManager.getActivityRecognitionRecord();
 
-        record.setProbableActivities(sProbableActivities);
-        record.setMostProbableActivity(sMostProbableActivity);
-        record.setDetectedtime(sDetectedtime);
-
-        setActivityRecord(record);
-*/
-        Log.e(TAG,detectedtime+"||"+ mostProbableActivity);
-
+        Log.d(TAG,detectedtime+"||"+ mostProbableActivity);
 
         // Assume isRequested.
         if(probableActivities!=null&&mostProbableActivity!=null)
@@ -361,26 +301,23 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         /**1. add record to the local pool **/
         long id = recordCount++;
         activityRecognitionDataRecord.setID(id);
-        Log.e(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime()+ " MostProbableActivity:"+activityRecognitionDataRecord.getMostProbableActivity());
+        Log.d(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime()+ " MostProbableActivity:"+activityRecognitionDataRecord.getMostProbableActivity());
 
-        Log.e("mLocalRecordPool ", String.valueOf(mLocalRecordPool));
         mLocalRecordPool.add(activityRecognitionDataRecord); //it's working.
-        Log.e(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
-        //Log.e(TAG, String.valueOf(mLocalRecordPool.size()));
+        Log.d(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
 
         /**2. check whether we should remove old record **/
         removeOutDatedRecord();
         //**** update the latest ActivityRecognitionDataRecord in mLocalRecordPool to MinukuStreamManager;
         mLocalRecordPool.get(mLocalRecordPool.size()-1).setID(999);
-        Log.e(TAG,"size : "+mLocalRecordPool.size());
+        Log.d(TAG,"size : "+mLocalRecordPool.size());
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(mLocalRecordPool.get(mLocalRecordPool.size()-1));
-        Log.e(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
+        Log.d(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
 
 
         this.activityRecognitionDataRecord = activityRecognitionDataRecord;
 
-        //TODO check we need this function or not
-//        updateStream();
+        updateStream();
 
     }
 
@@ -463,6 +400,30 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
             Log.e(TAG, "[onConnectionFailed] No Google Play services is available, the error code is "
                     + connectionResult.getErrorCode());
         }
+    }
+
+    public static int getActivityTypeFromName(String activityName) {
+
+        if (activityName.equals(STRING_DETECTED_ACTIVITY_IN_VEHICLE)) {
+            return DetectedActivity.IN_VEHICLE;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_ON_BICYCLE)) {
+            return DetectedActivity.ON_BICYCLE;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_ON_FOOT)) {
+            return DetectedActivity.ON_FOOT;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_STILL)) {
+            return DetectedActivity.STILL;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_UNKNOWN)) {
+            return DetectedActivity.UNKNOWN ;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_RUNNING)) {
+            return DetectedActivity.RUNNING ;
+        }else if (activityName.equals(STRING_DETECTED_ACTIVITY_WALKING)){
+            return DetectedActivity.WALKING;
+        }else if(activityName.equals(STRING_DETECTED_ACTIVITY_TILTING)) {
+            return DetectedActivity.TILTING;
+        }else {
+            return NO_ACTIVITY_TYPE;
+        }
+
     }
 
     public static String getActivityNameFromType(int activityType) {
