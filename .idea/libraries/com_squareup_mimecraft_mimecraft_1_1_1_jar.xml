@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="com.squareup.mimecraft:mimecraft:1.1.1@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.mimecraft/mimecraft/1.1.1/66f73c3e42fa4658ef1cbae8b1ebefdaa856a23c/mimecraft-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.mimecraft/mimecraft/1.1.1/1861e0b7f54627bec1a2210accc6a4b8e3edb787/mimecraft-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -549,15 +549,4 @@ public class MinukuStreamManager implements StreamManager {
         return locationDataRecord;
     }
 
-/*
-    public void setDataRecord(Class<?> t) {
-
-    }
-
-    public <T extends DataRecord> getDataRecord(){
-
-        return ;
-    }
-*/
-
 }
