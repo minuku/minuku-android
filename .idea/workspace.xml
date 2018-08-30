@@ -13,6 +13,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d55a8068-8c59-437e-b8c5-0c64ecc773ef" name="Default" comment="">
+<<<<<<< HEAD
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+=======
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/__local_aars____Users_Lawrence_Desktop_program_Android_LabelingStudy_app_libs_javatuples_1_2_jar_unspecified_jar.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/Receiver/RestarterBroadcastReceiver.java" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/splitedmap_dialog.xml" />
@@ -384,6 +387,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/minuku2-extended/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/minukucore/minukucore.iml" afterPath="$PROJECT_DIR$/minukucore/minukucore.iml" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
     </list>
     <ignored path="temp_Labeling-master (2).iws" />
     <ignored path=".idea/workspace.xml" />
@@ -428,6 +432,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< HEAD
+      <file leaf-file-name="BackgroundService.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/service/BackgroundService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1011">
+              <caret line="91" column="37" lean-forward="false" selection-start-line="91" selection-start-column="37" selection-end-line="91" selection-end-column="37" />
+              <folding />
+=======
       <file leaf-file-name="BackgroundService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/service/BackgroundService.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -453,6 +465,7 @@
                 <element signature="e#4271#5371#0" expanded="true" />
                 <element signature="e#5370#5371#0" expanded="true" />
               </folding>
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
             </state>
           </provider>
         </entry>
@@ -462,6 +475,16 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="30">
               <caret line="39" column="34" lean-forward="false" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+<<<<<<< HEAD
+              <folding>
+                <marker date="1535625133084" expanded="true" signature="2920:3769" ph="{...}" />
+                <marker date="1535625133084" expanded="false" signature="3821:3832" ph=" { " />
+                <marker date="1535625133084" expanded="false" signature="3841:3847" ph=" }" />
+                <marker date="1535625133084" expanded="true" signature="3902:3910" ph="{...}" />
+                <marker date="1535625133084" expanded="true" signature="4001:4116" ph="{...}" />
+                <marker date="1535625133084" expanded="true" signature="4171:4220" ph="{...}" />
+              </folding>
+=======
               <folding />
             </state>
           </provider>
@@ -473,10 +496,21 @@
             <state relative-caret-position="549">
               <caret line="426" column="0" lean-forward="false" selection-start-line="426" selection-start-column="0" selection-end-line="426" selection-end-column="0" />
               <folding />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
+      <file leaf-file-name="AppUsageStreamGenerator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AppUsageStreamGenerator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="549">
+              <caret line="462" column="0" lean-forward="false" selection-start-line="462" selection-start-column="0" selection-end-line="462" selection-end-column="0" />
+              <folding>
+                <element signature="e#5718#5719#0" expanded="false" />
+                <element signature="e#5748#5749#0" expanded="false" />
+=======
       <file leaf-file-name="MinukuStreamManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -484,17 +518,46 @@
               <caret line="342" column="52" lean-forward="false" selection-start-line="342" selection-start-column="52" selection-end-line="342" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
+      <file leaf-file-name="MinukuStreamManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="293">
+              <caret line="219" column="5" lean-forward="false" selection-start-line="219" selection-start-column="5" selection-end-line="219" selection-end-column="5" />
+              <folding>
+                <marker date="1535625133068" expanded="true" signature="8936:8943" ph="{...}" />
+                <marker date="1535625133068" expanded="true" signature="9018:9070" ph="{...}" />
+                <marker date="1535625133068" expanded="true" signature="9148:9209" ph="{...}" />
+                <marker date="1535625133068" expanded="false" signature="9264:9274" ph=" { " />
+                <marker date="1535625133068" expanded="false" signature="9300:9306" ph=" }" />
+              </folding>
+=======
       <file leaf-file-name="InstanceManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/manager/InstanceManager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="176">
               <caret line="162" column="24" lean-forward="false" selection-start-line="162" selection-start-column="24" selection-end-line="162" selection-end-column="24" />
               <folding />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+            </state>
+          </provider>
+        </entry>
+      </file>
+<<<<<<< HEAD
+      <file leaf-file-name="InstanceManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/manager/InstanceManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1706">
+              <caret line="216" column="24" lean-forward="false" selection-start-line="216" selection-start-column="24" selection-end-line="216" selection-end-column="24" />
+              <folding>
+                <marker date="1535625132795" expanded="true" signature="15490:15497" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -502,8 +565,15 @@
       <file leaf-file-name="TransportationModeStreamGenerator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="178" column="0" lean-forward="false" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+=======
+      <file leaf-file-name="TransportationModeStreamGenerator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
+          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="615">
               <caret line="226" column="0" lean-forward="false" selection-start-line="226" selection-start-column="0" selection-end-line="226" selection-end-column="0" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
               <folding />
             </state>
           </provider>
@@ -1287,6 +1357,7 @@
                 <option name="description" value="Generates Gradle wrapper files." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="wrapper" />
+<<<<<<< HEAD
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
@@ -1368,9 +1439,133 @@
                 <option name="description" value="Assembles and tests this project and all projects that depend on it." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="buildDependents" />
+=======
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateDebugAndroidTestResValues" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Caches generated Crashlytics symbol files for upload." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="crashlyticsCacheSymbolsDebug" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+                <option name="name" value="transformDexArchiveWithDexMergerForDebugAndroidTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeDebugJniLibFolders" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="createFullJarRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateReleaseBuildConfig" />
+=======
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebugUnitTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="transformDexArchiveWithExternalLibsDexMergerForDebugAndroidTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processDebugJavaRes" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates Crashlytics symbol files for NDK projects." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+                <option name="name" value="crashlyticsGenerateSymbolsRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="platformAttrExtractor" />
+=======
+                <option name="name" value="compileReleaseJavaWithJavac" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebugNdk" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="crashlyticsUploadDistributionDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="javaPreCompileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs instrumentation tests for all flavors on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="connectedAndroidTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+=======
+                <option name="name" value="transformClassesWithDexForRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="transformResourcesWithMergeJavaResForRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileReleaseUnitTestJavaWithJavac" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebugShaders" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+<<<<<<< HEAD
+=======
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="transformResourcesWithMergeJavaResForDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+=======
                 <option name="name" value="transformDexArchiveWithDexMergerForDebugAndroidTest" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
@@ -1426,6 +1621,7 @@
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
                 <option name="name" value="compileDebugAndroidTestRenderscript" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
@@ -2128,10 +2324,26 @@
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Uploads cached Crashlytics symbol files to Crashlytics." />
+<<<<<<< HEAD
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
                 <option name="name" value="crashlyticsUploadSymbolsDebug" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
+                <option name="name" value="crashlyticsUploadSymbolsDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Uploads an APK to Crashlytics for distribution." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
+                <option name="name" value="crashlyticsUploadDistributionRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
                 <option name="name" value="generateDebugBuildConfig" />
               </ExternalTaskPojo>
@@ -4184,7 +4396,10 @@
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/dao/userInteractionDataRecordDAO.java" />
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java" />
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/config/Constants.java" />
+<<<<<<< HEAD
+=======
         <option value="$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/service/BackgroundService.java" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java" />
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/SessionManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/CounterActivity.java" />
@@ -4201,6 +4416,10 @@
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java" />
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/SensorStreamGenerator.java" />
         <option value="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AppUsageStreamGenerator.java" />
+<<<<<<< HEAD
+        <option value="$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/service/BackgroundService.java" />
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
       </list>
     </option>
   </component>
@@ -4397,6 +4616,8 @@
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="LabelingStudy" />
+<<<<<<< HEAD
+=======
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -4511,11 +4732,28 @@
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="LabelingStudy" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="minuku2-extended" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DataRecord" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="manifests" />
@@ -4535,6 +4773,14 @@
               <option name="myItemId" value="res" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="manager" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -4553,6 +4799,10 @@
               <option name="myItemId" value="values" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderTypeNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dao" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -4563,10 +4813,42 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
             </PATH_ELEMENT>
+<<<<<<< HEAD
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="LabelingStudy" />
+<<<<<<< HEAD
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku2-extended" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="manifests" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidManifestsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LabelingStudy" />
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -4596,12 +4878,17 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+<<<<<<< HEAD
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderTypeNode" />
+=======
               <option name="myItemId" value="minuku_2" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="service" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -4673,6 +4960,53 @@
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="LabelingStudy" />
+<<<<<<< HEAD
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku_2" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NearbyPlaces" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LabelingStudy" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minuku_2" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="manager" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LabelingStudy" />
+=======
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -4822,7 +5156,11 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+<<<<<<< HEAD
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535625159322" />
+=======
         <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535624939651" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -4870,7 +5208,11 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+<<<<<<< HEAD
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535625159322" />
+=======
         <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535624939651" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -5053,7 +5395,11 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+<<<<<<< HEAD
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535625159324" />
+=======
         <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1535624939652" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
       </method>
     </configuration>
     <list size="1">
@@ -5208,6 +5554,8 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="20" column="46" lean-forward="false" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
+<<<<<<< HEAD
+=======
           <folding>
             <element signature="e#578#579#0" expanded="true" />
             <element signature="e#628#629#0" expanded="true" />
@@ -5219,14 +5567,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-966">
           <caret line="45" column="13" lean-forward="false" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuSituationManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-966">
+          <caret line="45" column="13" lean-forward="false" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/timer_move.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="17" column="0" lean-forward="true" selection-start-line="16" selection-start-column="34" selection-end-line="17" selection-end-column="0" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
@@ -5234,46 +5590,103 @@
         <state />
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/timer_move.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="16" selection-start-column="34" selection-end-line="17" selection-end-column="0" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuNotificationManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="97">
           <caret line="39" column="25" lean-forward="false" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="25" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuNotificationManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="39" column="25" lean-forward="false" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="25" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Utilities/ScheduleAndSampleManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
           <caret line="53" column="23" lean-forward="false" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Utilities/ScheduleAndSampleManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="53" column="23" lean-forward="false" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+=======
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/android/widget/ImageView.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-113">
           <caret line="982" column="17" lean-forward="false" selection-start-line="982" selection-start-column="17" selection-end-line="982" selection-end-column="17" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/android/widget/ImageView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-113">
+          <caret line="982" column="17" lean-forward="false" selection-start-line="982" selection-start-column="17" selection-end-line="982" selection-end-column="17" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/Receiver/WifiReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
           <caret line="157" column="40" lean-forward="false" selection-start-line="157" selection-start-column="40" selection-end-line="157" selection-end-column="40" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/Receiver/WifiReceiver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="157" column="40" lean-forward="false" selection-start-line="157" selection-start-column="40" selection-end-line="157" selection-end-column="40" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/Timer_site.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/timer_site.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="128" column="50" lean-forward="false" selection-start-line="128" selection-start-column="38" selection-end-line="128" selection-end-column="50" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
       <provider editor-type-id="android-manifest">
         <state />
@@ -5289,6 +5702,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="21" column="57" lean-forward="false" selection-start-line="21" selection-start-column="57" selection-end-line="21" selection-end-column="57" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/Receiver/RestarterBroadcastReceiver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="57" lean-forward="false" selection-start-line="21" selection-start-column="57" selection-end-line="21" selection-end-column="57" />
           <folding>
             <element signature="imports" expanded="false" />
           </folding>
@@ -5299,74 +5717,147 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="19" column="49" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="49" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/model/DataRecord/AccessibilityDataRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="19" column="49" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="49" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="47" column="38" lean-forward="true" selection-start-line="47" selection-start-column="38" selection-end-line="47" selection-end-column="38" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="47" column="38" lean-forward="true" selection-start-line="47" selection-start-column="38" selection-end-line="47" selection-end-column="38" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/dao/AccessibilityDataRecordDAO.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="35" column="49" lean-forward="true" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/dao/AccessibilityDataRecordDAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="35" column="49" lean-forward="true" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ConnectivityStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-102">
           <caret line="154" column="38" lean-forward="false" selection-start-line="154" selection-start-column="38" selection-end-line="154" selection-end-column="38" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ConnectivityStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-102">
+          <caret line="154" column="38" lean-forward="false" selection-start-line="154" selection-start-column="38" selection-end-line="154" selection-end-column="38" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1558">
           <caret line="161" column="27" lean-forward="false" selection-start-line="161" selection-start-column="27" selection-end-line="161" selection-end-column="27" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1558">
+          <caret line="161" column="27" lean-forward="false" selection-start-line="161" selection-start-column="27" selection-end-line="161" selection-end-column="27" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/Timer_move.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
           <caret line="182" column="69" lean-forward="false" selection-start-line="182" selection-start-column="69" selection-end-line="182" selection-end-column="69" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/timer_move.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="182" column="69" lean-forward="false" selection-start-line="182" selection-start-column="69" selection-end-line="182" selection-end-column="69" />
+=======
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/java/util/concurrent/ScheduledExecutorService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
           <caret line="93" column="17" lean-forward="false" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/java/util/concurrent/ScheduledExecutorService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="93" column="17" lean-forward="false" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
+=======
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/java/util/concurrent/Future.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
           <caret line="119" column="12" lean-forward="false" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="12" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-26/java/util/concurrent/Future.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="119" column="12" lean-forward="false" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="12" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/config/Constants.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="498">
           <caret line="242" column="52" lean-forward="false" selection-start-line="242" selection-start-column="28" selection-end-line="242" selection-end-column="52" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/config/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="498">
+          <caret line="242" column="52" lean-forward="false" selection-start-line="242" selection-start-column="28" selection-end-line="242" selection-end-column="52" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/BootCompleteReceiver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="47" column="54" lean-forward="false" selection-start-line="47" selection-start-column="54" selection-end-line="47" selection-end-column="54" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/BootCompleteReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
@@ -5375,6 +5866,11 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/Timeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="641" column="38" lean-forward="false" selection-start-line="641" selection-start-column="38" selection-end-line="641" selection-end-column="38" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/Timeline.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="318">
@@ -5392,50 +5888,100 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
           <caret line="137" column="56" lean-forward="false" selection-start-line="137" selection-start-column="56" selection-end-line="137" selection-end-column="56" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/CheckPointActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="137" column="56" lean-forward="false" selection-start-line="137" selection-start-column="56" selection-end-line="137" selection-end-column="56" />
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
           <caret line="24" column="35" lean-forward="false" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="24" column="35" lean-forward="false" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
           <caret line="26" column="35" lean-forward="false" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="35" lean-forward="false" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="226" column="0" lean-forward="false" selection-start-line="226" selection-start-column="0" selection-end-line="226" selection-end-column="0" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="178" column="0" lean-forward="false" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+=======
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/SessionManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="335" column="26" lean-forward="false" selection-start-line="335" selection-start-column="26" selection-end-line="335" selection-end-column="26" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/SessionManager.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="226">
           <caret line="335" column="26" lean-forward="false" selection-start-line="335" selection-start-column="26" selection-end-line="335" selection-end-column="26" />
+=======
+        <state relative-caret-position="249">
+          <caret line="174" column="13" lean-forward="true" selection-start-line="174" selection-start-column="13" selection-end-line="174" selection-end-column="13" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/service/MobileAccessibilityService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="249">
           <caret line="174" column="13" lean-forward="true" selection-start-line="174" selection-start-column="13" selection-end-line="174" selection-end-column="13" />
+=======
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ActivityRecognitionStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="163" column="35" lean-forward="false" selection-start-line="163" selection-start-column="35" selection-end-line="163" selection-end-column="35" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ActivityRecognitionStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="362">
@@ -5446,6 +5992,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Data/DBHelper.java">
       <provider selected="true" editor-type-id="text-editor">
+=======
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Data/DBHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
         <state relative-caret-position="308">
           <caret line="435" column="40" lean-forward="false" selection-start-line="435" selection-start-column="40" selection-end-line="435" selection-end-column="40" />
           <folding />
@@ -5478,9 +6028,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/manager/InstanceManager.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="1706">
+          <caret line="216" column="24" lean-forward="false" selection-start-line="216" selection-start-column="24" selection-end-line="216" selection-end-column="24" />
+          <folding>
+            <marker date="1535625132795" expanded="true" signature="15490:15497" ph="{...}" />
+          </folding>
+=======
         <state relative-caret-position="176">
           <caret line="162" column="24" lean-forward="false" selection-start-line="162" selection-start-column="24" selection-end-line="162" selection-end-column="24" />
           <folding />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
         </state>
       </provider>
     </entry>
@@ -5519,9 +6077,17 @@
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="293">
+<<<<<<< HEAD
+          <caret line="219" column="5" lean-forward="false" selection-start-line="219" selection-start-column="5" selection-end-line="219" selection-end-column="5" />
+=======
           <caret line="342" column="52" lean-forward="false" selection-start-line="342" selection-start-column="52" selection-end-line="342" selection-end-column="52" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding>
-            <element signature="imports" expanded="true" />
+            <marker date="1535625133068" expanded="true" signature="8936:8943" ph="{...}" />
+            <marker date="1535625133068" expanded="true" signature="9018:9070" ph="{...}" />
+            <marker date="1535625133068" expanded="true" signature="9148:9209" ph="{...}" />
+            <marker date="1535625133068" expanded="false" signature="9264:9274" ph=" { " />
+            <marker date="1535625133068" expanded="false" signature="9300:9306" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -5538,6 +6104,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
+<<<<<<< HEAD
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Utilities/CSVHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="26" column="44" lean-forward="false" selection-start-line="26" selection-start-column="44" selection-end-line="26" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-277">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+=======
           <folding>
             <element signature="e#605#606#0" expanded="false" />
             <element signature="e#645#646#0" expanded="false" />
@@ -5562,10 +6149,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="26" column="44" lean-forward="false" selection-start-line="26" selection-start-column="44" selection-end-line="26" selection-end-column="44" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/dao/AppUsageDataRecordDAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-186">
+          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/AndroidManifest.xml">
       <provider editor-type-id="android-manifest">
         <state />
@@ -5573,18 +6167,43 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-277">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/model/DataRecord/AppUsageDataRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-617">
+          <caret line="33" column="38" lean-forward="false" selection-start-line="33" selection-start-column="38" selection-end-line="33" selection-end-column="38" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/dao/AppUsageDataRecordDAO.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-186">
           <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AppUsageStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="549">
+          <caret line="462" column="0" lean-forward="false" selection-start-line="462" selection-start-column="0" selection-end-line="462" selection-end-column="0" />
+          <folding>
+            <element signature="e#5718#5719#0" expanded="false" />
+            <element signature="e#5748#5749#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-148">
+          <caret line="115" column="30" lean-forward="false" selection-start-line="115" selection-start-column="30" selection-end-line="115" selection-end-column="30" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/model/DataRecord/AppUsageDataRecord.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-617">
@@ -5597,10 +6216,32 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="549">
           <caret line="426" column="0" lean-forward="false" selection-start-line="426" selection-start-column="0" selection-end-line="426" selection-end-column="0" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/controller/CounterActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="447" column="14" lean-forward="false" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="39" column="34" lean-forward="false" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+          <folding>
+            <marker date="1535625133084" expanded="true" signature="2920:3769" ph="{...}" />
+            <marker date="1535625133084" expanded="false" signature="3821:3832" ph=" { " />
+            <marker date="1535625133084" expanded="false" signature="3841:3847" ph=" }" />
+            <marker date="1535625133084" expanded="true" signature="3902:3910" ph="{...}" />
+            <marker date="1535625133084" expanded="true" signature="4001:4116" ph="{...}" />
+            <marker date="1535625133084" expanded="true" signature="4171:4220" ph="{...}" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-148">
@@ -5618,18 +6259,33 @@
           <caret line="447" column="14" lean-forward="false" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
           <folding>
             <element signature="imports" expanded="false" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/UserInteractionStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-284">
+          <caret line="63" column="47" lean-forward="false" selection-start-line="63" selection-start-column="47" selection-end-line="63" selection-end-column="47" />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="39" column="34" lean-forward="false" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/labelingStudy/nctu/minuku_2/service/BackgroundService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1011">
+          <caret line="91" column="37" lean-forward="false" selection-start-line="91" selection-start-column="37" selection-end-line="91" selection-end-column="37" />
+          <folding />
+=======
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/UserInteractionStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-284">
@@ -5639,6 +6295,7 @@
             <element signature="e#4271#5371#0" expanded="true" />
             <element signature="e#5370#5371#0" expanded="true" />
           </folding>
+>>>>>>> b4fd8c2fff0310c226f9f0167f6d4d9b4dfe1479
         </state>
       </provider>
     </entry>
