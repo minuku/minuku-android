@@ -1,10 +1,14 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -90,11 +94,17 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         // also post an event.
         EventBus.getDefault().post(accessibilityDataRecord);
         try {
-            mDAO.add(accessibilityDataRecord);
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
 
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            db.accessibilityDataRecordDao().insertAll(accessibilityDataRecord);
+            List<AccessibilityDataRecord> accessibilityDataRecords = db.accessibilityDataRecordDao().getAll();
+
+            for (AccessibilityDataRecord a : accessibilityDataRecords) {
+                Log.d(TAG, "pack in db: "+a.getPack());
+            }
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
