@@ -62,12 +62,15 @@ import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.manager.SessionManager;
+import labelingStudy.nctu.minuku.manager.SituationManager;
 import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku.stream.LocationStream;
 import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
+
+import static labelingStudy.nctu.minuku.manager.SituationManager.locationSitu;
 
 /**
  * Created by neerajkumar on 7/18/16.
@@ -188,6 +191,10 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             //store it to the sharePrefrence
             sharedPrefs.edit().putFloat("latestLatitude", (float) location.getLatitude()).apply();
             sharedPrefs.edit().putFloat("latestLongitude", (float) location.getLongitude()).apply();
+
+            locationSitu = "(" +latestLatitude + latestLongitude + ")";
+            SituationManager locsitu = new SituationManager();
+            locsitu.setMap();
 
         }
     }
