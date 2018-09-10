@@ -1,5 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
@@ -19,11 +21,11 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.Utilities.Utils;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
@@ -45,7 +47,6 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public final String TAG = "TransportationModeStreamGenerator";
 
     private TransportationModeStream mStream;
-    TransportationModeDAO mDAO;
 
     private String ConfirmedActvitiyString = "NA";
 
@@ -166,7 +167,6 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new TransportationModeStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TransportationModeDataRecord.class);
 
         mScheduledExecutorService = Executors.newScheduledThreadPool(TransportationMode_ThreadSize);
 
@@ -178,6 +178,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         this.register();
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void register() {
         Log.d(TAG, "Registering with StreamManager.");
@@ -196,6 +197,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     }
 
 
+    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
 
@@ -250,10 +252,19 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         EventBus.getDefault().post(transportationModeDataRecord);
 
         try {
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.transportationModeDataRecordDao().insertAll(transportationModeDataRecord);
 
-            mDAO.add(transportationModeDataRecord);
-        } catch (DAOException e) {
-
+            List<TransportationModeDataRecord> transportationModeDataRecords = db.transportationModeDataRecordDao().getAll();
+            for (TransportationModeDataRecord t : transportationModeDataRecords) {
+                Log.d(TAG+" ConfirmedActivity: ", t.getConfirmedActivityString());
+                Log.d(TAG, t.getSuspectedStartActivityString());
+                Log.d(TAG, t.getSuspectedStopActivityString());
+                Log.d(TAG, String.valueOf(t.getSuspectedTime()));
+            }
         } catch (NullPointerException e) { //Sometimes no data is normal
 
             CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "Transportation, update stream, NullPointerException");
@@ -278,6 +289,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
 
     }
 
+    @SuppressLint("LongLogTag")
     public void setTransportationModeDataRecord(String getConfirmedActvitiyString){
 
         ConfirmedActvitiyString = getConfirmedActvitiyString;
@@ -897,7 +909,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
             //             " windwo Trip_startTime " + Trip_startTime + " windwo Trip_endTime " + Trip_endTime);
 
 
-            if (record.getTimestamp() >= startTime && record.getTimestamp() <= endTime)
+            if (record.getCreationTime() >= startTime && record.getCreationTime() <= endTime)
                 windowData.add(record);
         }
 

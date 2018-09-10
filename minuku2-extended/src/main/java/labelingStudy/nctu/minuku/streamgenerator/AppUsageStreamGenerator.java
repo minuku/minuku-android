@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -19,8 +20,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
@@ -91,7 +92,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
     private static final String STRING_INTERACTIVE = "Interactive";
     private static final String STRING_NOT_INTERACTIVE = "Not_Interactive";
 
-    AppUsageDataRecordDAO mDAO;
 
     public static AppUsageDataRecord toCheckFamiliarOrNotLocationDataRecord;
 
@@ -104,7 +104,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
         mContext = applicationContext;
         this.mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AppUsageDataRecord.class);
 
         mPowerManager = (PowerManager) applicationContext.getSystemService(POWER_SERVICE);
 
@@ -149,8 +148,20 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    mDAO.add(appUsageDataRecord);
-                } catch (DAOException e) {
+                    appDatabase db;
+                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                            .allowMainThreadQueries()
+                            .build();
+                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
+                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
+                    Log.d(TAG, "test test");
+                    for (AppUsageDataRecord a : appUsageDataRecords) {
+                        Log.d(TAG, a.getLatest_Used_App());
+                        Log.d(TAG, a.getLatest_Foreground_Activity());
+                        Log.d(TAG, a.getScreen_Status());
+                    }
+
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -169,8 +180,20 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    mDAO.add(appUsageDataRecord);
-                } catch (DAOException e) {
+                    appDatabase db;
+                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                            .allowMainThreadQueries()
+                            .build();
+                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
+
+                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
+
+                    for (AppUsageDataRecord a : appUsageDataRecords) {
+                        Log.d(TAG, a.getLatest_Used_App());
+                        Log.d(TAG, a.getLatest_Foreground_Activity());
+                        Log.d(TAG, a.getScreen_Status());
+                    }
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                     return false;
                 }

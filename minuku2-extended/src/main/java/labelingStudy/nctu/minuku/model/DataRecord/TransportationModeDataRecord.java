@@ -1,6 +1,9 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import java.util.Calendar;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
@@ -9,23 +12,55 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/5/22.
  */
 
-public class TransportationModeDataRecord implements DataRecord{
+@Entity
+public class TransportationModeDataRecord implements DataRecord {
 
+
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
+
+    @ColumnInfo(name = "creationTime")
     public long creationTime;
+
+    @ColumnInfo(name = "taskDayCount")
     private int taskDayCount;
+
+    @ColumnInfo(name = "hour")
     private long hour;
 
+    @ColumnInfo(name = "suspectedTime")
     private long suspectedTime;
-    public String confirmedActivityString;
+
+    @ColumnInfo(name = "ConfirmedActivityString")
+    public String ConfirmedActivityString; //
+
+    @ColumnInfo(name = "suspectedStartActivityString")
     public String suspectedStartActivityString;
+
+    @ColumnInfo(name = "suspectedStopActivityString")
     public String suspectedStopActivityString;
 
-    public String getSuspectedStopActivityString() {
-        return suspectedStopActivityString;
+    public TransportationModeDataRecord(String confirmedActvitiyString, long suspectTime, String suspectedStartActivity, String suspectedEndActivity) {
+        this.suspectedTime = suspectTime;
+        this.ConfirmedActivityString = confirmedActvitiyString;
+        this.suspectedStartActivityString = suspectedStartActivity;
+        this.suspectedStopActivityString = suspectedEndActivity;
     }
 
-    public void setSuspectedStopActivityString(String suspectedStopActivityString) {
-        this.suspectedStopActivityString = suspectedStopActivityString;
+    public int getTaskDayCount() {
+        return taskDayCount;
+    }
+
+    public void setTaskDayCount(int taskDayCount) {
+        this.taskDayCount = taskDayCount;
+    }
+
+    public long getHour() {
+        return hour;
+    }
+
+    public void setHour(long hour) {
+        this.hour = hour;
     }
 
     public long getSuspectedTime() {
@@ -44,40 +79,29 @@ public class TransportationModeDataRecord implements DataRecord{
         this.suspectedStartActivityString = suspectedStartActivityString;
     }
 
-    public TransportationModeDataRecord(){}
-
-    public TransportationModeDataRecord(String confirmedActivityString){
-
-        this.creationTime = new Date().getTime();
-        this.confirmedActivityString = confirmedActivityString;
+    public String getSuspectedStopActivityString() {
+        return suspectedStopActivityString;
     }
 
-    public TransportationModeDataRecord(String confirmedActivityString, long suspectedTime, String suspectedStartActivityString, String suspectedStopActivityString){
-
-        this.creationTime = new Date().getTime();
-        this.confirmedActivityString = confirmedActivityString;
-        this.suspectedTime = suspectedTime;
-        this.suspectedStartActivityString = suspectedStartActivityString;
+    public void setSuspectedStopActivityString(String suspectedStopActivityString) {
         this.suspectedStopActivityString = suspectedStopActivityString;
     }
 
-    private long getmillisecondToHour(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        return mhour;
-
+    public TransportationModeDataRecord(String ConfirmedActivityString){
+        this.creationTime = new Date().getTime();
+        this.ConfirmedActivityString = ConfirmedActivityString;
     }
 
-    public long getHour(){
-        return hour;
+    public long get_id() {
+        return _id;
     }
 
-    public int getTaskDayCount(){
-        return taskDayCount;
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
     @Override
@@ -86,11 +110,10 @@ public class TransportationModeDataRecord implements DataRecord{
     }
 
     public String getConfirmedActivityString(){
-        return confirmedActivityString;
+        return ConfirmedActivityString;
     }
 
-    public void setConfirmedActivityString(String confirmedActivityString){
-        this.confirmedActivityString = confirmedActivityString;
+    public void setConfirmedActivityType(String ConfirmedActivityString){
+        this.ConfirmedActivityString=ConfirmedActivityString;
     }
-
 }

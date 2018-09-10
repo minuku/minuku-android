@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -9,8 +10,10 @@ import android.os.Handler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.ConnectivityDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
@@ -20,6 +23,10 @@ import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
+
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileAvailable;
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileConnected;
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsWifiAvailable;
 
 /**
  * Created by Lawrence on 2017/8/22.
@@ -50,7 +57,6 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     private static ConnectivityManager mConnectivityManager;
 
     private ConnectivityStream mStream;
-    private ConnectivityDataRecordDAO mDAO;
 
     public ConnectivityStreamGenerator(){
 
@@ -64,7 +70,6 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
         mContext = applicationContext;
 
         this.mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ConnectivityDataRecord.class);
 
         mConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
 
@@ -102,11 +107,22 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
         // also post an event.
         EventBus.getDefault().post(connectivityDataRecord);
         try {
-            mDAO.add(connectivityDataRecord);
-            mDAO.query_counting();
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
+            List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
+            for (ConnectivityDataRecord c : connectivityDataRecords) {
+                Log.d(TAG+" isIsWifiConnected: ", String.valueOf(c.isIsWifiConnected()));
+                Log.d(TAG+" NetworkType: ",c.getNetworkType());
+                Log.d(TAG+" isNetworkAvailable: ", String.valueOf(c.isNetworkAvailable()));
+                Log.d(TAG+" isIsConnected: ", String.valueOf(c.isIsConnected()));
+                Log.d(TAG+" isIsWifiAvailable: ",String.valueOf(isIsWifiAvailable()));
+                Log.d(TAG+" isIsMobileAvailable: ",String.valueOf(isIsMobileAvailable()));
+                Log.d(TAG+" isIsMobileConnected: ", String.valueOf(isIsMobileConnected()));
+
+            }
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;

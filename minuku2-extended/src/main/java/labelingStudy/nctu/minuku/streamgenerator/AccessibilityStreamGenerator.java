@@ -104,6 +104,9 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
 
             for (AccessibilityDataRecord a : accessibilityDataRecords) {
                 Log.d(TAG, "pack in db: "+a.getPack());
+                Log.d(TAG, "Type in db: "+a.getType());
+                Log.d(TAG, "Text in db: "+a.getText());
+                Log.d(TAG, "Extra in db: "+a.getExtra());
             }
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();

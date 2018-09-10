@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,9 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
@@ -19,6 +23,7 @@ import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
+import labelingStudy.nctu.minukucore.user.User;
 
 /**
  * Created by Lawrence on 2018/8/29.
@@ -28,7 +33,7 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
 
     private String TAG = "UserInteractionStreamGenerator";
     private UserInteractionStream mStream;
-    private UserInteractionDataRecordDAO mDAO;
+    private Context mContext;
 
     private static final String STRING_FALSE = "0";
     private static final String STRING_TRUE = "1";
@@ -41,8 +46,8 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
     public UserInteractionStreamGenerator (Context applicationContext) {
 
         super(applicationContext);
+        mContext = applicationContext;
         this.mStream = new UserInteractionStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(UserInteractionDataRecord.class);
         this.register();
     }
 
@@ -77,11 +82,21 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
         // also post an event.
         EventBus.getDefault().post(userInteractionDataRecord);
         try {
-            mDAO.add(userInteractionDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
-        }catch (NullPointerException e){ //Sometimes no data is normal
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.userInteractionDataRecordDao().insertAll(userInteractionDataRecord);
+
+
+            List<UserInteractionDataRecord> userInteractionDataRecords = db.userInteractionDataRecordDao().getAll();
+            for (UserInteractionDataRecord u : userInteractionDataRecords) {
+                Log.d(TAG+" Background ", u.getBackground());
+                Log.d(TAG+" Foreground ", u.getForeground());
+                Log.d(TAG+" Present: ", u.getPresent());
+                Log.d(TAG+" Unlock: ", u.getUnlock());
+            }
+        } catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
         }

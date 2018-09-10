@@ -1,36 +1,26 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
+/**
+ * Created by Lawrence on 2017/7/22.
+ */
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.util.Log;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import labelingStudy.nctu.minuku.model.Session;
 import labelingStudy.nctu.minukucore.model.DataRecord;
 
 /**
  * Created by Lawrence on 2017/7/22.
  */
 
+@Entity
 public class SensorDataRecord implements DataRecord {
-    private final String TAG = "SensorDataRecord";
 
-    public long creationTime;
-    private String mAccele_str, mGyroscope_str, mGravity_str, mLinearAcceleration_str, mRotationVector_str,
-            mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str,  mAmbientTemperature_str;
+    public String TAG = "sensorDataRecord";
 
-    protected long _id;
-    protected String _source;
-    protected Session _session;
-    protected ArrayList<Integer> mSavedBySessionIds;
-    protected boolean isCopiedToPublicPool;
-    protected JSONObject mData;
-    protected String mTimestring;
-
-    public SensorDataRecord(String mAccele_str, String mGyroscope_str, String mGravity_str, String mLinearAcceleration_str,
-                            String mRotationVector_str, String mProximity_str, String mMagneticField_str, String mLight_str,
-                            String mPressure_str, String mRelativeHumidity_str, String mAmbientTemperature_str){
+    public SensorDataRecord(String mAccele_str, String mGyroscope_str, String mGravity_str, String mLinearAcceleration_str, String mRotationVector_str, String mProximity_str, String mMagneticField_str, String mLight_str, String mPressure_str, String mRelativeHumidity_str, String mAmbientTemperature_str) {
         this.mAccele_str = mAccele_str;
         this.mGyroscope_str = mGyroscope_str;
         this.mGravity_str = mGravity_str;
@@ -43,101 +33,155 @@ public class SensorDataRecord implements DataRecord {
         this.mRelativeHumidity_str = mRelativeHumidity_str;
         this.mAmbientTemperature_str = mAmbientTemperature_str;
 
-        Log.d(TAG, "mAccele_str "+mAccele_str+" mGyroscope_str "+mGyroscope_str+" mGravity_str "+mGravity_str
-                +" mLinearAcceleration_str "+mLinearAcceleration_str+" mRotationVector_str "+mRotationVector_str+" mProximity_str "+mProximity_str
-                +" mMagneticField_str "+mMagneticField_str+" mLight_str "+mLight_str+" mPressure_str "+mPressure_str
-                +" mRelativeHumidity_str "+mRelativeHumidity_str+" mAmbientTemperature_str "+mAmbientTemperature_str);
-
+        Log.d(TAG, "mAccele_str " + mAccele_str + " mGyroscope_str " + mGyroscope_str + " mGravity_str " + mGravity_str
+                + " mLinearAcceleration_str " + mLinearAcceleration_str + " mRotationVector_str " + mRotationVector_str + " mProximity_str " + mProximity_str
+                + " mMagneticField_str " + mMagneticField_str + " mLight_str " + mLight_str + " mPressure_str " + mPressure_str
+                + " mRelativeHumidity_str " + mRelativeHumidity_str + " mAmbientTemperature_str " + mAmbientTemperature_str);
     }
 
-    public ArrayList<Integer> getSavedSessionIds() {
-        return mSavedBySessionIds;
-    }
+    @PrimaryKey(autoGenerate = true)
+    private int _id;
 
-    public void addSavedBySessionId(int sessionId){
 
-        mSavedBySessionIds.add(sessionId);
+    @ColumnInfo(name = "creationTime")
+    public long creationTime;
 
-    }
 
-    @Override
-    public String toString() {
-        return "Record{" +
-                "id=" + _id +
-                ", source='" + _source + '\'' +
-                ", session=" + _session +
-                ", savedBySessionIds=" + mSavedBySessionIds +
-                ", data=" + mData +
-                ", createTime='" + creationTime + '\'' +
-                '}';
-    }
+    @ColumnInfo(name = "acceleration")
+    public String mAccele_str;
 
-    public boolean isCopiedToPublicPool() {
-        return isCopiedToPublicPool;
-    }
+    @ColumnInfo(name = "gryroscope")
+    public String mGyroscope_str;
 
-    public void setIsCopiedToPublicPool(boolean isCopiedToPublicPool) {
-        this.isCopiedToPublicPool = isCopiedToPublicPool;
-    }
+    @ColumnInfo(name = "gravity")
+    public String mGravity_str;
 
-    public void setID(long id){
-        _id = id;
-    }
+    @ColumnInfo(name = "linearAcceleration")
+    public String mLinearAcceleration_str;
 
-    public long getID(){
+    @ColumnInfo(name = "rotationVector")
+    public String mRotationVector_str;
+
+    @ColumnInfo(name = "proximity")
+    public String mProximity_str;
+
+    @ColumnInfo(name = "magneticField")
+    public String mMagneticField_str;
+
+    @ColumnInfo(name = "light")
+    public String mLight_str;
+
+    @ColumnInfo(name = "pressure")
+    public String mPressure_str;
+
+    @ColumnInfo(name = "relativeHumidity")
+    public String mRelativeHumidity_str;
+
+    @ColumnInfo(name = "ambientTemperature")
+    public String mAmbientTemperature_str;
+
+    public int get_id() {
         return _id;
     }
 
-
-    public JSONObject getData() {
-        return mData;
+    public void set_id(int _id) {
+        this._id = _id;
     }
 
-    public void setData(JSONObject data) {
-        this.mData = data;
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
-
-    public String getSource(){
-        return _source;
+    public String getmAccele_str() {
+        return mAccele_str;
     }
 
-    public void setSource(String source){
-        _source = source;
+    public void setmAccele_str(String mAccele_str) {
+        this.mAccele_str = mAccele_str;
     }
 
-    public Session getSession(){
-        return _session;
+    public String getmGyroscope_str() {
+        return mGyroscope_str;
     }
 
-    public void setSession(Session s){
-        _session = s;
+    public void setmGyroscope_str(String mGyroscope_str) {
+        this.mGyroscope_str = mGyroscope_str;
     }
+
+    public String getmGravity_str() {
+        return mGravity_str;
+    }
+
+    public void setmGravity_str(String mGravity_str) {
+        this.mGravity_str = mGravity_str;
+    }
+
+    public String getmLinearAcceleration_str() {
+        return mLinearAcceleration_str;
+    }
+
+    public void setmLinearAcceleration_str(String mLinearAcceleration_str) {
+        this.mLinearAcceleration_str = mLinearAcceleration_str;
+    }
+
+    public String getmRotationVector_str() {
+        return mRotationVector_str;
+    }
+
+    public void setmRotationVector_str(String mRotationVector_str) {
+        this.mRotationVector_str = mRotationVector_str;
+    }
+
+    public String getmProximity_str() {
+        return mProximity_str;
+    }
+
+    public void setmProximity_str(String mProximity_str) {
+        this.mProximity_str = mProximity_str;
+    }
+
+    public String getmMagneticField_str() {
+        return mMagneticField_str;
+    }
+
+    public void setmMagneticField_str(String mMagneticField_str) {
+        this.mMagneticField_str = mMagneticField_str;
+    }
+
+    public String getmLight_str() {
+        return mLight_str;
+    }
+
+    public void setmLight_str(String mLight_str) {
+        this.mLight_str = mLight_str;
+    }
+
+    public String getmPressure_str() {
+        return mPressure_str;
+    }
+
+    public void setmPressure_str(String mPressure_str) {
+        this.mPressure_str = mPressure_str;
+    }
+
+    public String getmRelativeHumidity_str() {
+        return mRelativeHumidity_str;
+    }
+
+    public void setmRelativeHumidity_str(String mRelativeHumidity_str) {
+        this.mRelativeHumidity_str = mRelativeHumidity_str;
+    }
+
+    public String getmAmbientTemperature_str() {
+        return mAmbientTemperature_str;
+    }
+
+    public void setmAmbientTemperature_str(String mAmbientTemperature_str) {
+        this.mAmbientTemperature_str = mAmbientTemperature_str;
+    }
+
     @Override
     public long getCreationTime() {
-
-        return creationTime;
+        return 0;
     }
-
-    public String getmAccele_str() {return mAccele_str;}
-
-    public String getmGyroscope_str() {return mGyroscope_str;}
-
-    public String getmGravity_str() {return mGravity_str;}
-
-    public String getmLinearAcceleration_str() {return mLinearAcceleration_str;}
-
-    public String getmRotationVector_str() {return mRotationVector_str;}
-
-    public String getmProximity_str() {return mProximity_str;}
-
-    public String getmMagneticField_str() {return mMagneticField_str;}
-
-    public String getmLight_str() {return mLight_str;}
-
-    public String getmPressure_str() {return mPressure_str;}
-
-    public String getmRelativeHumidity_str() {return mRelativeHumidity_str;}
-
-    public String getmAmbientTemperature_str() {return mAmbientTemperature_str;}
 }

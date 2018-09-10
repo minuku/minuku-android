@@ -1,64 +1,66 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import android.content.Context;
-import android.os.PowerManager;
-
-import org.json.JSONObject;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
-import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minukucore.model.DataRecord;
 
 /**
  * Created by Lawrence on 2017/7/22.
  */
+@Entity
+public class AppUsageDataRecord implements DataRecord {
 
-public class AppUsageDataRecord implements DataRecord{
+    public String TAG = "AppUsageDataRecord";
 
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
+
+    @ColumnInfo(name="creationTime")
     public long creationTime;
-    private String TAG = "AppUsageDataRecord";
 
+    @ColumnInfo(name = "Screen_Status")
     private String Screen_Status;
-    private String Latest_Used_App;
-    private String Latest_Used_App_Time;
-    private String Recent_Apps;
-    //private String Users;
+
+    @ColumnInfo(name = "Latest_Foreground_Activity")
     private String Latest_Foreground_Activity;
 
-    private Context context;
-
-    //screen on and off
-    private static final String STRING_SCREEN_OFF = "Screen_off";
-    private static final String STRING_SCREEN_ON = "Screen_on";
-    private static final String STRING_INTERACTIVE = "Interactive";
-    private static final String STRING_NOT_INTERACTIVE = "Not_Interactive";
-
-    private PowerManager mPowerManager;
-
-    protected JSONObject jSONObject;
+    @ColumnInfo(name = "Latest_Used_App")
+    private String Latest_Used_App;
 
 
-    public AppUsageDataRecord(){
-        this.creationTime = new java.util.Date().getTime();
-    }
 
     public AppUsageDataRecord(String Screen_Status, String Latest_Used_App, String Latest_Foreground_Activity) {
-        this.creationTime = new java.util.Date().getTime();
+        this.creationTime = new Date().getTime();
         this.Screen_Status = Screen_Status;
         this.Latest_Used_App = Latest_Used_App;
         this.Latest_Foreground_Activity = Latest_Foreground_Activity;
-        //this.Users = Users;
+    }
+    @Ignore
+    public AppUsageDataRecord() {
+
     }
 
-    public AppUsageDataRecord(String Screen_Status, String Latest_Used_App, String Latest_Used_App_Time, String Recent_Apps) {
-        this.creationTime = new java.util.Date().getTime();
-        this.Screen_Status = Screen_Status;
-        this.Latest_Used_App = Latest_Used_App;
-        this.Latest_Used_App_Time = Latest_Used_App_Time;
-        this.Recent_Apps = Recent_Apps;
-        //this.Users = Users;
+    public String getTAG() {
+        return TAG;
+    }
+
+    public void setTAG(String TAG) {
+        this.TAG = TAG;
+    }
+
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     @Override
@@ -66,87 +68,33 @@ public class AppUsageDataRecord implements DataRecord{
         return creationTime;
     }
 
-    public void setCreationTime(long t){this.creationTime = t;}
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
 
-//    public String getScreenStatus() {
-//        Log.e(TAG, "GetScreenStatus called.");
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//
-//            //use isInteractive after api 20
-//            DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
-//            for (Display display : dm.getDisplays()) {
-//                if (display.getState() != Display.STATE_OFF) {
-//                    Screen_Status = STRING_INTERACTIVE;
-//                }
-//                else
-//                    Screen_Status = STRING_SCREEN_OFF;
-//            }
-//
-//
-//
-//        }
-//        //before API20, we use screen on or off
-//        else {
-//            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-//            if(mPowerManager.isScreenOn())
-//                Screen_Status = STRING_SCREEN_ON;
-//            else
-//                Screen_Status = STRING_SCREEN_OFF;
-//
-//        }
-//
-//        Log.e(TAG, "test source being requested [testing app] SCREEN:  " + Screen_Status);
-//
-//        return Screen_Status;
-//    }
-
-    public String getScreen_Status(){
-        Log.e(TAG, "getScreen_Status called.");
-
+    public String getScreen_Status() {
         return Screen_Status;
     }
 
-    public String getLatestUsedApp() {
-        Log.e(TAG, "GetLatestUsedApp called.");
-        return Latest_Used_App;
+    public void setScreen_Status(String screen_Status) {
+        Screen_Status = screen_Status;
     }
 
-    public String getLatestUsedAppTime() {
-        Log.e(TAG, "GetLatestUsedAppTime called.");
-        return Latest_Used_App_Time;
-    }
-
-    public String getRecentApps() {
-        Log.e(TAG, "GetRecentApps called.");
-        return Recent_Apps;
-    }
-
-//      public String getUsers() {
-//        return Users;
-//    }
-
-
-
-//    public static void setCurrentForegroundActivityAndPackage(String curForegroundActivity) {
-//
-//        Latest_Foreground_Activity=curForegroundActivity;
-//
-//
-//        Log.d(TAG, "[setCurrentForegroundActivityAndPackage] the current running package mIs " + Latest_Foreground_Activity );
-//    }
-
-    public String getLatestForegroundActivity() {
+    public String getLatest_Foreground_Activity() {
         return Latest_Foreground_Activity;
     }
 
-    public JSONObject getData() {
-        return jSONObject;
+    public void setLatest_Foreground_Activity(String latest_Foreground_Activity) {
+        Latest_Foreground_Activity = latest_Foreground_Activity;
     }
 
-    public void setData(JSONObject data) {
-        this.jSONObject = data;
+    public String getLatest_Used_App() {
+        return Latest_Used_App;
     }
 
+    public void setLatest_Used_App(String latest_Used_App) {
+        Latest_Used_App = latest_Used_App;
+    }
 
     /**get the current time in milliseconds**/
     public static long getCurrentTimeInMillis(){
@@ -156,6 +104,5 @@ public class AppUsageDataRecord implements DataRecord{
         long t = cal.getTimeInMillis();
         return t;
     }
-
-
 }
+

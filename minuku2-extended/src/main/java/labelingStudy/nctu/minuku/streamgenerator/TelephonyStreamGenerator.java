@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -9,8 +10,10 @@ import android.telephony.TelephonyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
@@ -35,7 +38,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     private String TAG = "TelephonyStreamGenerator";
     private TelephonyStream mStream;
-    private TelephonyDataRecordDAO mDAO;
+    private Context mContext;
     private TelephonyManager telephonyManager;
     private String mNetworkOperatorName;
     private int mCallState;
@@ -51,8 +54,8 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     public TelephonyStreamGenerator (Context applicationContext) {
 
         super(applicationContext);
+        mContext = applicationContext;
         this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TelephonyDataRecord.class);
         this.register();
 
         mCallState = -9999;
@@ -97,11 +100,22 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         //post an event
         EventBus.getDefault().post(telephonyDataRecord);
         try {
-            mDAO.add(telephonyDataRecord);
-            mDAO.query_check();
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.telephonyDataRecordDao().insertAll(telephonyDataRecord);
+
+            List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
+
+            for (TelephonyDataRecord t : telephonyDataRecords) {
+                Log.d(TAG+" NetworkOperatorName: ", t.getNetworkOperatorName());
+                Log.d(TAG+" CallState: ", String.valueOf(t.getCallState()));
+                Log.d(TAG+" CdmaSignalStrengthLevel: ", String.valueOf(t.getCdmaSignalStrengthLevel()));
+                Log.d(TAG+" GsmSignalStrength: ", String.valueOf(t.getGsmSignalStrength()));
+                Log.d(TAG+" LTESignalStrength: ", String.valueOf(t.getLTESignalStrength()));
+                Log.d(TAG+" PhoneSignalType: ", String.valueOf(t.getPhoneSignalType()));
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;

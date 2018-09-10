@@ -1,6 +1,8 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
@@ -65,7 +67,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     private Context mContext;
     private ActivityRecognitionStream mStream;
-    ActivityRecognitionDataRecordDAO mDAO;
 
     private ActivityRecognitionDataRecord activityRecognitionDataRecord;
 
@@ -90,7 +91,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         //this.mContext = mMainServiceContext;
         this.mContext = applicationContext;
         this.mStream = new ActivityRecognitionStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ActivityRecognitionDataRecord.class);
 
         mLocalRecordPool = new ArrayList<ActivityRecognitionDataRecord>();
 
@@ -102,6 +102,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         this.register();
     }
 
+    @SuppressLint("LongLogTag")
     public static ActivityRecognitionStreamGenerator getInstance(Context applicationContext) {
 
         if(ActivityRecognitionStreamGenerator.instance == null) {
@@ -116,6 +117,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         return ActivityRecognitionStreamGenerator.instance;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void register() {
         Log.d(TAG, "Registering with StreamManager.");
@@ -155,6 +157,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         return mStream;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
         Log.e(TAG, "Update stream called.");
@@ -168,10 +171,22 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
             EventBus.getDefault().post(activityRecognitionDataRecord);
             try {
+                appDatabase db;
+                db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                        .allowMainThreadQueries()
+                        .build();
+                db.activityRecognitionDataRecordDao().insertAll(activityRecognitionDataRecord);
+                List<ActivityRecognitionDataRecord> activityRecognitionDataRecords = db.activityRecognitionDataRecordDao().getAll();
+                for (ActivityRecognitionDataRecord a : activityRecognitionDataRecords) {
+                    Log.d(TAG, String.valueOf(a.getDetectedtime()));
+                    Log.d(TAG, a.getMostProbableActivity().toString());
+                    Log.d(TAG, String.valueOf(a.getProbableActivities()));
+                }
 
-                mDAO.add(activityRecognitionDataRecord);
-
-            } catch (DAOException e) {
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return false;
+            } catch (RuntimeException e) {
                 e.printStackTrace();
                 return false;
             }
@@ -203,6 +218,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         startActivityRecognitionUpdates();
     }
 
+    @SuppressLint("LongLogTag")
     private void startActivityRecognitionUpdates() {
 
         Log.d(TAG, "[startActivityRecognitionUpdates]");
@@ -243,6 +259,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         }
     }
 
+    @SuppressLint("LongLogTag")
     public void setActivitiesandDetectedtime (List<DetectedActivity> probableActivities, DetectedActivity mostProbableActivity, long detectedtime) {
         //set activities
 
@@ -287,29 +304,30 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         }
 
         /**we set data in Record**/
-        record.setData(data);
-        record.setTimestamp(sLatestDetectionTime);
+//        record.setData(data);
+//        record.setTimestamp(sLatestDetectionTime);
 
-        Log.d(TAG, "testing saving records at " + record.getTimeString() + " data: " + record.getData());
+//        Log.d(TAG, "testing saving records at " + record.getTimeString() + " data: " + record.getData());
 
         addRecord(record);
 
     }
 
+    @SuppressLint("LongLogTag")
     protected void addRecord(ActivityRecognitionDataRecord activityRecognitionDataRecord) {
 
         /**1. add record to the local pool **/
         long id = recordCount++;
-        activityRecognitionDataRecord.setID(id);
+        activityRecognitionDataRecord.set_id(id);
         Log.d(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime()+ " MostProbableActivity:"+activityRecognitionDataRecord.getMostProbableActivity());
 
         mLocalRecordPool.add(activityRecognitionDataRecord); //it's working.
-        Log.d(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
+        Log.d(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getCreationTime() );
 
         /**2. check whether we should remove old record **/
         removeOutDatedRecord();
         //**** update the latest ActivityRecognitionDataRecord in mLocalRecordPool to MinukuStreamManager;
-        mLocalRecordPool.get(mLocalRecordPool.size()-1).setID(999);
+        mLocalRecordPool.get(mLocalRecordPool.size()-1).set_id(999);
         Log.d(TAG,"size : "+mLocalRecordPool.size());
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(mLocalRecordPool.get(mLocalRecordPool.size()-1));
         Log.d(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
@@ -324,6 +342,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     /**
      * this function remove old record (depending on the maximum size of the local pool)
      */
+    @SuppressLint("LongLogTag")
     protected void removeOutDatedRecord() {
 
         for (int i=0; i<mLocalRecordPool.size(); i++) {
@@ -331,7 +350,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
             ActivityRecognitionDataRecord record = mLocalRecordPool.get(i);
 
             //calculate time difference
-            long diff =  getCurrentTimeInMillis() - mLocalRecordPool.get(i).getTimestamp();
+            long diff =  getCurrentTimeInMillis() - mLocalRecordPool.get(i).getCreationTime();
 
             //remove outdated records.
             if (diff >= sKeepalive){

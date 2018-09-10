@@ -1,8 +1,10 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.util.Log;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
@@ -10,23 +12,39 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
-
+@Entity
 public class RingerDataRecord implements DataRecord {
 
-    private final String TAG = "RingerDataRecord";
+    private String TAG = "RingerDataRecord";
 
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
+
+    @ColumnInfo(name = "creationTime")
     public long creationTime;
-    private int taskDayCount;
-    private long hour;
-    private String RingerMode = "NA";
-    private String AudioMode = "NA";
-    private int StreamVolumeMusic = -9999;
-    private int StreamVolumeNotification = -9999;
-    private int StreamVolumeRing = -9999;
-    private int StreamVolumeVoicecall = -9999;
-    private int StreamVolumeSystem = -9999;
 
-    public RingerDataRecord(){}
+    @ColumnInfo(name = "RingerMode")
+    public String RingerMode = "NA";
+
+    @ColumnInfo(name = "AudioMode")
+    public String AudioMode = "NA";
+
+    @ColumnInfo(name = "StreamVolumeMusic")
+    public int StreamVolumeMusic = -9999;
+
+    @ColumnInfo(name = "StreamVolumeNotification")
+    public int StreamVolumeNotification = -9999;
+
+    @ColumnInfo(name = "StreamVolumeRing")
+    public int StreamVolumeRing = -9999;
+
+    @ColumnInfo(name = "StreamVolumeVoicecall")
+    public int StreamVolumeVoicecall = -9999;
+
+    @ColumnInfo(name = "StreamVolumeSystem")
+    public int StreamVolumeSystem = -9999;
+
+//    public RingerDataRecord(){}
 
     public RingerDataRecord(String RingerMode, String AudioMode, int StreamVolumeMusic
             , int StreamVolumeNotification, int StreamVolumeRing, int StreamVolumeVoicecall, int StreamVolumeSystem){
@@ -47,23 +65,20 @@ public class RingerDataRecord implements DataRecord {
 
     }
 
-    private long getmillisecondToHour(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        return mhour;
-
+    public String getTAG() {
+        return TAG;
     }
 
-    public long getHour(){
-        return hour;
+    public void setTAG(String TAG) {
+        this.TAG = TAG;
     }
 
-    public int getTaskDayCount(){
-        return taskDayCount;
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     @Override
@@ -71,32 +86,63 @@ public class RingerDataRecord implements DataRecord {
         return creationTime;
     }
 
-    public String getRingerMode(){
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public String getRingerMode() {
         return RingerMode;
     }
 
-    public String getAudioMode(){
+    public void setRingerMode(String ringerMode) {
+        RingerMode = ringerMode;
+    }
+
+    public String getAudioMode() {
         return AudioMode;
     }
 
-    public int getStreamVolumeMusic(){
+    public void setAudioMode(String audioMode) {
+        AudioMode = audioMode;
+    }
+
+    public int getStreamVolumeMusic() {
         return StreamVolumeMusic;
     }
 
-    public int getStreamVolumeNotification(){
+    public void setStreamVolumeMusic(int streamVolumeMusic) {
+        StreamVolumeMusic = streamVolumeMusic;
+    }
+
+    public int getStreamVolumeNotification() {
         return StreamVolumeNotification;
     }
 
-    public int getStreamVolumeRing(){
+    public void setStreamVolumeNotification(int streamVolumeNotification) {
+        StreamVolumeNotification = streamVolumeNotification;
+    }
+
+    public int getStreamVolumeRing() {
         return StreamVolumeRing;
     }
 
-    public int getStreamVolumeVoicecall(){
+    public void setStreamVolumeRing(int streamVolumeRing) {
+        StreamVolumeRing = streamVolumeRing;
+    }
+
+    public int getStreamVolumeVoicecall() {
         return StreamVolumeVoicecall;
     }
 
-    public int getStreamVolumeSystem(){
+    public void setStreamVolumeVoicecall(int streamVolumeVoicecall) {
+        StreamVolumeVoicecall = streamVolumeVoicecall;
+    }
+
+    public int getStreamVolumeSystem() {
         return StreamVolumeSystem;
     }
 
+    public void setStreamVolumeSystem(int streamVolumeSystem) {
+        StreamVolumeSystem = streamVolumeSystem;
+    }
 }
