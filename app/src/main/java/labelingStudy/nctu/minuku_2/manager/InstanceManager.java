@@ -31,31 +31,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minuku.Data.DBHelper;
-import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.BatteryDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.ConnectivityDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.LocationDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
-import labelingStudy.nctu.minuku.dao.TransportationModeDAO;
-import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
-import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.AppUsageDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.BatteryDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.SensorDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
-import labelingStudy.nctu.minuku.model.DataRecord.UserInteractionDataRecord;
 import labelingStudy.nctu.minuku.model.UserSubmissionStats;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
@@ -114,38 +92,38 @@ public class InstanceManager {
         MinukuDAOManager daoManager = MinukuDAOManager.getInstance();
 
         //build new DAO here.
-        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
+//        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
 
-        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
+//        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
+//
+//        TransportationModeDAO transportationModeDAO = new TransportationModeDAO(getApplicationContext());
+//        daoManager.registerDaoFor(TransportationModeDataRecord.class, transportationModeDAO);
+//
+//        ConnectivityDataRecordDAO connectivityDataRecordDAO = new ConnectivityDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(ConnectivityDataRecord.class, connectivityDataRecordDAO);
+//
+//        BatteryDataRecordDAO batteryDataRecordDAO = new BatteryDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(BatteryDataRecord.class, batteryDataRecordDAO);
+//
+//        RingerDataRecordDAO ringerDataRecordDAO = new RingerDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(RingerDataRecord.class, ringerDataRecordDAO);
+//
+//        AppUsageDataRecordDAO appUsageDataRecordDAO = new AppUsageDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(AppUsageDataRecord.class, appUsageDataRecordDAO);
 
-        TransportationModeDAO transportationModeDAO = new TransportationModeDAO(getApplicationContext());
-        daoManager.registerDaoFor(TransportationModeDataRecord.class, transportationModeDAO);
-
-        ConnectivityDataRecordDAO connectivityDataRecordDAO = new ConnectivityDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(ConnectivityDataRecord.class, connectivityDataRecordDAO);
-
-        BatteryDataRecordDAO batteryDataRecordDAO = new BatteryDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(BatteryDataRecord.class, batteryDataRecordDAO);
-
-        RingerDataRecordDAO ringerDataRecordDAO = new RingerDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(RingerDataRecord.class, ringerDataRecordDAO);
-
-        AppUsageDataRecordDAO appUsageDataRecordDAO = new AppUsageDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(AppUsageDataRecord.class, appUsageDataRecordDAO);
-
-        TelephonyDataRecordDAO telephonyDataRecordDAO = new TelephonyDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(TelephonyDataRecord.class, telephonyDataRecordDAO);
-
-        AccessibilityDataRecordDAO accessibilityDataRecordDAO = new AccessibilityDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(AccessibilityDataRecord.class, accessibilityDataRecordDAO);
-
-        SensorDataRecordDAO sensorDataRecordDAO = new SensorDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(SensorDataRecord.class, sensorDataRecordDAO);
-
-        UserInteractionDataRecordDAO userInteractionDataRecordDAO = new UserInteractionDataRecordDAO(getApplicationContext());
-        daoManager.registerDaoFor(UserInteractionDataRecord.class, userInteractionDataRecordDAO);
+//        TelephonyDataRecordDAO telephonyDataRecordDAO = new TelephonyDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(TelephonyDataRecord.class, telephonyDataRecordDAO);
+//
+//        AccessibilityDataRecordDAO accessibilityDataRecordDAO = new AccessibilityDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(AccessibilityDataRecord.class, accessibilityDataRecordDAO);
+//
+//        SensorDataRecordDAO sensorDataRecordDAO = new SensorDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(SensorDataRecord.class, sensorDataRecordDAO);
+//
+//        UserInteractionDataRecordDAO userInteractionDataRecordDAO = new UserInteractionDataRecordDAO(getApplicationContext());
+//        daoManager.registerDaoFor(UserInteractionDataRecord.class, userInteractionDataRecordDAO);
 
 
         // Create corresponding stream generators. Only to be created once in Main Activity

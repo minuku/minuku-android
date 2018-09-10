@@ -1,5 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +11,13 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.BatteryDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.BatteryDataRecord;
@@ -28,7 +35,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     private final String TAG = "BatteryStreamGenerator";
     private BatteryStream mStream;
-    private BatteryDataRecordDAO mDAO;
+    private static Context mContext;
 
     public static int mBatteryLevel= -1;
     public static float mBatteryPercentage = -1;
@@ -37,9 +44,9 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     public BatteryStreamGenerator(Context applicationContext){
         super(applicationContext);
+        mContext = applicationContext;
 
         this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(BatteryDataRecord.class);;
         this.register();
     }
 
@@ -64,6 +71,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         return mStream;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
         Log.d(TAG, "updateStream called");
@@ -75,14 +83,44 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         // also post an event.
         EventBus.getDefault().post(batteryDataRecord);
         try {
-            mDAO.add(batteryDataRecord);
-//            mDAO.query_counting();
-        } catch (DAOException e) {
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.batteryDataRecordDao().insertAll(batteryDataRecord);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date start =sdf.parse("2018/03/26 00:00:00");
+            Date end =sdf.parse("2018/03/26 15:37:00");
+
+            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
+            for (BatteryDataRecord b : batteryDataRecords) {
+                Log.d(TAG+" BatteryChargingState ", b.getBatteryChargingState());
+                Log.d(TAG+" BatteryPercentage ", String.valueOf(b.getBatteryPercentage()));
+                Log.d(TAG+" BatteryLevel: ", String.valueOf(b.getBatteryLevel()));
+                Log.d(TAG+" isCharging: ", String.valueOf(b.isCharging()));
+            }
+
+//            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
+//            for (BatteryDataRecord b : batteryDataRecords) {
+//                Date dt=new Date(b.getCreationTime());
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//                String time=sdf.format(dt);
+//                Log.d(TAG, time);
+//            }
+
+//            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getRecordBetweenTimes(start.getTime(), end.getTime());
+//            for (BatteryDataRecord b : batteryDataRecords) {
+//                Date dt=new Date(b.getCreationTime());
+//                String time=sdf.format(dt);
+//                Log.d(TAG, time);
+//            }
+
+        } catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
-        }catch (NullPointerException e){ //Sometimes no data is normal
+        } catch (ParseException e) {
             e.printStackTrace();
-            return false;
         }
 
         return false;

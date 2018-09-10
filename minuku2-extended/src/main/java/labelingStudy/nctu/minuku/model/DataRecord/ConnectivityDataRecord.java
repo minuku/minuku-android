@@ -1,6 +1,9 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import java.util.Calendar;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
@@ -8,31 +11,40 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
+@Entity
+public class ConnectivityDataRecord implements DataRecord {
 
-public class ConnectivityDataRecord implements DataRecord{
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
 
+    @ColumnInfo(name = "creationTime")
     public long creationTime;
-    private int taskDayCount;
-    private long hour;
-    //network connectivity
-    public static String NETWORK_TYPE_WIFI = "Wifi";
-    public static String NETWORK_TYPE_MOBILE = "Mobile";
 
-    private static String NetworkType = "NA";
-    private static boolean IsNetworkAvailable = false;
-    private static boolean IsConnected = false;
-    private static boolean IsWifiAvailable = false;
-    private static boolean IsMobileAvailable = false;
-    private static boolean IsWifiConnected = false;
-    private static boolean IsMobileConnected = false;
+    @ColumnInfo(name = "NetworkType")
+    public static String NetworkType = "NA";
 
-    public ConnectivityDataRecord(){}
+    @ColumnInfo(name = "IsNetworkAvailable")
+    public static boolean IsNetworkAvailable = false;
+
+    @ColumnInfo(name = "IsConnected")
+    public static boolean IsConnected = false;
+
+    @ColumnInfo(name = "IsWifiAvailable")
+    public static boolean IsWifiAvailable = false;
+
+    @ColumnInfo(name = "IsMobileAvailable")
+    public static boolean IsMobileAvailable = false;
+
+    @ColumnInfo(name = "IsWifiConnected")
+    public static boolean IsWifiConnected = false;
+
+    @ColumnInfo(name = "IsMobileConnected")
+    public static boolean IsMobileConnected = false;
+
 
     public ConnectivityDataRecord(String NetworkType,boolean IsNetworkAvailable, boolean IsConnected, boolean IsWifiAvailable,
                                   boolean IsMobileAvailable, boolean IsWifiConnected, boolean IsMobileConnected){
         this.creationTime = new Date().getTime();
-//        this.taskDayCount = Constants.TaskDayCount;
-//        this.hour = getmillisecondToHour(creationTime);
         this.NetworkType = NetworkType;
         this.IsNetworkAvailable = IsNetworkAvailable;
         this.IsConnected = IsConnected;
@@ -42,24 +54,14 @@ public class ConnectivityDataRecord implements DataRecord{
         this.IsMobileConnected = IsMobileConnected;
 
     }
+    public ConnectivityDataRecord() {}
 
-    private long getmillisecondToHour(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        return mhour;
-
+    public long get_id() {
+        return _id;
     }
 
-    public long getHour(){
-        return hour;
-    }
-
-    public int getTaskDayCount(){
-        return taskDayCount;
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     @Override
@@ -67,32 +69,63 @@ public class ConnectivityDataRecord implements DataRecord{
         return creationTime;
     }
 
-    public String getNetworkType(){
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public static String getNetworkType() {
         return NetworkType;
     }
 
-    public boolean getIsNetworkAvailable(){
+    public static void setNetworkType(String networkType) {
+        NetworkType = networkType;
+    }
+
+    public static boolean isNetworkAvailable() {
         return IsNetworkAvailable;
     }
 
-    public boolean getIsConnected(){
+    public static void setIsNetworkAvailable(boolean isNetworkAvailable) {
+        IsNetworkAvailable = isNetworkAvailable;
+    }
+
+    public static boolean isIsConnected() {
         return IsConnected;
     }
 
-    public boolean getIsWifiAvailable(){
+    public static void setIsConnected(boolean isConnected) {
+        IsConnected = isConnected;
+    }
+
+    public static boolean isIsWifiAvailable() {
         return IsWifiAvailable;
     }
 
-    public boolean getIsMobileAvailable(){
+    public static void setIsWifiAvailable(boolean isWifiAvailable) {
+        IsWifiAvailable = isWifiAvailable;
+    }
+
+    public static boolean isIsMobileAvailable() {
         return IsMobileAvailable;
     }
 
-    public boolean getIsWifiConnected(){
+    public static void setIsMobileAvailable(boolean isMobileAvailable) {
+        IsMobileAvailable = isMobileAvailable;
+    }
+
+    public static boolean isIsWifiConnected() {
         return IsWifiConnected;
     }
 
-    public boolean getIsMobileConnected(){
+    public static void setIsWifiConnected(boolean isWifiConnected) {
+        IsWifiConnected = isWifiConnected;
+    }
+
+    public static boolean isIsMobileConnected() {
         return IsMobileConnected;
     }
 
+    public static void setIsMobileConnected(boolean isMobileConnected) {
+        IsMobileConnected = isMobileConnected;
+    }
 }

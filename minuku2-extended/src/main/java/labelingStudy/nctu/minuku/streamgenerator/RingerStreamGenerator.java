@@ -1,5 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
@@ -9,8 +11,10 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
@@ -28,7 +32,6 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
     private String TAG = "RingerStreamGenerator";
     private RingerStream mStream;
-    private RingerDataRecordDAO mDAO;
 
     //audio and ringer
     public static final String RINGER_MODE_NORMAL = "Normal";
@@ -69,7 +72,6 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
         mContext = applicationContext;
 
         this.mStream = new RingerStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(RingerDataRecord.class);
 
         mAudioManager = (AudioManager)mContext.getSystemService(mContext.AUDIO_SERVICE);
 
@@ -95,6 +97,7 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
         return mStream;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
 
@@ -107,11 +110,22 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
         // also post an event.
         EventBus.getDefault().post(ringerDataRecord);
         try {
-            mDAO.add(ringerDataRecord);
-            mDAO.query_counting();
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.ringerDataRecordDao().insertAll(ringerDataRecord);
+
+            List<RingerDataRecord> ringerDataRecords = db.ringerDataRecordDao().getAll();
+            for (RingerDataRecord r : ringerDataRecords) {
+                Log.d(TAG+" RingerMode: ", r.getRingerMode());
+                Log.d(TAG+" AudioMode: ", r.getAudioMode());
+                Log.d(TAG+" StreamVolumeMusic: ", String.valueOf(r.getStreamVolumeMusic()));
+                Log.d(TAG+" StreamVolumeNotification: ", String.valueOf(r.getStreamVolumeNotification()));
+                Log.d(TAG+" StreamVolumeRing: ", String.valueOf(r.getStreamVolumeRing()));
+                Log.d(TAG+" StreamVolumeVoicecall: ", String.valueOf(r.getStreamVolumeVoicecall()));
+                Log.d(TAG+" StreamVolumeSystem: ", String.valueOf(r.getStreamVolumeSystem()));
+            }
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;

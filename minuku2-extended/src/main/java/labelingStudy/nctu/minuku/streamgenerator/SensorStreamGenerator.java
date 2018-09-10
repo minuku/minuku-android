@@ -22,6 +22,7 @@
 
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -32,8 +33,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
@@ -57,7 +58,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     private SensorStream mStream;
     private String TAG = "SensorStreamGenerator";
     private Sensor sensor;
-    SensorDataRecordDAO mDAO;
     public static SensorDataRecord sensorDataRecord;
     /** Tag for logging. */
     private static final String LOG_TAG = "PhoneSensorMnger";
@@ -122,7 +122,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     public SensorStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new SensorStream(Constants.SENSOR_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(SensorDataRecord.class);
 
         mContext = applicationContext;
         //call sensor manager from the service
@@ -182,11 +181,30 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         //post an event
         EventBus.getDefault().post(sensorDataRecord);
         try {
-            mDAO.add(sensorDataRecord);
-//            mDAO.query_check();
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.sensorDataRecordDao().insertAll(sensorDataRecord);
+            List<SensorDataRecord> sensorDataRecords = db.sensorDataRecordDao().getAll();
+
+            for (SensorDataRecord s : sensorDataRecords) {
+                Log.d(TAG+" Accele: ", s.getmAccele_str());
+                Log.d(TAG+" AmbientTemperature: ", s.getmAmbientTemperature_str());
+                Log.d(TAG+" Gravity: ", s.getmGravity_str());
+
+                Log.d(TAG+" Gyroscope: ", s.getmGyroscope_str());
+                Log.d(TAG+" Light: ", s.getmLight_str());
+                Log.d(TAG+" LinearAcceleration: ", s.getmLinearAcceleration_str());
+                Log.d(TAG+" MagneticField: ", s.getmMagneticField_str());
+                Log.d(TAG+" Pressure: ", s.getmPressure_str());
+                Log.d(TAG+" Proximity: ", s.getmProximity_str());
+                Log.d(TAG+" RelativeHumidity: ", s.getmRelativeHumidity_str());
+                Log.d(TAG+" RotationVector: ", s.getmRotationVector_str());
+
+            }
+
+
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;
