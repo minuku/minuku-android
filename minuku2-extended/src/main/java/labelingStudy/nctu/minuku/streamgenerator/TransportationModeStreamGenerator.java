@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.util.Log;
 
 import com.google.android.gms.location.DetectedActivity;
 import com.opencsv.CSVWriter;
@@ -26,6 +25,7 @@ import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.Utilities.Utils;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
@@ -260,10 +260,13 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
 
             List<TransportationModeDataRecord> transportationModeDataRecords = db.transportationModeDataRecordDao().getAll();
             for (TransportationModeDataRecord t : transportationModeDataRecords) {
-                Log.d(TAG+" ConfirmedActivity: ", t.getConfirmedActivityString());
-                Log.d(TAG, t.getSuspectedStartActivityString());
-                Log.d(TAG, t.getSuspectedStopActivityString());
-                Log.d(TAG, String.valueOf(t.getSuspectedTime()));
+                Log.e(TAG," ConfirmedActivity: "+ t.getConfirmedActivityString());
+                Log.e(TAG, " SuspectedStartActivityString: "+t.getSuspectedStartActivityString());
+                Log.e(TAG, " SuspectedStopActivityString: "+t.getSuspectedStopActivityString());
+                Log.e(TAG, " SuspectedTime: "+String.valueOf(t.getSuspectedTime()));
+                Log.e(TAG, "taskDayCount: "+t.getTaskDayCount());
+                Log.e(TAG, "hour: "+t.getHour());
+
             }
         } catch (NullPointerException e) { //Sometimes no data is normal
 

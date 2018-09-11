@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -15,6 +14,7 @@ import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
+import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.UserInteractionDataRecord;
@@ -91,10 +91,10 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
 
             List<UserInteractionDataRecord> userInteractionDataRecords = db.userInteractionDataRecordDao().getAll();
             for (UserInteractionDataRecord u : userInteractionDataRecords) {
-                Log.d(TAG+" Background ", u.getBackground());
-                Log.d(TAG+" Foreground ", u.getForeground());
-                Log.d(TAG+" Present: ", u.getPresent());
-                Log.d(TAG+" Unlock: ", u.getUnlock());
+                Log.e(TAG," Background "+ u.getBackground());
+                Log.e(TAG," Foreground "+ u.getForeground());
+                Log.e(TAG," Present: "+ u.getPresent());
+                Log.e(TAG," Unlock: "+ u.getUnlock());
             }
         } catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();

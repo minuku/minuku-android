@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,6 +24,7 @@ import java.util.TimeZone;
 
 import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
@@ -167,7 +167,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         if(activityRecognitionDataRecord!=null) {
 
             mStream.add(activityRecognitionDataRecord);
-//            Log.e(TAG, "Activity to be sent to event bus" + activityRecognitionDataRecord);
+            Log.e(TAG, "Activity to be sent to event bus" + activityRecognitionDataRecord);
 
             EventBus.getDefault().post(activityRecognitionDataRecord);
             try {
@@ -178,9 +178,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
                 db.activityRecognitionDataRecordDao().insertAll(activityRecognitionDataRecord);
                 List<ActivityRecognitionDataRecord> activityRecognitionDataRecords = db.activityRecognitionDataRecordDao().getAll();
                 for (ActivityRecognitionDataRecord a : activityRecognitionDataRecords) {
-                    Log.d(TAG, String.valueOf(a.getDetectedtime()));
-                    Log.d(TAG, a.getMostProbableActivity().toString());
-                    Log.d(TAG, String.valueOf(a.getProbableActivities()));
+                    Log.e(TAG, "Detectedtime"+String.valueOf(a.getDetectedtime()));
+                    Log.e(TAG, "ostProbableActivity"+a.getMostProbableActivity().toString());
+                    Log.e(TAG, "ProbableActivities"+String.valueOf(a.getProbableActivities()));
                 }
 
             } catch (NullPointerException e) {

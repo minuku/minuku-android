@@ -114,13 +114,13 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
             db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
             List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
             for (ConnectivityDataRecord c : connectivityDataRecords) {
-                Log.d(TAG+" isIsWifiConnected: ", String.valueOf(c.isIsWifiConnected()));
-                Log.d(TAG+" NetworkType: ",c.getNetworkType());
-                Log.d(TAG+" isNetworkAvailable: ", String.valueOf(c.isNetworkAvailable()));
-                Log.d(TAG+" isIsConnected: ", String.valueOf(c.isIsConnected()));
-                Log.d(TAG+" isIsWifiAvailable: ",String.valueOf(isIsWifiAvailable()));
-                Log.d(TAG+" isIsMobileAvailable: ",String.valueOf(isIsMobileAvailable()));
-                Log.d(TAG+" isIsMobileConnected: ", String.valueOf(isIsMobileConnected()));
+                Log.e(TAG, " isIsWifiConnected: "+String.valueOf(c.isIsWifiConnected()));
+                Log.e(TAG," NetworkType: "+c.getNetworkType());
+                Log.e(TAG, " isNetworkAvailable: "+String.valueOf(c.isNetworkAvailable()));
+                Log.e(TAG, " isIsConnected: "+ String.valueOf(c.isIsConnected()));
+                Log.e(TAG, " isIsWifiAvailable: "+String.valueOf(isIsWifiAvailable()));
+                Log.e(TAG, " isIsMobileAvailable: "+String.valueOf(isIsMobileAvailable()));
+                Log.e(TAG, " isIsMobileConnected: "+ String.valueOf(isIsMobileConnected()));
 
             }
         }catch (NullPointerException e){ //Sometimes no data is normal

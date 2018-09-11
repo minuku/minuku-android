@@ -109,12 +109,12 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
             List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
 
             for (TelephonyDataRecord t : telephonyDataRecords) {
-                Log.d(TAG+" NetworkOperatorName: ", t.getNetworkOperatorName());
-                Log.d(TAG+" CallState: ", String.valueOf(t.getCallState()));
-                Log.d(TAG+" CdmaSignalStrengthLevel: ", String.valueOf(t.getCdmaSignalStrengthLevel()));
-                Log.d(TAG+" GsmSignalStrength: ", String.valueOf(t.getGsmSignalStrength()));
-                Log.d(TAG+" LTESignalStrength: ", String.valueOf(t.getLTESignalStrength()));
-                Log.d(TAG+" PhoneSignalType: ", String.valueOf(t.getPhoneSignalType()));
+                Log.e(TAG," NetworkOperatorName: "+ t.getNetworkOperatorName());
+                Log.e(TAG," CallState: "+ String.valueOf(t.getCallState()));
+                Log.e(TAG," CdmaSignalStrengthLevel: "+ String.valueOf(t.getCdmaSignalStrengthLevel()));
+                Log.e(TAG," GsmSignalStrength: "+ String.valueOf(t.getGsmSignalStrength()));
+                Log.e(TAG," LTESignalStrength: "+ String.valueOf(t.getLTESignalStrength()));
+                Log.e(TAG," PhoneSignalType: "+ String.valueOf(t.getPhoneSignalType()));
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
