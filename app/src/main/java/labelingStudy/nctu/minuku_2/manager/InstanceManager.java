@@ -34,6 +34,7 @@ import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
+import labelingStudy.nctu.minuku.manager.SituationParserManager;
 import labelingStudy.nctu.minuku.model.UserSubmissionStats;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
@@ -166,6 +167,9 @@ public class InstanceManager {
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();
 
 
+        //Situation JsonParser
+        SituationParserManager situationParserManager = SituationParserManager.getInstance();
+        situationParserManager.ReadJsonFile(getApplicationContext());
         //TODO additional function
         //for testing to trigger qualtrics
         //QuestionnaireManager questionnaireManager = new QuestionnaireManager(getApplicationContext());

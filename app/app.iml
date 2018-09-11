@@ -196,13 +196,13 @@
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-messaging-9.2.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-nearby-9.2.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-location-9.2.1" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:C.\Users\Tingwei\Downloads\minuku-android-tingwei1\app\libs\javatuples-1.2.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-gcm-9.2.1" level="project" />
     <orderEntry type="library" name="Gradle: com.firebase:tubesock:0.0.12@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.firebaseui:firebase-ui-0.2.2" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-ads-lite-9.2.1" level="project" />
     <orderEntry type="library" name="Gradle: de.hdodenhof:circleimageview-2.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-auth-module-9.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/home/muilab/Desktop/minuku-android/app/libs/javatuples-1.2.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.github.vipulasri:timelineview-1.0.5" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7-26.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.firebase:firebase-client-jvm:2.4.0@jar" level="project" />
@@ -223,8 +223,8 @@
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-gass-9.2.1" level="project" />
     <orderEntry type="library" name="Gradle: com.crashlytics.sdk.android:answers-1.4.1" level="project" />
     <orderEntry type="library" name="Gradle: com.bugfender.sdk:android-0.8.4" level="project" />
-    <orderEntry type="module" module-name="opencsv-3.10" />
     <orderEntry type="module" module-name="minukucore" />
     <orderEntry type="module" module-name="minuku2-extended" />
+    <orderEntry type="module" module-name="opencsv-3.10" />
   </component>
 </module>
