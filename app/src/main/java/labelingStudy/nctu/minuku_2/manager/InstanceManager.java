@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -169,7 +170,11 @@ public class InstanceManager {
 
         //Situation JsonParser
         SituationParserManager situationParserManager = SituationParserManager.getInstance();
-        situationParserManager.ReadJsonFile(getApplicationContext());
+        try {
+            situationParserManager.ReadJsonFile(getApplicationContext());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //TODO additional function
         //for testing to trigger qualtrics
         //QuestionnaireManager questionnaireManager = new QuestionnaireManager(getApplicationContext());
