@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/minuku-android.iml" filepath="$PROJECT_DIR$/minuku-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/minuku-android-tingwei1.iml" filepath="$PROJECT_DIR$/minuku-android-tingwei1.iml" />
       <module fileurl="file://$PROJECT_DIR$/minuku2-extended/minuku2-extended.iml" filepath="$PROJECT_DIR$/minuku2-extended/minuku2-extended.iml" />
       <module fileurl="file://$PROJECT_DIR$/minukucore/minukucore.iml" filepath="$PROJECT_DIR$/minukucore/minukucore.iml" />
       <module fileurl="file://$PROJECT_DIR$/opencsv-3.10/opencsv-3.10.iml" filepath="$PROJECT_DIR$/opencsv-3.10/opencsv-3.10.iml" />

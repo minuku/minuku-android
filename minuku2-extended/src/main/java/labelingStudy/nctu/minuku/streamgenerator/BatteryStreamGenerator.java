@@ -95,10 +95,10 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
             List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
             for (BatteryDataRecord b : batteryDataRecords) {
-                Log.d(TAG+" BatteryChargingState ", b.getBatteryChargingState());
-                Log.d(TAG+" BatteryPercentage ", String.valueOf(b.getBatteryPercentage()));
-                Log.d(TAG+" BatteryLevel: ", String.valueOf(b.getBatteryLevel()));
-                Log.d(TAG+" isCharging: ", String.valueOf(b.isCharging()));
+                Log.e(TAG, " BatteryChargingState "+b.getBatteryChargingState());
+                Log.e(TAG, " BatteryPercentage "+String.valueOf(b.getBatteryPercentage()));
+                Log.e(TAG, " BatteryLevel: "+String.valueOf(b.getBatteryLevel()));
+                Log.e(TAG, " isCharging: "+String.valueOf(b.isCharging()));
             }
 
 //            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();

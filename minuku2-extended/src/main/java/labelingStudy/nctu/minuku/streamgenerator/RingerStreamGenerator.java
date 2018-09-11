@@ -7,7 +7,6 @@ import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -15,6 +14,7 @@ import java.util.List;
 
 import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
@@ -118,13 +118,13 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
             List<RingerDataRecord> ringerDataRecords = db.ringerDataRecordDao().getAll();
             for (RingerDataRecord r : ringerDataRecords) {
-                Log.d(TAG+" RingerMode: ", r.getRingerMode());
-                Log.d(TAG+" AudioMode: ", r.getAudioMode());
-                Log.d(TAG+" StreamVolumeMusic: ", String.valueOf(r.getStreamVolumeMusic()));
-                Log.d(TAG+" StreamVolumeNotification: ", String.valueOf(r.getStreamVolumeNotification()));
-                Log.d(TAG+" StreamVolumeRing: ", String.valueOf(r.getStreamVolumeRing()));
-                Log.d(TAG+" StreamVolumeVoicecall: ", String.valueOf(r.getStreamVolumeVoicecall()));
-                Log.d(TAG+" StreamVolumeSystem: ", String.valueOf(r.getStreamVolumeSystem()));
+                Log.e(TAG," RingerMode: "+ r.getRingerMode());
+                Log.e(TAG," AudioMode: "+ r.getAudioMode());
+                Log.e(TAG," StreamVolumeMusic: "+ String.valueOf(r.getStreamVolumeMusic()));
+                Log.e(TAG," StreamVolumeNotification: "+ String.valueOf(r.getStreamVolumeNotification()));
+                Log.e(TAG," StreamVolumeRing: "+ String.valueOf(r.getStreamVolumeRing()));
+                Log.e(TAG," StreamVolumeVoicecall: "+ String.valueOf(r.getStreamVolumeVoicecall()));
+                Log.e(TAG," StreamVolumeSystem: "+ String.valueOf(r.getStreamVolumeSystem()));
             }
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();

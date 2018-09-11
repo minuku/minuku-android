@@ -156,9 +156,9 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                     List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
                     Log.d(TAG, "test test");
                     for (AppUsageDataRecord a : appUsageDataRecords) {
-                        Log.d(TAG, a.getLatest_Used_App());
-                        Log.d(TAG, a.getLatest_Foreground_Activity());
-                        Log.d(TAG, a.getScreen_Status());
+                        Log.e(TAG, "Latest_Used_App "+a.getLatest_Used_App());
+                        Log.e(TAG, "Latest_Foreground_Activity "+a.getLatest_Foreground_Activity());
+                        Log.e(TAG, "getScreen_Status "+a.getScreen_Status());
                     }
 
                 } catch (NullPointerException e) {
@@ -189,9 +189,9 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                     List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
 
                     for (AppUsageDataRecord a : appUsageDataRecords) {
-                        Log.d(TAG, a.getLatest_Used_App());
-                        Log.d(TAG, a.getLatest_Foreground_Activity());
-                        Log.d(TAG, a.getScreen_Status());
+                        Log.e(TAG, "Latest_Used_App "+a.getLatest_Used_App());
+                        Log.e(TAG, "Latest_Foreground_Activity "+a.getLatest_Foreground_Activity());
+                        Log.e(TAG, "getScreen_Status "+a.getScreen_Status());
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();

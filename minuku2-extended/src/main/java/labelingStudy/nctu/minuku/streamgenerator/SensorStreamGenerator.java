@@ -189,18 +189,18 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
             List<SensorDataRecord> sensorDataRecords = db.sensorDataRecordDao().getAll();
 
             for (SensorDataRecord s : sensorDataRecords) {
-                Log.d(TAG+" Accele: ", s.getmAccele_str());
-                Log.d(TAG+" AmbientTemperature: ", s.getmAmbientTemperature_str());
-                Log.d(TAG+" Gravity: ", s.getmGravity_str());
+                Log.e(TAG," Accele: "+ s.getmAccele_str());
+                Log.e(TAG," AmbientTemperature: "+ s.getmAmbientTemperature_str());
+                Log.e(TAG," Gravity: "+ s.getmGravity_str());
 
-                Log.d(TAG+" Gyroscope: ", s.getmGyroscope_str());
-                Log.d(TAG+" Light: ", s.getmLight_str());
-                Log.d(TAG+" LinearAcceleration: ", s.getmLinearAcceleration_str());
-                Log.d(TAG+" MagneticField: ", s.getmMagneticField_str());
-                Log.d(TAG+" Pressure: ", s.getmPressure_str());
-                Log.d(TAG+" Proximity: ", s.getmProximity_str());
-                Log.d(TAG+" RelativeHumidity: ", s.getmRelativeHumidity_str());
-                Log.d(TAG+" RotationVector: ", s.getmRotationVector_str());
+                Log.e(TAG," Gyroscope: "+ s.getmGyroscope_str());
+                Log.e(TAG," Light: "+ s.getmLight_str());
+                Log.e(TAG," LinearAcceleration: "+ s.getmLinearAcceleration_str());
+                Log.e(TAG," MagneticField: "+ s.getmMagneticField_str());
+                Log.e(TAG," Pressure: "+ s.getmPressure_str());
+                Log.e(TAG," Proximity: "+ s.getmProximity_str());
+                Log.e(TAG," RelativeHumidity: "+ s.getmRelativeHumidity_str());
+                Log.e(TAG," RotationVector: "+ s.getmRotationVector_str());
 
             }
 

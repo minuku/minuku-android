@@ -311,13 +311,13 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             db.locationDataRecordDao().insertAll(newlocationDataRecord);
             List<LocationDataRecord> locationDataRecords = db.locationDataRecordDao().getAll();
             for (LocationDataRecord l : locationDataRecords) {
-                Log.d(TAG+" Latitude: ", String.valueOf(l.getLatitude()));
-                Log.d(TAG+" Longitude: ", String.valueOf(l.getLongitude()));
-                Log.d(TAG+" Accuracy: ", String.valueOf(l.getAccuracy()));
-                Log.d(TAG+" Altitude: ", String.valueOf(l.getAltitude()));
-                Log.d(TAG+" Speed: ", String.valueOf(l.getSpeed()));
-                Log.d(TAG+" Bearing: ", String.valueOf(l.getBearing()));
-                //Log.d(TAG+" Provider: ", l.getProvider());
+                Log.e(TAG, " Latitude: "+String.valueOf(l.getLatitude()));
+                Log.e(TAG, " Longitude: "+String.valueOf(l.getLongitude()));
+                Log.e(TAG," Accuracy: "+ String.valueOf(l.getAccuracy()));
+                Log.e(TAG," Altitude: "+ String.valueOf(l.getAltitude()));
+                Log.e(TAG," Speed: "+ String.valueOf(l.getSpeed()));
+                Log.e(TAG," Bearing: "+ String.valueOf(l.getBearing()));
+                Log.e(TAG," Provider: "+l.getProvider());
             }
 
 
