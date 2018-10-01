@@ -14,6 +14,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
+
+/**
+ * AppUsageDataRecord stores information about conditions of other applications user has used, while also collect the screen status to see the interaction with the screen.
+ */
 @Entity
 public class AppUsageDataRecord implements DataRecord {
 

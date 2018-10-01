@@ -17,6 +17,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by tingwei on 2018/3/15.
  */
+
+/**
+ * ActivityRecognitionDataRecord stores information about the possible activities of the specific detected time
+ */
 @Entity
 public class ActivityRecognitionDataRecord implements DataRecord {
 

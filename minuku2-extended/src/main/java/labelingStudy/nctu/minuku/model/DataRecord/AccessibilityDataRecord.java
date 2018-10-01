@@ -12,6 +12,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/9/6.
  */
+
+/**
+ * AccessibilityDataRecord stores information about events happen in the user interface.
+ */
 @Entity
 public class AccessibilityDataRecord implements DataRecord {
 

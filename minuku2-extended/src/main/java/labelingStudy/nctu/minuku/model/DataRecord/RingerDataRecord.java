@@ -12,6 +12,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
+
+/**
+ * RingerDataRecord stores information about volume and ringer status of the use phone
+ */
 @Entity
 public class RingerDataRecord implements DataRecord {
 

@@ -15,6 +15,9 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/7/22.
  */
 
+/**
+ * SensorDataRecord stores information about physical change data of the user phone such as acceleration, gravity, rotation etc.
+ */
 @Entity
 public class SensorDataRecord implements DataRecord {
 

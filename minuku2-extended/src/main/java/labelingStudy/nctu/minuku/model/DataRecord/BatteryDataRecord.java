@@ -14,6 +14,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
+
+/**
+ * BatteryDataRecord stores information about battery conditions and status
+ */
 @Entity
 public class BatteryDataRecord implements DataRecord {
 

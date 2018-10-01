@@ -12,6 +12,9 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/5/22.
  */
 
+/**
+ * TransportationModeDataRecord stores information about the recorded transportation mode
+ */
 @Entity
 public class TransportationModeDataRecord implements DataRecord {
 

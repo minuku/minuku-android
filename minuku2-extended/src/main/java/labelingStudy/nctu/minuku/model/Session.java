@@ -26,28 +26,32 @@ public class Session {
 
     ArrayList<String> mContextSourceNames;
 
+    /**
+     * @param sessionId Set session Id
+     */
     public Session (int sessionId){
         mId = sessionId;
         mAnnotationSet = new AnnotationSet();
     }
 
+    /**
+     * @param timestamp Set session StartTime and CreatedTime
+     */
     public Session (long timestamp){
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
+    /**
+     *
+     * @param timestamp Set session StartTime and CreatedTime
+     * @param sessionId Set session Id
+     */
     public Session (long timestamp, int sessionId){
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mId = sessionId;
-        mAnnotationSet = new AnnotationSet();
-    }
-
-    public Session (int id, long timestamp){
-        mId = id;
-        mStartTime = timestamp;
-        mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
@@ -183,6 +187,10 @@ public class Session {
         mAnnotationSet = annotationSet;
     }
 
+    /**
+     * Add annotation to annotation set
+     * @param annotation
+     */
     public void addAnnotation (Annotation annotation) {
 
         if (mAnnotationSet==null){

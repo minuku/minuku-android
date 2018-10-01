@@ -34,6 +34,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by shriti on 7/15/16.
  */
+
+/**
+ * LocationDataRecord stores information about location data from GPS
+ */
 @Entity
 public class LocationDataRecord implements DataRecord {
 
