@@ -11,6 +11,10 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/10/4.
  */
 
+/**
+ * The collection of TelephonyDataRecord
+ *      {@link TelephonyDataRecord}
+ */
 public class TelephonyStream extends AbstractStreamFromDevice<TelephonyDataRecord> {
     public TelephonyStream(int maxSize) {
         super(maxSize);

@@ -11,6 +11,10 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/5/22.
  */
 
+/**
+ * The collection of ActivityRecognitionDataRecord
+ *      {@link ActivityRecognitionDataRecord}
+ */
 public class ActivityRecognitionStream extends AbstractStreamFromDevice<ActivityRecognitionDataRecord> {
 
     public ActivityRecognitionStream(int maxSize) {

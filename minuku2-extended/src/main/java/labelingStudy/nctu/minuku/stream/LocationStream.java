@@ -33,6 +33,11 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
 /**
  * Created by Neeraj Kumar on 7/17/16.
  */
+
+/**
+ * The collection of LocationDataRecord
+ *      {@link LocationDataRecord}
+ */
 public class LocationStream extends AbstractStreamFromDevice<LocationDataRecord> {
 
     public LocationStream(int maxSize) {
