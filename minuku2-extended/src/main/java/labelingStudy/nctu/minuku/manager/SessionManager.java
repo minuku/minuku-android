@@ -23,6 +23,9 @@ import labelingStudy.nctu.minuku.model.Session;
  * Created by Lawrence on 2018/3/13.
  */
 
+/**
+ * SessionManager is the main class that handle session related operation
+ */
 public class SessionManager {
 
     private final static String TAG = "SessionManager";
@@ -57,10 +60,19 @@ public class SessionManager {
 
     private static Context mContext;
 
+    /**
+     * Store the SessionManager itself
+     */
     private static SessionManager instance;
 
+    /**
+     * Store the ongoing session, that is, the current recording session. In most condition there would only be one ongoing session, so size of the list usually no greater than 1
+     * In this edition of minuku there would always be only one ongoing session
+     */
     private static ArrayList<Integer> mOngoingSessionIdList;
+
     private static ArrayList<Integer> mEmptyOngoingSessionIdList;
+
     private static boolean emptySessionOngoing;
 
     public static boolean sessionIsWaiting;
@@ -70,6 +82,9 @@ public class SessionManager {
 
 //    private int testing_count;
 
+    /**
+     * Initialize the SessionManager
+     */
     public SessionManager(Context context) {
 
         this.mContext = context;
@@ -94,6 +109,11 @@ public class SessionManager {
         lasttime_trip_transportation = sharedPrefs.getString("lasttime_trip_transportation","NA");
     }
 
+
+
+    /**
+     * Return the SessionManager itself
+     */
     public static SessionManager getInstance() {
         if(SessionManager.instance == null) {
             try {
@@ -106,6 +126,11 @@ public class SessionManager {
         return SessionManager.instance;
     }
 
+    /**
+     * Return the SessionManager itself. If SessionManager is not initialize yet, initialize SessionManager
+     * @param context use to set context in SessionManager
+     * @return SessionManager
+     */
     public static SessionManager getInstance(Context context) {
         if(SessionManager.instance == null) {
             try {
@@ -117,6 +142,11 @@ public class SessionManager {
         return SessionManager.instance;
     }
 
+    /**
+     * To identify if the given session is the ongoing session
+     * @param sessionId the id of the session to be identified if it is ongoing
+     * @return is the session ongoing or not
+     */
     public static boolean isSessionOngoing(int sessionId) {
 
         Log.d(TAG, " [test combine] tyring to see if the session is ongoing:" + sessionId);
@@ -133,6 +163,11 @@ public class SessionManager {
         return false;
     }
 
+    /**
+     * Return the ongoing session, usually store at index(0) since there is only one ongoing session at most conditions
+     * In this edition of minuku there would always be only one ongoing session
+     * @return the ongoing session list
+     */
     public static ArrayList<Integer> getOngoingSessionIdList() {
         return mOngoingSessionIdList;
     }
@@ -141,6 +176,10 @@ public class SessionManager {
         mOngoingSessionIdList = ongoingSessionIdList;
     }
 
+    /**
+     * Update the ongoing session. In this edition of Minuku, there is always a removal of ongoing session id before calling addOngoingSessionId, thus the size of mOngoingSessionIdList keep at 1
+     * @param id the id of the session that is set to be ongoing
+     */
     public void addOngoingSessionid(int id) {
         Log.d(TAG, "test combine: adding ongonig session " + id );
         this.mOngoingSessionIdList.add(id);
@@ -151,13 +190,19 @@ public class SessionManager {
         return mOngoingSessionIdList;
     }
 
+    /**
+     * Remove the session given by id in the ongoingSessionList
+     * @param id  id the id of the session that is set not to be ongoing anymore
+     */
     public void removeOngoingSessionid(int id) {
         Log.d(TAG, "test replay: inside removeongogint session renove " + id );
         this.mOngoingSessionIdList.remove(id);
         Log.d(TAG, "test replay: inside removeongogint session the ongoiong list is  " + mOngoingSessionIdList.toString() );
     }
 
-
+    /**
+     * Store the empty ongoing session, use for CAR mode
+     */
     public static boolean isSessionEmptyOngoing(int sessionId) {
 
         Log.d(TAG, " [test combine] tyring to see if the session is ongoing:" + sessionId);
@@ -195,6 +240,11 @@ public class SessionManager {
 
     }
 
+    /**
+     * Return time in text by the given time value
+     * @param time the given time in long
+     * @return date format of time in string
+     */
     public static String getTimeString(long time){
 
         SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW_SLASH);
@@ -204,9 +254,9 @@ public class SessionManager {
     }
 
     /**
-     * This function convert Session String retrieved from the DB to Object Session
-     * @param sessionStr
-     * @return
+     * This function convert Session String retrieved from the database to Object Session
+     * @param sessionStr session data in string object
+     * @return session object get from sessionStr
      */
     public static Session convertStringToSession(String sessionStr) {
 
@@ -316,6 +366,11 @@ public class SessionManager {
         return session;
     }
 
+    /**
+     * Get session from database with id
+     * @param id id of the requiring session
+     * @return the session get from database
+     */
     public static Session getSession (String id) {
 
         int sessionId = Integer.parseInt(id);
@@ -333,6 +388,10 @@ public class SessionManager {
         return session;
     }
 
+    /**
+     * Get last session from database. should avoid the discarded session
+     * @return last recorded session
+     */
     public static Session getLastSession() {
 
         Session session = null;
@@ -352,6 +411,9 @@ public class SessionManager {
         return session;
     }
 
+    /**
+     * Get second last session from database, use for combine session.  Should avoid the discarded session
+     */
     public static Session getLast2Session() {
 
         Session session = null;
@@ -373,7 +435,12 @@ public class SessionManager {
     }
 
 
-
+    /**
+     * Get the last time record of the session
+     * Since the session contains a list of location record, LastRecordTime could be get by the timestamp of the last recorded location.
+     * @param sessionId id of the requiring session
+     * @return the last time record of the requiring session
+     */
     public static long getLastRecordTimeinSession(int sessionId) {
 
         ArrayList<String> resultBySession = null;
@@ -395,6 +462,11 @@ public class SessionManager {
         }
     }
 
+    /**
+     * Get session from database by id
+     * @param sessionId id of requiring session
+     * @return the requiring session data in session object
+     */
     public static Session getSession (int sessionId) {
 
         Log.d(TAG, "sessionId : "+sessionId);
@@ -408,8 +480,8 @@ public class SessionManager {
     }
 
     /**
-     *
-     * @return
+     * Get count of sessions in database
+     * @return count of sessions in database
      */
     public static int getNumOfSession(){
         int num = 0;
@@ -420,16 +492,22 @@ public class SessionManager {
     }
 
     /**
-     *
-     * @param sessionId
-     * @param endTime
-     * @param userPressOrNot
+     * Update the session end time while also set the labeling mode
+     * @param sessionId id of the requiring update session
+     * @param endTime the update end time
+     * @param userPressOrNot the labeling mode
      */
     public static void updateCurSessionEndInfoTo(int sessionId, long endTime, boolean userPressOrNot){
 
         DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot);
     }
 
+    /**
+     * Update the session end time while also set the labeling mode
+     * @param sessionId id of the requiring update session
+     * @param endTime the update end time
+     * @param userPressOrNot the labeling mode
+     */
     public static void updateCurSession(int sessionId, long endTime, boolean userPressOrNot){
 
         DBHelper.updateSessionTable(sessionId, endTime, userPressOrNot);
@@ -441,7 +519,7 @@ public class SessionManager {
     }
 
     /**
-     *
+     * Start recording the session and set it to the ongoingSession, while also add it to database
      * @param session
      */
     public static void startNewSession(Session session) {
@@ -528,8 +606,8 @@ public class SessionManager {
     }
 
     /**
-     *
-     * @param session
+     * Stop recording the session, usually the ongoing session, and remove it from ongoing session list
+     * @param session the ongoing session
      */
     public static void endCurSession(Session session) {
 
@@ -542,6 +620,7 @@ public class SessionManager {
         Log.d(TAG, "test show trip: before remove the list at 0 is " + getOngoingSessionIdList().get(0));
 
         //remove the ongoing session
+        // should use function to remove
         mOngoingSessionIdList.remove(Integer.valueOf(session.getId()));
 
         Log.d(TAG, "test show trip: after remove going the list is  " + getOngoingSessionIdList().toString());
@@ -613,6 +692,9 @@ public class SessionManager {
         return sessions;
     }
 
+    /**
+     * Get recent stored sessions, while "recent" is defined by Config
+     */
     public static ArrayList<Session> getRecentSessions() {
 
         Log.d(TAG, "[test show trip] getRecentSessions");
@@ -643,6 +725,12 @@ public class SessionManager {
         return sessions;
     }
 
+    /**
+     * Get the requiring session data from table of database
+     * @param sessionId id of requiring session
+     * @param tableName the table which stored requiring session
+     * @return session data in ArrayList String format
+     */
     public static ArrayList<String> getRecordsInSession(int sessionId, String tableName) {
 
         ArrayList<String> resultList = new ArrayList<String>();
@@ -653,6 +741,9 @@ public class SessionManager {
         return resultList;
     }
 
+    /**
+     * ##Should move to date format related class
+     */
     private static String addZero(int date){
         if(date<10)
             return String.valueOf("0"+date);
@@ -670,7 +761,11 @@ public class SessionManager {
         return dataformat;
     }
 
-
+    /**
+     * Transfer annotationSet data from jSon to AnnotationSet format
+     * @param annotationJSONArray
+     * @return
+     */
     public static AnnotationSet toAnnorationSet(JSONArray annotationJSONArray) {
 
         AnnotationSet annotationSet = new AnnotationSet();
