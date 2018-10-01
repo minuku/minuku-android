@@ -15,6 +15,7 @@ import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
 import labelingStudy.nctu.minuku.service.MobileAccessibilityService;
+import labelingStudy.nctu.minuku.stream.AccessibilityStream;
 import labelingStudy.nctu.minuku.stream.BatteryStream;
 import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
@@ -27,10 +28,15 @@ import static labelingStudy.nctu.minuku.manager.MinukuStreamManager.getInstance;
  * Created by Lawrence on 2017/9/6.
  */
 
+/**
+ * AccessibilityStreamGenerator collects data about events happen in the user interface that get from AccessibilityEvent
+ */
+
 public class AccessibilityStreamGenerator extends AndroidStreamGenerator<AccessibilityDataRecord> {
 
     private final String TAG = "AccessibilityStreamGenerator";
-    private Stream mStream;
+
+    private AccessibilityStream mStream;
     private Context mContext;
     AccessibilityDataRecordDAO mDAO;
     MobileAccessibilityService mobileAccessibilityService;
@@ -40,10 +46,14 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
     private String type;
     private String extra;
 
+    /**
+     * Initial constructor
+     * @param applicationContext
+     */
     public AccessibilityStreamGenerator(Context applicationContext){
         super(applicationContext);
         this.mContext = applicationContext;
-        this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mStream = new AccessibilityStream(Constants.DEFAULT_QUEUE_SIZE);
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AccessibilityDataRecord.class);
 
         mobileAccessibilityService = new MobileAccessibilityService(this);
@@ -53,9 +63,12 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         this.register();
     }
 
+    /**
+     * Register a stream with AccessibilityDataRecord
+     */
     @Override
     public void register() {
-        Log.d(TAG, "Registring with StreamManage");
+        Log.d(TAG, "Registring with StreamManager");
 
         try {
             getInstance().register(mStream, AccessibilityDataRecord.class, this);
@@ -81,6 +94,10 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         return mStream;
     }
 
+    /**
+     * Send data as AccessibilityDataRecord to database.
+     * @return
+     */
     @Override
     public boolean updateStream() {
 
@@ -113,7 +130,8 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
             return false;
         }
 
-        pack = text = type = extra = "";
+        // Remove to avoid asyc error
+        //pack = text = type = extra = "";
 
         return false;
     }
@@ -128,6 +146,9 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
 
     }
 
+    /**
+     * Update Accessibility data from MobileAccessibilityService
+     */
     public void setLatestInAppAction(String pack, String text, String type, String extra){
 
         this.pack = pack;
