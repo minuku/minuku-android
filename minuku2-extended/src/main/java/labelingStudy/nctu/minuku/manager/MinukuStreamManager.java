@@ -315,11 +315,11 @@ public class MinukuStreamManager implements StreamManager {
                                     String diff1stSuspectedStopTransportation_ID = firstDiffSuspectStopTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
 
                                     //query suspect start time id (the next one from the above data)
-                                    ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.transportationMode_table, Integer.valueOf(diff1stSuspectedStopTransportation_ID));
+                                    ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStopTransportation_ID));
 
                                     if(suspectedStopTransportation.size() > 0){
 
-                                        String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_Suspected_Transportation_TIME);
+                                        String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
 
                                         lastSession.setEndTime(Long.valueOf(suspectTime));
                                     }
@@ -393,11 +393,11 @@ public class MinukuStreamManager implements StreamManager {
                                 String diff1stSuspectedStartTransportation_ID = firstDiffSuspectedStartTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
 
                                 //query suspect start time id (the next one from the above data)
-                                ArrayList<String> suspectedStartTransportation = DBHelper.queryNextData(DBHelper.transportationMode_table, Integer.valueOf(diff1stSuspectedStartTransportation_ID));
+                                ArrayList<String> suspectedStartTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStartTransportation_ID));
 
                                 if(suspectedStartTransportation.size() > 0){
 
-                                    String suspectTime = suspectedStartTransportation.get(DBHelper.COL_INDEX_Suspected_Transportation_TIME);
+                                    String suspectTime = suspectedStartTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
 
                                     session.setStartTime(Long.valueOf(suspectTime));
                                 }
@@ -445,7 +445,7 @@ public class MinukuStreamManager implements StreamManager {
                             // set it earlier than other conditions due to the CountDownTimer
                             this.transportationModeDataRecord = transportationModeDataRecord;
 
-                            SessionManager.sessionIsWaiting = true;
+                            SessionManager.sSessionIsWaiting = true;
 
                             //wait for a minute to the user
                             handler.postDelayed(new Runnable() {
@@ -487,7 +487,7 @@ public class MinukuStreamManager implements StreamManager {
                                         Log.d(TAG, "[test triggering] "+ checkCAR);
                                     }
 
-                                    SessionManager.sessionIsWaiting = false;
+                                    SessionManager.sSessionIsWaiting = false;
 
                                 }
                             }, Constants.MILLISECONDS_PER_MINUTE);
@@ -508,7 +508,7 @@ public class MinukuStreamManager implements StreamManager {
         String notificationText = "您有新的移動紀錄";
         Notification notification = getNotification(notificationText, context);
 
-        mNotificationManager.notify(MinukuNotificationManager.reminderNotificationID, notification);
+        mNotificationManager.notify(MinukuNotificationManager.sReminderNotificationID, notification);
     }
 
     private Notification getNotification(String text, Context context){

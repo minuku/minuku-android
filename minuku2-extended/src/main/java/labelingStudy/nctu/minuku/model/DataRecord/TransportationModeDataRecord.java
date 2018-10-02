@@ -12,6 +12,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/5/22.
  */
 
+/**
+ * TransportationModeDataRecord stores  information about the filtered ActivityRecognition from google.
+ * We filter it by our finite-state machine to get the more accurate data.
+ */
 @Entity
 public class TransportationModeDataRecord implements DataRecord {
 

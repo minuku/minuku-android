@@ -11,6 +11,10 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/8/22.
  */
 
+/**
+ * The collection of  RingerDataRecord
+ *      {@link RingerDataRecord}
+ */
 public class RingerStream extends AbstractStreamFromDevice<RingerDataRecord> {
     public RingerStream(int maxSize) {
         super(maxSize);

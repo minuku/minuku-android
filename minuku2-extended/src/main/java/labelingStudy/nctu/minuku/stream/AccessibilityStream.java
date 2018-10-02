@@ -11,7 +11,12 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/9/6.
  */
 
+/**
+ * The collection of AccessibilityDataRecord
+ *      {@link AccessibilityDataRecord}
+ */
 public class AccessibilityStream extends AbstractStreamFromDevice<AccessibilityDataRecord> {
+
     public AccessibilityStream(int maxSize) {
         super(maxSize);
     }

@@ -855,7 +855,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray transportationAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.transportationMode_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.TRANSPORTATION_MODE_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
             if(rows!=0){
@@ -895,7 +895,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray locationAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.location_table +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.LOCATION_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
             //Log.d(TAG,"SELECT * FROM "+DBHelper.STREAM_TYPE_LOCATION +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ");
 
             int rows = cursor.getCount();
@@ -940,7 +940,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray arAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.activityRecognition_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.ACTIVITY_RECOGNITION_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1024,7 +1024,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray ringerAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.ringer_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.RINGER_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1076,7 +1076,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray connectivityAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.connectivity_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.CONNECTIVITY_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1128,7 +1128,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray batteryAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.battery_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.BATTERY_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1173,7 +1173,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray appUsageAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.appUsage_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.APP_USAGE_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1215,7 +1215,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray telephonyAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.telephony_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.TELEPHONY_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1235,7 +1235,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 //                    String timestampInSec = timestamp.substring(0, timestamp.length()-3);
 
-                    //<timestamp, networkOperatorName, CallState, PhoneSignalType_col, gsmSignalStrength, LTESignalStrength, CdmaSignalStrengthLevel>
+                    //<timestamp, networkOperatorName, CallState, PHONE_SIGNAL_TYPE_COL, gsmSignalStrength, LTESignalStrength, CdmaSignalStrengthLevel>
                     Septet<String, String, String, String, String, String ,String> telephonyTuple
                             = new Septet<>(timestamp, networkOperatorName, callState, phoneSignalType, gsmSignalStrength, LTESignalStrength, CdmaSignalStrengthLevel);
 
@@ -1260,7 +1260,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray sensorAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.sensor_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.SENSOR_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 
@@ -1316,7 +1316,7 @@ public class WifiReceiver extends BroadcastReceiver {
             JSONArray accessibilityAndtimestampsJson = new JSONArray();
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.sensor_table+" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
+            Cursor cursor = db.rawQuery("SELECT * FROM "+DBHelper.SENSOR_TABLE +" WHERE "+DBHelper.TIME+" BETWEEN"+" '"+startTime+"' "+"AND"+" '"+endTime+"' ", null); //cause pos start from 0.
 
             int rows = cursor.getCount();
 

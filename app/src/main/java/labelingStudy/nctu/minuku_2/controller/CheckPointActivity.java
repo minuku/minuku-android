@@ -124,13 +124,13 @@ public class CheckPointActivity extends AppCompatActivity {
 
                 Session lastSession = SessionManager.getLastSession();
 
-                if( SessionManager.sessionIsWaiting ){
+                if( SessionManager.sSessionIsWaiting){
 
                     lastSession.setUserPressOrNot(true);
 
                     SessionManager.updateCurSession(lastSession.getId(), ScheduleAndSampleManager.getCurrentTimeInMillis(), lastSession.isUserPress());
 
-                    SessionManager.sessionIsWaiting = false;
+                    SessionManager.sSessionIsWaiting = false;
 
                     return;
                 }

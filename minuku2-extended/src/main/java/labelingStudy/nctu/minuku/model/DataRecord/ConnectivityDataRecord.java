@@ -11,6 +11,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by Lawrence on 2017/7/22.
  */
+
+/**
+ * ConnectivityDataRecord stores information about network connecting condition and status
+ */
 @Entity
 public class ConnectivityDataRecord implements DataRecord {
 

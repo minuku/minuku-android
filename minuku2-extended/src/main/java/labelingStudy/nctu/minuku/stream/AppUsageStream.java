@@ -11,6 +11,10 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Jimmy on 2017/8/8.
  */
 
+/**
+ * The collection of AppUsageDataRecord
+ *      {@link AppUsageDataRecord}
+ */
 public class AppUsageStream extends AbstractStreamFromDevice<AppUsageDataRecord> {
 
     public AppUsageStream(int maxSize) {

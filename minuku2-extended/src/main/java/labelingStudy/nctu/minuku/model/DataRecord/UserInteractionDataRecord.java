@@ -10,6 +10,10 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
 /**
  * Created by tingwei on 2018/9/10.
  */
+
+/**
+ * UserInteractionDataRecord stores information about when the user present and unlock their phone.
+ */
 @Entity
 public class UserInteractionDataRecord implements DataRecord {
 
