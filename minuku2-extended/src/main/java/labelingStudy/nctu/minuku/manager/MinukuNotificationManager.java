@@ -33,32 +33,28 @@ import labelingStudy.nctu.minuku.config.Constants;
 /**
  * Created by neerajkumar on 8/3/16.
  */
+
+/**
+ * Manage displaying notification of new detected activity
+ */
 public class MinukuNotificationManager {
 
-    public static int reminderNotificationID = 21;
-    public static int ongoingNotificationID = 42;
-    public static String ongoingNotificationText = Constants.RUNNING_APP_DECLARATION;
-    public static Intent toTimeline;
+    public static int sReminderNotificationID = 21;
+    public static int sOngoingNotificationID = 42;
+    public static String sOngoingNotificationText = Constants.RUNNING_APP_DECLARATION;
+    public static Intent sToTimeline;
 
+    public static void setIntentToTimeline(Intent intentToTimeline) {
 
-    public static void setIntentToTimeline(Intent intentToTimeline){
-
-        toTimeline = intentToTimeline;
+        sToTimeline = intentToTimeline;
     }
 
     public static int getNotificationIcon(Notification.Builder notificationBuilder) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
             notificationBuilder.setColor(Color.TRANSPARENT);
             return R.drawable.muilab_icon_noti;
-
         }
         return R.drawable.muilab_icon;
     }
-
-
-
-
-
 }
