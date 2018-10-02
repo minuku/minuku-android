@@ -263,35 +263,45 @@ public class DBHelper extends SQLiteOpenHelper {
         DBManager.initializeInstance(this);
     }
 
-    public void createConvenientSiteTable(SQLiteDatabase db){
+    /**
+     * Create convenient site table
+     */
+    public void createConvenientSiteTable(SQLiteDatabase db) {
         Log.d(TAG,"create CustomSite table");
 
         String cmd = "CREATE TABLE " +
                 CONVENIENT_SITE_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                CONVENIENT_SITE_COL +" TEXT, " +
-                CONVENIENT_SITE_LATITUDE_COL +" FLOAT, "+
-                CONVENIENT_SITE_LONGITUDE_COL +" FLOAT " +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                CONVENIENT_SITE_COL + " TEXT, " +
+                CONVENIENT_SITE_LATITUDE_COL + " FLOAT, " +
+                CONVENIENT_SITE_LONGITUDE_COL + " FLOAT " +
                 ");";
 
         db.execSQL(cmd);
     }
 
-    public void createCustomSiteTable(SQLiteDatabase db){
+    /**
+     * Create custom site table
+     */
+    public void createCustomSiteTable(SQLiteDatabase db) {
         Log.d(TAG,"create CustomSite table");
 
         String cmd = "CREATE TABLE " +
                 CUSTOM_SITE_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                CUSTOM_SITE_NAME_COL +" TEXT, " +
-                CUSTOM_SITE_LATITUDE_COL +" FLOAT, "+
-                CUSTOM_SITE_LONGITUDE_COL +" FLOAT " +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                CUSTOM_SITE_NAME_COL + " TEXT, " +
+                CUSTOM_SITE_LATITUDE_COL + " FLOAT, " +
+                CUSTOM_SITE_LONGITUDE_COL + " FLOAT " +
                 ");";
 
         db.execSQL(cmd);
     }
 
-    public void createAnnotationTable(SQLiteDatabase db){
+    /**
+     * Create annotation table
+     * {@link labelingStudy.nctu.minuku.model.Annotation}
+     */
+    public void createAnnotationTable(SQLiteDatabase db) {
         Log.d(TAG,"create annotation table");
 
         String cmd = "CREATE TABLE " +
@@ -312,92 +322,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(cmd);
     }
 
-    public void createTelephonyTable(SQLiteDatabase db){
-
-        Log.d(TAG,"create telephony table");
-
-        String cmd = "CREATE TABLE " +
-                TELEPHONY_TABLE + "(" +
-                ID + " INTEGER PRIMARY KEY NOT NULL," +
-                TIME + " TEXT NOT NULL," +
-                NETWORK_OPERATOR_NAME_COL + " TEXT," +
-                CALL_STATE_COL + " INT," +
-                PHONE_SIGNAL_TYPE_COL + " INT," +
-                GSM_SIGNAL_STRENGTH_COL + " INT," +
-                LTE_SIGNAL_STRENGTH_COL + " INT," +
-                CDMA_SIGNAL_STRENGTH_LEVEL_COL + " INT" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createTransportationModeTable(SQLiteDatabase db){
-        Log.d(TAG,"create TransportationMode table");
-
-        String cmd = "CREATE TABLE " +
-                TRANSPORTATION_MODE_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL," +
-                CONFIRM_TRANSPORTATION_COL + " TEXT, " +
-                SUSPECTED_TRANSPORTATION_TIME_COL + " TEXT, " +
-                SUSPECTED_START_TRANSPORTATION_COL + " TEXT, " +
-                SUSPECTED_STOP_TRANSPORTATION_COL + " TEXT " +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createAppUsageTable(SQLiteDatabase db){
-        Log.d(TAG,"create AppUsage table");
-
-        String cmd = "CREATE TABLE " +
-                APP_USAGE_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL," +
-                SCREEN_STATUS_COL +" TEXT," +
-                LATEST_USED_APP_COL +" TEXT," +
-                LATEST_FOREGROUND_ACTIVITY_COL +" TEXT" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createConnectivityTable(SQLiteDatabase db){
-        Log.d(TAG,"create Connectivity table");
-
-        String cmd = "CREATE TABLE " +
-                CONNECTIVITY_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL," +
-                NETWORK_TYPE_COL +" TEXT," +
-                IS_NETWORK_AVAILABLE_COL +" BOOLEAN," +
-                IS_CONNECTED_COL +" BOOLEAN," +
-                IS_WIFI_AVAILABLE_COL +" BOOLEAN," +
-                IS_MOBILE_AVAILABLE_COL +" BOOLEAN," +
-                IS_WIFI_CONNECTED_COL +" BOOLEAN," +
-                IS_MOBILE_CONNECTED_COL +" BOOLEAN" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createBatteryTable(SQLiteDatabase db){
-        Log.d(TAG,"create Battery table");
-
-        String cmd = "CREATE TABLE " +
-                BATTERY_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL," +
-                BATTERY_LEVEL_COL +" INTEGER," +
-                BATTERY_PERCENTAGE_COL +" FLOAT," +
-                BATTERY_CHARGING_STATE_COL +" TEXT," +
-                IS_CHARGING_COL +" BOOLEAN" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createAccessibilityTable(SQLiteDatabase db){
+    /**
+     * Create accessibility table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord}
+     */
+    public void createAccessibilityTable(SQLiteDatabase db) {
 
         Log.d(TAG, "create accessibility table");
 
@@ -414,95 +343,137 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(cmd);
     }
 
-    public void createRingerTable(SQLiteDatabase db){
-        Log.d(TAG,"create Ringer table");
-
-        String cmd = "CREATE TABLE " +
-                RINGER_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL," +
-                RINGER_MODE_COL +" TEXT," +
-                AUDIO_MODE_COL +" TEXT," +
-                STREAM_VOLUME_MUSIC_COL +" INTEGER," +
-                STREAM_VOLUME_NOTIFICATION_COL +" INTEGER," +
-                STREAM_VOLUME_RING_COL +" INTEGER," +
-                STREAM_VOLUME_VOICE_CALL_COL +" INTEGER," +
-                STREAM_VOLUME_SYSTEM_COL +" INTEGER" +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createUserInteractionTable(SQLiteDatabase db){
-        Log.d(TAG,"create UserInteraction table");
-
-        String cmd = "CREATE TABLE " +
-                USER_INTERACTION_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
-                TIME + " TEXT NOT NULL, " +
-                PRESENT_COL +" TEXT, " +
-                UNLOCK_COL +" TEXT, " +
-                BACKGROUND_COL +" TEXT, " +
-                FOREGROUND_COL +" TEXT " +
-                ");";
-
-        db.execSQL(cmd);
-    }
-
-    public void createARTable(SQLiteDatabase db){
+    /**
+     * Create activity recognition table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord}
+     */
+    public void createARTable(SQLiteDatabase db) {
         Log.d(TAG,"create AR table");
 
         String cmd = "CREATE TABLE " +
                 ACTIVITY_RECOGNITION_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
                 TIME + " TEXT NOT NULL," +
-                MOST_PROBABLE_ACTIVITY_COL +" TEXT," +
-                PROBABLE_ACTIVITIES_COL +" TEXT " +
+                MOST_PROBABLE_ACTIVITY_COL + " TEXT," +
+                PROBABLE_ACTIVITIES_COL + " TEXT " +
                 ");";
 
         db.execSQL(cmd);
     }
 
-    public void createLocationTable(SQLiteDatabase db){
+    /**
+     * Create app usage table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.AppUsageDataRecord}
+     */
+    public void createAppUsageTable(SQLiteDatabase db) {
+        Log.d(TAG,"create AppUsage table");
+
+        String cmd = "CREATE TABLE " +
+                APP_USAGE_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL," +
+                SCREEN_STATUS_COL + " TEXT," +
+                LATEST_USED_APP_COL + " TEXT," +
+                LATEST_FOREGROUND_ACTIVITY_COL + " TEXT" +
+                ");";
+
+        db.execSQL(cmd);
+    }
+
+    /**
+     * Create battery table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.BatteryDataRecord}
+     */
+    public void createBatteryTable(SQLiteDatabase db) {
+        Log.d(TAG,"create Battery table");
+
+        String cmd = "CREATE TABLE " +
+                BATTERY_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL," +
+                BATTERY_LEVEL_COL + " INTEGER," +
+                BATTERY_PERCENTAGE_COL + " FLOAT," +
+                BATTERY_CHARGING_STATE_COL + " TEXT," +
+                IS_CHARGING_COL + " BOOLEAN" +
+                ");";
+
+        db.execSQL(cmd);
+    }
+
+    /**
+     * Create connectivity table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord}
+     */
+    public void createConnectivityTable(SQLiteDatabase db) {
+        Log.d(TAG,"create Connectivity table");
+
+        String cmd = "CREATE TABLE " +
+                CONNECTIVITY_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL," +
+                NETWORK_TYPE_COL + " TEXT," +
+                IS_NETWORK_AVAILABLE_COL + " BOOLEAN," +
+                IS_CONNECTED_COL + " BOOLEAN," +
+                IS_WIFI_AVAILABLE_COL + " BOOLEAN," +
+                IS_MOBILE_AVAILABLE_COL + " BOOLEAN," +
+                IS_WIFI_CONNECTED_COL + " BOOLEAN," +
+                IS_MOBILE_CONNECTED_COL + " BOOLEAN" +
+                ");";
+
+        db.execSQL(cmd);
+    }
+
+    /**
+     * Create location table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord}
+     */
+    public void createLocationTable(SQLiteDatabase db) {
         Log.d(TAG,"create location table");
 
         String cmd = "CREATE TABLE " +
                 LOCATION_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
                 TIME + " TEXT NOT NULL," +
-                LATITUDE_COL +" FLOAT,"+
-                LONGITUDE_COL +" FLOAT, " +
+                LATITUDE_COL + " FLOAT," +
+                LONGITUDE_COL + " FLOAT, " +
                 ACCURACY_COL + " FLOAT, " +
-                ALTITUDE_COL +" FLOAT," +
-                SPEED_COL +" FLOAT," +
-                BEARING_COL +" FLOAT," +
-                PROVIDER_COL +" TEXT," +
+                ALTITUDE_COL + " FLOAT," +
+                SPEED_COL + " FLOAT," +
+                BEARING_COL + " FLOAT," +
+                PROVIDER_COL + " TEXT," +
                 COL_SESSION_ID + " TEXT" +
                 ");";
 
         db.execSQL(cmd);
     }
 
-    public void createTripTable(SQLiteDatabase db){
-
-        Log.d(TAG,"create trip table");
+    /**
+     * Create ringer table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord}
+     */
+    public void createRingerTable(SQLiteDatabase db) {
+        Log.d(TAG,"create Ringer table");
 
         String cmd = "CREATE TABLE " +
-                TRIP_TABLE + "(" +
-                ID +" INTEGER PRIMARY KEY NOT NULL, " +
+                RINGER_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
                 TIME + " TEXT NOT NULL," +
-                SESSION_ID_COL + " TEXT," +
-                LATITUDE_COL +" FLOAT,"+
-                LONGITUDE_COL +" FLOAT, " +
-                ACCURACY_COL + " FLOAT," +
-                TRIP_TRANSPORTATION_COL + " TEXT, " +
-                TRIP_SITE_COL + " TEXT, " +
-                USER_PRESS_OR_NOT_COL + " TEXT" +
+                RINGER_MODE_COL + " TEXT," +
+                AUDIO_MODE_COL + " TEXT," +
+                STREAM_VOLUME_MUSIC_COL + " INTEGER," +
+                STREAM_VOLUME_NOTIFICATION_COL + " INTEGER," +
+                STREAM_VOLUME_RING_COL + " INTEGER," +
+                STREAM_VOLUME_VOICE_CALL_COL + " INTEGER," +
+                STREAM_VOLUME_SYSTEM_COL + " INTEGER" +
                 ");";
 
         db.execSQL(cmd);
     }
 
+    /**
+     * Create sensor table
+     * {@link labelingStudy.nctu.minuku.model.DataRecord.SensorDataRecord}
+     */
     private void createSensorTable(SQLiteDatabase db) {
 
         Log.d(TAG, "create sensor table");
@@ -527,12 +498,96 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(cmd);
     }
 
-    public void createSessionTable(SQLiteDatabase db){
+    /**
+     * Create trip table
+     */
+    public void createTripTable(SQLiteDatabase db) {
+
+        Log.d(TAG,"create trip table");
+
+        String cmd = "CREATE TABLE " +
+                TRIP_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL," +
+                SESSION_ID_COL + " TEXT," +
+                LATITUDE_COL + " FLOAT," +
+                LONGITUDE_COL + " FLOAT, " +
+                ACCURACY_COL + " FLOAT," +
+                TRIP_TRANSPORTATION_COL + " TEXT, " +
+                TRIP_SITE_COL + " TEXT, " +
+                USER_PRESS_OR_NOT_COL + " TEXT" +
+                ");";
+
+        db.execSQL(cmd);
+    }
+    
+    /**
+     * Create telephony table {@link labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord}
+     */
+    public void createTelephonyTable(SQLiteDatabase db) {
+
+        Log.d(TAG,"create telephony table");
+
+        String cmd = "CREATE TABLE " +
+                TELEPHONY_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL," +
+                TIME + " TEXT NOT NULL," +
+                NETWORK_OPERATOR_NAME_COL + " TEXT," +
+                CALL_STATE_COL + " INT," +
+                PHONE_SIGNAL_TYPE_COL + " INT," +
+                GSM_SIGNAL_STRENGTH_COL + " INT," +
+                LTE_SIGNAL_STRENGTH_COL + " INT," +
+                CDMA_SIGNAL_STRENGTH_LEVEL_COL + " INT" +
+                ");";
+
+        db.execSQL(cmd);
+    }
+
+    /**
+     * Create transportation mode table
+     */
+    public void createTransportationModeTable(SQLiteDatabase db) {
+        Log.d(TAG,"create TransportationMode table");
+
+        String cmd = "CREATE TABLE " +
+                TRANSPORTATION_MODE_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL," +
+                CONFIRM_TRANSPORTATION_COL + " TEXT, " +
+                SUSPECTED_TRANSPORTATION_TIME_COL + " TEXT, " +
+                SUSPECTED_START_TRANSPORTATION_COL + " TEXT, " +
+                SUSPECTED_STOP_TRANSPORTATION_COL + " TEXT " +
+                ");";
+
+        db.execSQL(cmd);
+    }
+    
+    public void createUserInteractionTable(SQLiteDatabase db) {
+        Log.d(TAG,"create UserInteraction table");
+
+        String cmd = "CREATE TABLE " +
+                USER_INTERACTION_TABLE + "(" +
+                ID + " INTEGER PRIMARY KEY NOT NULL, " +
+                TIME + " TEXT NOT NULL, " +
+                PRESENT_COL + " TEXT, " +
+                UNLOCK_COL + " TEXT, " +
+                BACKGROUND_COL + " TEXT, " +
+                FOREGROUND_COL + " TEXT " +
+                ");";
+
+        db.execSQL(cmd);
+    }
+
+    /**
+     * Create session table
+     * {@link Session}
+     */
+    public void createSessionTable(SQLiteDatabase db) {
 
         Log.d(TAG, "createSessionTable");
 
         String cmd = "CREATE TABLE" + " " +
-                SESSION_TABLE_NAME + " ( "+
+                SESSION_TABLE_NAME + " ( " +
                 COL_ID + " "  + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_SESSION_CREATED_TIME + " INTEGER NOT NULL, " +
                 COL_SESSION_START_TIME + " INTEGER NOT NULL, " +
@@ -541,13 +596,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 COL_SESSION_MODIFIED_FLAG + " INTEGER, " +
                 COL_SESSION_USER_PRESS_OR_NOT_FLAG + " INTEGER, " +
                 COL_SESSION_SENT_OR_NOT_FLAG + " INTEGER, " +
-                COL_SESSION_TYPE + " TEXT "+
+                COL_SESSION_TYPE + " TEXT " +
                 ");" ;
 
         db.execSQL(cmd);
     }
 
-    public static void insertConvenientSiteTable(String sitename, LatLng markerLocation){
+    public static void insertConvenientSiteTable(String sitename, LatLng markerLocation) {
 
         ContentValues values = new ContentValues();
 
@@ -561,7 +616,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db.insert(DBHelper.CONVENIENT_SITE_TABLE, null, values);
         }
-        catch(NullPointerException e){
+        catch(NullPointerException e) {
             e.printStackTrace();
         }
         finally {
@@ -571,7 +626,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public static void insertCustomizedSiteTable(String sitename, LatLng markerLocation){
+    public static void insertCustomizedSiteTable(String sitename, LatLng markerLocation) {
 
         ContentValues values = new ContentValues();
 
@@ -585,7 +640,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db.insert(DBHelper.CUSTOM_SITE_TABLE, null, values);
         }
-        catch(NullPointerException e){
+        catch(NullPointerException e) {
             e.printStackTrace();
         }
         finally {
@@ -594,7 +649,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public static ArrayList<String> queryCustomizedSites(){
+    public static ArrayList<String> queryCustomizedSites() {
 
         ArrayList<String> result = new ArrayList<String>();
 
@@ -602,16 +657,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            String sql = "SELECT *" +" FROM " + CUSTOM_SITE_TABLE;
+            String sql = "SELECT *" + " FROM " + CUSTOM_SITE_TABLE;
 
             Log.d(TAG, "[test show trip querySession] the query statement is " +sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
 
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
 
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
@@ -622,14 +677,14 @@ public class DBHelper extends SQLiteOpenHelper {
             DBManager.getInstance().closeDatabase();
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
         return result;
     }
 
-    public static long insertSessionTable(Session session){
+    public static long insertSessionTable(Session session) {
 
         Log.d(TAG, "test trip put session " + session.getId() + " to table " + SESSION_TABLE_NAME);
 
@@ -644,7 +699,7 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(COL_SESSION_START_TIME, session.getStartTime());
             values.put(COL_SESSION_ANNOTATION_SET, session.getAnnotationsSet().toJSONObject().toString());
 
-            if(session.getEndTime() != 0){
+            if(session.getEndTime() != 0) {
 
                 values.put(COL_SESSION_END_TIME, session.getEndTime());
             }
@@ -667,9 +722,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             rowId = db.insert(SESSION_TABLE_NAME, null, values);
 
-//            Toast.makeText(mContext,"test trip inserting sessionid : "+ session.getId(),Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext,"test trip inserting sessionid : " + session.getId(),Toast.LENGTH_SHORT).show();
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             rowId = -1;
         }
@@ -679,20 +734,20 @@ public class DBHelper extends SQLiteOpenHelper {
         return rowId;
     }
 
-    public static void deleteSession(int sessionId){
+    public static void deleteSession(int sessionId) {
 
         try {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            db.delete(SESSION_TABLE_NAME, COL_ID + " = "+ sessionId, null);
-        }catch (Exception e){
+            db.delete(SESSION_TABLE_NAME, COL_ID + " = " + sessionId, null);
+        }catch (Exception e) {
 
         }
 
     }
 
-    public static ArrayList<String> queryNextData(String tablename, int id){
+    public static ArrayList<String> queryNextData(String tablename, int id) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
@@ -700,14 +755,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            String sql = "SELECT *"  +" FROM " + tablename +
+            String sql = "SELECT *"  + " FROM " + tablename +
                     " where " + COL_ID + " = " + (id + 1);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
 
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
@@ -717,14 +772,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
         return rows;
     }
 
-    public static ArrayList<String> querySession(int sessionId){
+    public static ArrayList<String> querySession(int sessionId) {
 
         Log.d(TAG, "[test show trip]query session in DBHelper with session id" + sessionId);
 
@@ -734,7 +789,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME +
                     //condition with session id
                     " where " + COL_ID + " = " + sessionId;
 
@@ -742,10 +797,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
 
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
 
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
@@ -756,7 +811,7 @@ public class DBHelper extends SQLiteOpenHelper {
             DBManager.getInstance().closeDatabase();
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -772,7 +827,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME +
 
 //                    " where " + COL_SESSION_START_TIME + " > " + startTime + " and " +
 //                    COL_SESSION_START_TIME + " < " + endTime +
@@ -782,9 +837,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -793,7 +848,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -809,7 +864,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME +
                     " where "
                     /* + COL_SESSION_USER_PRESS_OR_NOT_FLAG + " = 1" + " and "*/
                     + COL_SESSION_START_TIME + " > " + startTime + " and " +
@@ -820,20 +875,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
 
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
             }
             cursor.close();
-//            Log.d(TAG,"cursor.getCount : "+cursor.getCount());
+//            Log.d(TAG,"cursor.getCount : " +cursor.getCount());
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -850,7 +905,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME +
                     " where "
                     /* + COL_SESSION_USER_PRESS_OR_NOT_FLAG + " = 1" + " and "*/
                     + COL_SESSION_START_TIME + " > " + startTime + " and " +
@@ -861,20 +916,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
 
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
             }
             cursor.close();
-//            Log.d(TAG,"cursor.getCount : "+cursor.getCount());
+//            Log.d(TAG,"cursor.getCount : " +cursor.getCount());
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -884,21 +939,21 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //query task table
-    public static ArrayList<String> queryModifiedSessions (){
+    public static ArrayList<String> queryModifiedSessions () {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME + " where " +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME + " where " +
                     COL_SESSION_MODIFIED_FLAG + " = 1";
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -907,7 +962,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -930,16 +985,16 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + DBHelper.SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
                     " order by " + COL_SESSION_START_TIME + " DESC ";
 
             Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -948,7 +1003,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
         Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
@@ -956,23 +1011,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static ArrayList<String> querySessions (String order){
+    public static ArrayList<String> querySessions (String order) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + DBHelper.SESSION_TABLE_NAME +
-                    " order by " + COL_SESSION_START_TIME + " "+order;
+            String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
+                    " order by " + COL_SESSION_START_TIME + " " +order;
 
             Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -981,7 +1036,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
         Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
@@ -989,7 +1044,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static ArrayList<String> queryUnSentSessions(){
+    public static ArrayList<String> queryUnSentSessions() {
 
         Log.d(TAG, "[test show trip] queryUnSentSessions");
 
@@ -998,7 +1053,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + DBHelper.SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
                     " WHERE " + DBHelper.COL_SESSION_SENT_OR_NOT_FLAG + " = " + Constants.SESSION_SHOULD_BE_SENT_FLAG +
                     " order by " + COL_SESSION_START_TIME + " " + "ASC";
 
@@ -1006,9 +1061,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -1017,7 +1072,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
             Log.e(TAG, "exception", e);
         }
@@ -1027,7 +1082,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static ArrayList<String> querySessions(long time24HrAgo){
+    public static ArrayList<String> querySessions(long time24HrAgo) {
 
         Log.d(TAG, "[test show trip] querySessions");
 
@@ -1036,18 +1091,18 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + DBHelper.SESSION_TABLE_NAME +
+            String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
                     " WHERE " + DBHelper.COL_SESSION_START_TIME + " < " + time24HrAgo +
-                    " AND "+ DBHelper.COL_SESSION_SENT_OR_NOT_FLAG + " <> " + Constants.SESSION_IS_ALREADY_SENT_FLAG +
+                    " AND " + DBHelper.COL_SESSION_SENT_OR_NOT_FLAG + " <> " + Constants.SESSION_IS_ALREADY_SENT_FLAG +
                     " order by " + DBHelper.COL_SESSION_START_TIME + " " + "ASC";
 
             Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 rows.add(curRow);
@@ -1056,7 +1111,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
             Log.e(TAG, "exception", e);
         }
@@ -1067,14 +1122,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //get the number of existing session
-    public static long querySessionCount (){
+    public static long querySessionCount () {
 
 
         long count = 0;
 
         try{
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT * "  +" FROM " + SESSION_TABLE_NAME ;
+            String sql = "SELECT * "  + " FROM " + SESSION_TABLE_NAME ;
             Cursor cursor = db.rawQuery(sql, null);
             count = cursor.getCount();
 
@@ -1082,7 +1137,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
         return count;
@@ -1096,16 +1151,16 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + table_name  +
                     " where " + COL_SESSION_ID + " = " + sessionId +
                     " order by " + COL_ID + " DESC LIMIT 1";
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 Log.d(TAG, "[queryLastRecord] get result row " +curRow);
@@ -1117,7 +1172,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1132,15 +1187,15 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME  +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME  +
                     " order by " + COL_ID + " DESC LIMIT 1";
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 Log.d(TAG, "[test combine queryLastRecord] get result row " +curRow);
@@ -1152,7 +1207,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1168,15 +1223,15 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + SESSION_TABLE_NAME  +
+            String sql = "SELECT *"  + " FROM " + SESSION_TABLE_NAME  +
                     " order by " + COL_ID + " DESC LIMIT 2";
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
                 Log.d(TAG, "[test combine queryLastRecord] get result row " +curRow);
@@ -1187,7 +1242,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1203,7 +1258,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + table_name  +
                     " where " +  TIME + " > " + startTime + " and " +
                     TIME + " < " + endTime  +
                     " order by " + TIME;
@@ -1213,9 +1268,9 @@ public class DBHelper extends SQLiteOpenHelper {
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
 //                    Log.d(TAG, "[queryRecordsInSession][testgetdata] column " + i + " content: " + cursor.getString(i));
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
 
@@ -1227,7 +1282,7 @@ public class DBHelper extends SQLiteOpenHelper {
             DBManager.getInstance().closeDatabase();
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1238,23 +1293,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public static ArrayList<String> queryTransportationSuspectedStartTimePreviousId(String transportation){
+    public static ArrayList<String> queryTransportationSuspectedStartTimePreviousId(String transportation) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + TRANSPORTATION_MODE_TABLE +
-                    " where " + SUSPECTED_START_TRANSPORTATION_COL + " <> "+ transportation +
+            String sql = "SELECT *"  + " FROM " + TRANSPORTATION_MODE_TABLE +
+                    " where " + SUSPECTED_START_TRANSPORTATION_COL + " <> " + transportation +
                     " order by " + TIME + " DESC LIMIT 1 ";
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
 
@@ -1264,30 +1319,30 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
         return rows;
     }
 
-    public static ArrayList<String> queryTransportationSuspectedStopTimePreviousId(String transportation){
+    public static ArrayList<String> queryTransportationSuspectedStopTimePreviousId(String transportation) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + TRANSPORTATION_MODE_TABLE +
-                    " where " + SUSPECTED_STOP_TRANSPORTATION_COL + " <> "+ transportation +
+            String sql = "SELECT *"  + " FROM " + TRANSPORTATION_MODE_TABLE +
+                    " where " + SUSPECTED_STOP_TRANSPORTATION_COL + " <> " + transportation +
                     " order by " + TIME + " DESC LIMIT 1 ";
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
 
@@ -1297,7 +1352,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1311,7 +1366,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + table_name  +
                     " where " + COL_SESSION_ID + " = " + sessionId + " and " +
                     TIME + " > " + startTime + " and " +
                     TIME + " < " + endTime  +
@@ -1320,9 +1375,9 @@ public class DBHelper extends SQLiteOpenHelper {
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
 
                 }
@@ -1334,7 +1389,7 @@ public class DBHelper extends SQLiteOpenHelper {
             DBManager.getInstance().closeDatabase();
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1350,7 +1405,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  +" FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + table_name  +
                     " where " + COL_SESSION_ID + " = " + sessionId +
                     " order by " + TIME;
 
@@ -1360,9 +1415,9 @@ public class DBHelper extends SQLiteOpenHelper {
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
-            while(cursor.moveToNext()){
+            while(cursor.moveToNext()) {
                 String curRow = "";
-                for (int i=0; i<columnCount; i++){
+                for (int i=0; i<columnCount; i++) {
                     curRow += cursor.getString(i)+ Constants.DELIMITER;
                 }
 
@@ -1372,7 +1427,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -1382,7 +1437,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void updateSessionTable(int sessionId, long startTime, long endTime){
+    public static void updateSessionTable(int sessionId, long startTime, long endTime) {
 
         String where = COL_ID + " = " +  sessionId;
 
@@ -1397,7 +1452,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch(Exception e){
+        }catch(Exception e) {
 
         }
     }
@@ -1408,7 +1463,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param endTime
      * @param sessionUserPressOrNot
      */
-    public static void updateSessionTable(int session_id, long endTime, boolean sessionUserPressOrNot){
+    public static void updateSessionTable(int session_id, long endTime, boolean sessionUserPressOrNot) {
 
         String where = COL_ID + " = " +  session_id;
 
@@ -1427,12 +1482,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Log.d(TAG, "test combine: completing updating end time for sesssion" + ID);
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateSessionTable(int session_id, long endTime, int sessionUserPressOrNot, int modifiedOrNot){
+    public static void updateSessionTable(int session_id, long endTime, int sessionUserPressOrNot, int modifiedOrNot) {
 
         String where = COL_ID + " = " + session_id;
 
@@ -1451,7 +1506,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Log.d(TAG, "[test triggering] completing updating end time for session : " + session_id );
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             Log.d(TAG, "[test triggering] updating fail" );
         }
@@ -1459,7 +1514,7 @@ public class DBHelper extends SQLiteOpenHelper {
         DBManager.getInstance().closeDatabase();
     }
 
-    public static void updateSessionTable(int sessionId, long endTime){
+    public static void updateSessionTable(int sessionId, long endTime) {
 
         String where = COL_ID + " = " +  sessionId;
 
@@ -1472,7 +1527,7 @@ public class DBHelper extends SQLiteOpenHelper {
             /**first check if the endtime is intentionally invalid**/
 
             //if not
-            if (endTime!=Constants.INVALID_TIME_VALUE){
+            if (endTime!=Constants.INVALID_TIME_VALUE) {
                 values.put(COL_SESSION_END_TIME, endTime);
             }
             else{
@@ -1483,7 +1538,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
 
@@ -1491,7 +1546,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void updateSessionTable(int sessionId, long startTime,long endTime, AnnotationSet annotationSet, int toBeSent){
+    public static void updateSessionTable(int sessionId, long startTime,long endTime, AnnotationSet annotationSet, int toBeSent) {
 
         String where = COL_ID + " = " +  sessionId;
 
@@ -1509,13 +1564,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void updateSessionTable(int sessionId, int toBeSent){
+    public static void updateSessionTable(int sessionId, int toBeSent) {
 
         String where = COL_ID + " = " +  sessionId;
 
@@ -1529,13 +1584,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void updateSessionTable(int sessionId, AnnotationSet annotationSet){
+    public static void updateSessionTable(int sessionId, AnnotationSet annotationSet) {
 
         String where = COL_ID + " = " +  sessionId;
 
@@ -1553,7 +1608,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Log.d(TAG, "[storing sitename] store successfully");
 
-        }catch(Exception e){
+        }catch(Exception e) {
 
             Log.d(TAG, "[storing sitename] Exception");
 
@@ -1565,7 +1620,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void updateSessionTable(Session session, long endTime){
+    public static void updateSessionTable(Session session, long endTime) {
 
         String where = COL_ID + " = " +  session.getId();
 
@@ -1577,7 +1632,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             /**first check if the endtime is intentionally invalid**/
             //if not
-            if (endTime!=Constants.INVALID_TIME_VALUE){
+            if (endTime!=Constants.INVALID_TIME_VALUE) {
                 values.put(COL_SESSION_END_TIME, endTime);
             }
             else{
@@ -1593,7 +1648,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             DBManager.getInstance().closeDatabase();
 
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
 
@@ -1606,8 +1661,8 @@ public class DBHelper extends SQLiteOpenHelper {
 //        String where = COL_SESSION_ID + " = " + currentSessionId;
 
         //get the exact session id in the delimiters
-        String querySessionidInDelimiters = "( '"+Constants.SESSION_DELIMITER + "' || RTRIM("+COL_SESSION_ID+") || '" + Constants.SESSION_DELIMITER+"' )"
-                +"LIKE ('%" +Constants.SESSION_DELIMITER + "' || " + currentSessionId + " || '" + Constants.SESSION_DELIMITER + "%')";
+        String querySessionidInDelimiters = "( '" +Constants.SESSION_DELIMITER + "' || RTRIM(" +COL_SESSION_ID+ ") || '" + Constants.SESSION_DELIMITER+ "' )"
+                + "LIKE ('%" +Constants.SESSION_DELIMITER + "' || " + currentSessionId + " || '" + Constants.SESSION_DELIMITER + "%')";
 
         String querySessionid = COL_SESSION_ID + " = " + currentSessionId;
 
@@ -1622,12 +1677,12 @@ public class DBHelper extends SQLiteOpenHelper {
             db.update(table_name, values, querySessionidInDelimiters
 //                            + " or " + querySessionidBetweenSpaceAndDelimiter
 //                            + " or " + querySessionid
-                            +" and " + afterSplitting
+                            + " and " + afterSplitting
                     , null);
 
             DBManager.getInstance().closeDatabase();
 
-        }catch (Exception e){
+        }catch (Exception e) {
 
             Log.e(TAG, "SessionConcat exception", e);
         }
