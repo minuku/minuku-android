@@ -45,7 +45,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
                 if(ongoingSessionId != -1){
 
-                    SessionManager.getInstance(context).addOngoingSessionid(ongoingSessionId);
+                    SessionManager.getInstance(context).addOngoingSessionId(ongoingSessionId);
                 }
 
             }finally {

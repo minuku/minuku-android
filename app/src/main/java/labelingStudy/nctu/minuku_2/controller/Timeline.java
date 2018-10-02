@@ -570,7 +570,7 @@ public class Timeline extends AppCompatActivity {
 
                             String name = "";
                             //get location by session id
-                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.location_table);
+                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.LOCATION_TABLE);
 
                             double lat = -999;
                             double lng = -999;
@@ -773,7 +773,7 @@ public class Timeline extends AppCompatActivity {
                                         //try catch the situation that the location hasn't been caught
                                         try {
 
-                                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.location_table);
+                                            ArrayList<String> latlngs = DataHandler.getDataBySession(session.getId(), DBHelper.LOCATION_TABLE);
                                             String[] latlng_first = latlngs.get(0).split(Constants.DELIMITER);
                                             String latString = latlng_first[2];
                                             String lngString = latlng_first[3];
@@ -863,7 +863,7 @@ public class Timeline extends AppCompatActivity {
 
                                                     //update session locations' session id,
                                                     //set the time after splittingTime to the new id
-                                                    DBHelper.updateRecordsInSession(DBHelper.location_table, splittingTime, session.getId(), addedSession.getId());
+                                                    DBHelper.updateRecordsInSession(DBHelper.LOCATION_TABLE, splittingTime, session.getId(), addedSession.getId());
                                                 }catch (ArrayIndexOutOfBoundsException e){
 
                                                 }
@@ -1235,7 +1235,7 @@ public class Timeline extends AppCompatActivity {
 
         private Pair<Long, LatLng> getSplitTimeAndClosestLocation(final LatLng latLng, final Session currentSession){
 
-            ArrayList<String> data = DataHandler.getDataBySession(currentSession.getId(), DBHelper.location_table);
+            ArrayList<String> data = DataHandler.getDataBySession(currentSession.getId(), DBHelper.LOCATION_TABLE);
             Log.d(TAG, "[test show trip] get availSite id: " + currentSession.getId());
 
             Log.d(TAG, "[test show trip] get availSite: " + data.size() + " rows");
@@ -1388,7 +1388,7 @@ public class Timeline extends AppCompatActivity {
             ArrayList<LatLng> points = new ArrayList<>();
 
             //get availSite from the database
-            ArrayList<String> data = DataHandler.getDataBySession(sessionId, DBHelper.location_table);
+            ArrayList<String> data = DataHandler.getDataBySession(sessionId, DBHelper.LOCATION_TABLE);
             Log.d(TAG, "[test show trip] getLocationPointsToDrawOnMap get availSite:" + data.size() + "rows");
 
             for (int i=0; i<data.size(); i++){

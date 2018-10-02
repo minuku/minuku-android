@@ -211,16 +211,16 @@ public class CounterActivity extends AppCompatActivity {
 
             ongoingActivity = Utils.getActivityStringType(ongoingActivity);
 
-            MinukuNotificationManager.ongoingNotificationText = "正在為您記錄 "+getTrafficInChinese(ongoingActivity);
+            MinukuNotificationManager.sOngoingNotificationText = "正在為您記錄 "+getTrafficInChinese(ongoingActivity);
         }else {
 
-            MinukuNotificationManager.ongoingNotificationText = Constants.RUNNING_APP_DECLARATION;
+            MinukuNotificationManager.sOngoingNotificationText = Constants.RUNNING_APP_DECLARATION;
         }
 
-        Notification note = getOngoingNotification(MinukuNotificationManager.ongoingNotificationText);
+        Notification note = getOngoingNotification(MinukuNotificationManager.sOngoingNotificationText);
 
         // using the same tag and Id causes the new notification to replace an existing one
-        mNotificationManager.notify(MinukuNotificationManager.ongoingNotificationID, note);
+        mNotificationManager.notify(MinukuNotificationManager.sOngoingNotificationID, note);
 //        note.flags |= Notification.FLAG_NO_CLEAR;
 
     }

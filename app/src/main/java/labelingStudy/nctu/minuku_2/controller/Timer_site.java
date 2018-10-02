@@ -96,7 +96,7 @@ public class Timer_site extends AppCompatActivity {
 
         //output their custom sites from sqlite
         SQLiteDatabase db = DBManager.getInstance().openDatabase();
-        Cursor cursor = db.rawQuery("SELECT "+ DBHelper.convenientsite_col +" FROM "+ DBHelper.convenientsite_table, null);
+        Cursor cursor = db.rawQuery("SELECT "+ DBHelper.CONVENIENT_SITE_COL +" FROM "+ DBHelper.CONVENIENT_SITE_TABLE, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
 

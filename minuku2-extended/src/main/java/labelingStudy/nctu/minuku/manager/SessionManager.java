@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import labelingStudy.nctu.minuku.Data.DBHelper;
-import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.model.Annotation;
@@ -295,10 +294,10 @@ public class SessionManager {
         session.setCreatedTime(createdTime);
 
 
-        if (!separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG].equals("")) {
+        if (!separated[DBHelper.COL_INDEX_SESSION_USER_PRESS_OR_NOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_USER_PRESS_OR_NOT_FLAG].equals("")) {
 
-//            isUserPress = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG]);
-            int isUserPress = Integer.parseInt(separated[DBHelper.COL_INDEX_SESSION_USERPRESSORNOT_FLAG]);
+//            isUserPress = Boolean.parseBoolean(separated[DBHelper.COL_INDEX_SESSION_USER_PRESS_OR_NOT_FLAG]);
+            int isUserPress = Integer.parseInt(separated[DBHelper.COL_INDEX_SESSION_USER_PRESS_OR_NOT_FLAG]);
 
             Log.d(TAG, "[test show trip] testgetdata isUserPress is now:  " + isUserPress);
 
@@ -327,9 +326,9 @@ public class SessionManager {
             }
         }
 
-        if (!separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG].equals("")) {
+        if (!separated[DBHelper.COL_INDEX_SESSION_SENT_OR_NOT_FLAG].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_SENT_OR_NOT_FLAG].equals("")) {
 
-            session.setIsSent(Integer.valueOf(separated[DBHelper.COL_INDEX_SESSION_SENTORNOT_FLAG]));
+            session.setIsSent(Integer.valueOf(separated[DBHelper.COL_INDEX_SESSION_SENT_OR_NOT_FLAG]));
         }
 
         if (!separated[DBHelper.COL_INDEX_SESSION_TYPE].equals("null") && !separated[DBHelper.COL_INDEX_SESSION_TYPE].equals("")) {
@@ -440,7 +439,7 @@ public class SessionManager {
     public static long getLastRecordTimeInSession(int sessionId) {
 
         ArrayList<String> resultBySession = null;
-        resultBySession = SessionManager.getRecordsInSession(sessionId, DBHelper.location_table);
+        resultBySession = SessionManager.getRecordsInSession(sessionId, DBHelper.LOCATION_TABLE);
 
         Log.d(TAG, "test combine: there are " + resultBySession.size() + " location records"  );
 

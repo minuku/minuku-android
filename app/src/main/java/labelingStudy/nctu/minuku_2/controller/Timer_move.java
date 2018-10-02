@@ -126,9 +126,9 @@ public class Timer_move extends AppCompatActivity {
 
         blackTextView = (TextView) findViewById(R.id.blackTextView);
 
-        if(!MinukuNotificationManager.ongoingNotificationText.equals(Constants.RUNNING_APP_DECLARATION)){
+        if(!MinukuNotificationManager.sOngoingNotificationText.equals(Constants.RUNNING_APP_DECLARATION)){
 
-            blackTextView.setText(MinukuNotificationManager.ongoingNotificationText);
+            blackTextView.setText(MinukuNotificationManager.sOngoingNotificationText);
         }else{
 
             blackTextView.setText(blackTextViewDefault);
