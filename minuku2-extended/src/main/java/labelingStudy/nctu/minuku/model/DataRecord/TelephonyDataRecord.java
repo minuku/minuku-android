@@ -14,7 +14,7 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  */
 
 /**
- * TelephonyDataRecord stores information about phone calls record
+ * TelephonyDataRecord stores information about the signal detail, including LTE, Gsm, Cdma
  */
 @Entity
 public class TelephonyDataRecord implements DataRecord {

@@ -12,7 +12,7 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  */
 
 /**
- * UserInteractionDataRecord stores information about
+ * UserInteractionDataRecord stores information about when the user present and unlock their phone.
  */
 @Entity
 public class UserInteractionDataRecord implements DataRecord {
