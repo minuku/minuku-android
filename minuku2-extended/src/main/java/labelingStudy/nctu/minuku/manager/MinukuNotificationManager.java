@@ -52,9 +52,15 @@ public class MinukuNotificationManager {
     public static int getNotificationIcon(Notification.Builder notificationBuilder) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
             notificationBuilder.setColor(Color.TRANSPARENT);
             return R.drawable.muilab_icon_noti;
         }
         return R.drawable.muilab_icon;
     }
+
+
+
+
+
 }

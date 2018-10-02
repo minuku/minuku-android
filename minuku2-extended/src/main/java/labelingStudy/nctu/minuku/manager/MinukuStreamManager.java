@@ -445,7 +445,7 @@ public class MinukuStreamManager implements StreamManager {
                             // set it earlier than other conditions due to the CountDownTimer
                             this.transportationModeDataRecord = transportationModeDataRecord;
 
-                            SessionManager.sessionIsWaiting = true;
+                            SessionManager.sSessionIsWaiting = true;
 
                             //wait for a minute to the user
                             handler.postDelayed(new Runnable() {
@@ -487,7 +487,7 @@ public class MinukuStreamManager implements StreamManager {
                                         Log.d(TAG, "[test triggering] "+ checkCAR);
                                     }
 
-                                    SessionManager.sessionIsWaiting = false;
+                                    SessionManager.sSessionIsWaiting = false;
 
                                 }
                             }, Constants.MILLISECONDS_PER_MINUTE);
@@ -508,7 +508,7 @@ public class MinukuStreamManager implements StreamManager {
         String notificationText = "您有新的移動紀錄";
         Notification notification = getNotification(notificationText, context);
 
-        mNotificationManager.notify(MinukuNotificationManager.reminderNotificationID, notification);
+        mNotificationManager.notify(MinukuNotificationManager.sReminderNotificationID, notification);
     }
 
     private Notification getNotification(String text, Context context){
