@@ -414,7 +414,7 @@ public class SessionManager {
 
         Session session = null;
 
-        ArrayList<String> sessions = DBHelper.queryLast2Sessions();
+        ArrayList<String> sessions = DBHelper.queryLastTwoSessions();
         if (sessions.size() >= 2) { //sessions.size() != 0
 
             String sessionStr = sessions.get(1);
