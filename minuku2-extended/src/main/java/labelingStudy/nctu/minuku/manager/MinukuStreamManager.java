@@ -309,7 +309,7 @@ public class MinukuStreamManager implements StreamManager {
                                 lastSession.setEndTime(endTime);
 
                                 //query suspect start time PREVIOUS id
-                                ArrayList<String> firstDiffSuspectStopTransportation = DBHelper.queryTransportationSuspectedStopTimePreviousId(transportationModeDataRecord.getConfirmedActivityString());
+                                    ArrayList<String> firstDiffSuspectStopTransportation = DBHelper.queryTransportationWithSuspectedStopTransportation(transportationModeDataRecord.getConfirmedActivityString());
                                 if(firstDiffSuspectStopTransportation.size() > 0) {
 
                                     String diff1stSuspectedStopTransportation_ID = firstDiffSuspectStopTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
@@ -387,7 +387,7 @@ public class MinukuStreamManager implements StreamManager {
                             session.setStartTime(ScheduleAndSampleManager.getCurrentTimeInMillis());
 
                             //query suspect start time PREVIOUS id
-                            ArrayList<String> firstDiffSuspectedStartTransportation = DBHelper.queryTransportationSuspectedStartTimePreviousId(transportationModeDataRecord.getConfirmedActivityString());
+                            ArrayList<String> firstDiffSuspectedStartTransportation = DBHelper.queryLastTransportationWithSuspectedStartTransportation(transportationModeDataRecord.getConfirmedActivityString());
                             if(firstDiffSuspectedStartTransportation.size() > 0) {
 
                                 String diff1stSuspectedStartTransportation_ID = firstDiffSuspectedStartTransportation.get(DBHelper.COL_INDEX_RECORD_ID);

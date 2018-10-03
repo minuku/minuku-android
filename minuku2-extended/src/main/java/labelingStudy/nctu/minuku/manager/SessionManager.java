@@ -439,7 +439,7 @@ public class SessionManager {
     public static long getLastRecordTimeInSession(int sessionId) {
 
         ArrayList<String> resultBySession = null;
-        resultBySession = SessionManager.getRecordsInSession(sessionId, DBHelper.LOCATION_TABLE);
+        resultBySession = SessionManager.getRecordsInSession(DBHelper.LOCATION_TABLE, sessionId);
 
         Log.d(TAG, "test combine: there are " + resultBySession.size() + " location records"  );
 
@@ -732,7 +732,7 @@ public class SessionManager {
      * @param tableName the table which stored requiring session
      * @return session data in ArrayList String format
      */
-    public static ArrayList<String> getRecordsInSession(int sessionId, String tableName) {
+    public static ArrayList<String> getRecordsInSession(String tableName, int sessionId) {
 
         ArrayList<String> resultList = new ArrayList<String>();
 

@@ -663,7 +663,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             String sql = "SELECT *" + " FROM " + CUSTOM_SITE_TABLE;
 
-            Log.d(TAG, "[test show trip querySession] the query statement is " +sql);
+            Log.d(TAG, "[test show trip querySession] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -731,8 +731,6 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.d(TAG, "[test combine] insert session: " + values.toString());
 
             rowId = db.insert(SESSION_TABLE_NAME, null, values);
-
-//            Toast.makeText(mContext,"test trip inserting sessionid : " + session.getId(),Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -817,7 +815,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     //condition with session id
                     " where " + COL_ID + " = " + sessionId;
 
-            Log.d(TAG, "[test show trip querySession] the query statement is " +sql);
+            Log.d(TAG, "[test show trip querySession] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -839,7 +837,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
 
-        Log.d(TAG, "[test show trip] the session is " +rows);
+        Log.d(TAG, "[test show trip] the session is " + rows);
 
         return rows;
     }
@@ -857,7 +855,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //                    COL_SESSION_START_TIME + " < " + endTime +
                     " order by " + COL_SESSION_START_TIME + " " + order;
 
-            Log.d(TAG, "[test show trip querySessionsBetweenTimes] test order the query statement is " +sql);
+            Log.d(TAG, "[test show trip querySessionsBetweenTimes] test order the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -899,7 +897,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     COL_SESSION_START_TIME + " < " + endTime +
                     " order by " + COL_SESSION_START_TIME + " DESC ";
 
-            Log.d(TAG, "test combine [querySessionsBetweenTimes] the query statement is " +sql);
+            Log.d(TAG, "test combine [querySessionsBetweenTimes] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -912,7 +910,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 rows.add(curRow);
             }
             cursor.close();
-//            Log.d(TAG,"cursor.getCount : " +cursor.getCount());
 
             DBManager.getInstance().closeDatabase();
 
@@ -944,7 +941,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     COL_SESSION_START_TIME + " < " + endTime +
                     " order by " + COL_SESSION_START_TIME + " " + order + ", " + COL_SESSION_END_TIME + " " + order;
 
-            Log.d(TAG, "test combine [querySessionsBetweenTimes] the query statement is " +sql);
+            Log.d(TAG, "test combine [querySessionsBetweenTimes] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -957,7 +954,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 rows.add(curRow);
             }
             cursor.close();
-//            Log.d(TAG,"cursor.getCount : " +cursor.getCount());
+//            Log.d(TAG,"cursor.getCount : " + cursor.getCount());
 
             DBManager.getInstance().closeDatabase();
 
@@ -1020,7 +1017,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
                     " order by " + COL_SESSION_START_TIME + " DESC ";
 
-            Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+            Log.d(TAG, "[queryLastRecord] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -1038,7 +1035,7 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
 
         }
-        Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
+        Log.d(TAG, "[test show trip] the sessions are" + " " + rows);
 
         return rows;
     }
@@ -1058,7 +1055,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String sql = "SELECT *"  + " FROM " + DBHelper.SESSION_TABLE_NAME +
                     " order by " + COL_SESSION_START_TIME + " " +order;
 
-            Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+            Log.d(TAG, "[queryLastRecord] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -1076,7 +1073,7 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
 
         }
-        Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
+        Log.d(TAG, "[test show trip] the sessions are" + " " + rows);
 
         return rows;
     }
@@ -1094,7 +1091,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     " WHERE " + DBHelper.COL_SESSION_SENT_OR_NOT_FLAG + " = " + Constants.SESSION_SHOULD_BE_SENT_FLAG +
                     " order by " + COL_SESSION_START_TIME + " " + "ASC";
 
-            Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+            Log.d(TAG, "[queryLastRecord] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -1114,7 +1111,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.e(TAG, "exception", e);
         }
 
-        Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
+        Log.d(TAG, "[test show trip] the sessions are" + " " + rows);
 
         return rows;
     }
@@ -1138,7 +1135,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     " AND " + DBHelper.COL_SESSION_SENT_OR_NOT_FLAG + " <> " + Constants.SESSION_IS_ALREADY_SENT_FLAG +
                     " order by " + DBHelper.COL_SESSION_START_TIME + " " + "ASC";
 
-            Log.d(TAG, "[queryLastRecord] the query statement is " +sql);
+            Log.d(TAG, "[queryLastRecord] the query statement is " + sql);
 
             Cursor cursor = db.rawQuery(sql, null);
             int columnCount = cursor.getColumnCount();
@@ -1158,7 +1155,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.e(TAG, "exception", e);
         }
 
-        Log.d(TAG, "[test show trip] the sessions are" + " " +rows);
+        Log.d(TAG, "[test show trip] the sessions are" + " " + rows);
 
         return rows;
     }
@@ -1214,7 +1211,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 for (int i = 0; i < columnCount; i++) {
                     curRow += cursor.getString(i) + Constants.DELIMITER;
                 }
-                Log.d(TAG, "[queryLastRecord] get result row " +curRow);
+                Log.d(TAG, "[queryLastRecord] get result row " + curRow);
 
                 rows.add(curRow);
             }
@@ -1253,7 +1250,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 for (int i = 0; i < columnCount; i++) {
                     curRow += cursor.getString(i) + Constants.DELIMITER;
                 }
-                Log.d(TAG, "[test combine queryLastRecord] get result row " +curRow);
+                Log.d(TAG, "[test combine queryLastRecord] get result row " + curRow);
 
                 rows.add(curRow);
             }
@@ -1293,7 +1290,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 for (int i = 0; i < columnCount; i++) {
                     curRow += cursor.getString(i) + Constants.DELIMITER;
                 }
-                Log.d(TAG, "[test combine queryLastRecord] get result row " +curRow);
+                Log.d(TAG, "[test combine queryLastRecord] get result row " + curRow);
 
                 rows.add(curRow);
             }
@@ -1313,19 +1310,19 @@ public class DBHelper extends SQLiteOpenHelper {
      * Get data that time between startTime and endTime from required table
      * @return
      */
-    public static ArrayList<String> queryRecordsBetweenTimes(String table_name, long startTime, long endTime) {
+    public static ArrayList<String> queryRecordsBetweenTimes(String tableName, long startTime, long endTime) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  + " FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + tableName  +
                     " where " +  TIME + " > " + startTime + " and " +
                     TIME + " < " + endTime  +
                     " order by " + TIME;
 
-            Log.d(TAG, "[test sampling] the query statement is " +sql);
+            Log.d(TAG, "[test sampling] the query statement is " + sql);
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
@@ -1348,16 +1345,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
 
-        Log.d(TAG, "[test sampling] the rsult is " +rows);
+        Log.d(TAG, "[test sampling] the rsult is " + rows);
         return rows;
     }
 
     /**
+     * Get the last transportation which suspected start transportation fit the required transportation.
+     * In this version of Minuku, we use this function with a confirmActivity as the parameter.
+     * In this case, we could access the transportation datum which was created ,while the given confirmActivity was in the suspected-start phase, that is, it was still a suspected  start activity,
+     * and we can get the information at that moment.
      *
-     * @param transportation
+     * Briefly to say, the function help us to access the suspected-start time of the given transportation, that is, the confirmActivity,
+     * and set the actual start time of the session that is corresponding to confirmActivity
+     * @param transportation confirmActivity that needs to get its actual start time
      * @return
      */
-    public static ArrayList<String> queryTransportationSuspectedStartTimePreviousId(String transportation) {
+    public static ArrayList<String> queryLastTransportationWithSuspectedStartTransportation(String transportation) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
@@ -1390,7 +1393,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static ArrayList<String> queryTransportationSuspectedStopTimePreviousId(String transportation) {
+    /**
+     * Get the last transportation which suspected start transportation fit the required transportation.
+     * In this version of Minuku, we use this function with a confirmActivity as the parameter.
+     * In this case, we could access the transportation datum which was created ,while the given confirmActivity was in the suspected-stop phase, that is, it was a suspected stop activity,
+     * and we can get the information at that moment.
+     *
+     * Briefly to say, the function help us to access the suspected-stop time of the given transportation, that is, the confirmActivity,
+     * and set the actual start time of the session that is corresponding to confirmActivity
+     * @param transportation confirmActivity that needs to get its end time
+     * @return
+     */
+    public static ArrayList<String> queryTransportationWithSuspectedStopTransportation(String transportation) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
@@ -1423,14 +1437,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return rows;
     }
 
-    public static ArrayList<String> queryRecordsInSession(String table_name, int sessionId, long startTime, long endTime) {
+    /**
+     * Get data of the session which id = sessionId from required table while fit the time interval
+     * @return
+     */
+    public static ArrayList<String> queryRecordsInSession(String tableName, int sessionId, long startTime, long endTime) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
         try {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  + " FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + tableName  +
                     " where " + COL_SESSION_ID + " = " + sessionId + " and " +
                     TIME + " > " + startTime + " and " +
                     TIME + " < " + endTime  +
@@ -1457,11 +1475,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
 
-
         return rows;
     }
 
-    public static ArrayList<String> queryRecordsInSession(String table_name, int sessionId) {
+    /**
+     * Get data of the session which id = sessionId from required table
+     * @return
+     */
+    public static ArrayList<String> queryRecordsInSession(String tableName, int sessionId) {
 
         ArrayList<String> rows = new ArrayList<String>();
 
@@ -1469,12 +1490,12 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
 
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
-            String sql = "SELECT *"  + " FROM " + table_name  +
+            String sql = "SELECT *"  + " FROM " + tableName  +
                     " where " + COL_SESSION_ID + " = " + sessionId +
                     " order by " + TIME;
 
 
-            Log.d(TAG, "[test show trip] the query statement is " +sql);
+            Log.d(TAG, "[test show trip] the query statement is " + sql);
 
             //execute the query
             Cursor cursor = db.rawQuery(sql, null);
@@ -1501,6 +1522,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Update the startTime and endTime of the session
+     * @param sessionId id of the updating session
+     * @param startTime
+     * @param endTime
+     */
     public static void updateSessionTable(int sessionId, long startTime, long endTime) {
 
         String where = COL_ID + " = " +  sessionId;
@@ -1522,14 +1549,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * this is called usally when we want to end a session.
-     * @param session_id
+     * Update the information of the session about ending a session.
+     * @param sessionId id of the updating session
      * @param endTime
-     * @param sessionUserPressOrNot
+     * @param sessionUserPressOrNot the labeling mode
      */
-    public static void updateSessionTable(int session_id, long endTime, boolean sessionUserPressOrNot) {
+    public static void updateSessionTable(int sessionId, long endTime, boolean sessionUserPressOrNot) {
 
-        String where = COL_ID + " = " +  session_id;
+        String where = COL_ID + " = " +  sessionId;
 
         try {
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
@@ -1551,9 +1578,12 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public static void updateSessionTable(int session_id, long endTime, int sessionUserPressOrNot, int modifiedOrNot) {
+    /**
+     * Update the information of the session about ending a session.
+     */
+    public static void updateSessionTable(int sessionId, long endTime, int sessionUserPressOrNot, int modifiedOrNot) {
 
-        String where = COL_ID + " = " + session_id;
+        String where = COL_ID + " = " + sessionId;
 
         Log.d(TAG, "[test triggering] sessionUserPressOrNot : " + sessionUserPressOrNot);
         Log.d(TAG, "[test triggering] modifiedOrNot : " + modifiedOrNot);
@@ -1568,7 +1598,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db.update(SESSION_TABLE_NAME, values, where, null);
 
-            Log.d(TAG, "[test triggering] completing updating end time for session : " + session_id );
+            Log.d(TAG, "[test triggering] completing updating end time for session : " + sessionId );
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1578,6 +1608,11 @@ public class DBHelper extends SQLiteOpenHelper {
         DBManager.getInstance().closeDatabase();
     }
 
+    /**
+     * Update the end time of the session
+     * @param sessionId
+     * @param endTime
+     */
     public static void updateSessionTable(int sessionId, long endTime) {
 
         String where = COL_ID + " = " +  sessionId;
@@ -1610,6 +1645,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Update session information with time, annotation and flag.
+     * @param sessionId
+     * @param startTime
+     * @param endTime
+     * @param annotationSet
+     * @param toBeSent
+     */
     public static void updateSessionTable(int sessionId, long startTime,long endTime, AnnotationSet annotationSet, int toBeSent) {
 
         String where = COL_ID + " = " +  sessionId;
@@ -1634,6 +1677,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Update the flag of the session
+     * @param sessionId
+     * @param toBeSent
+     */
     public static void updateSessionTable(int sessionId, int toBeSent) {
 
         String where = COL_ID + " = " +  sessionId;
@@ -1654,6 +1702,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Update the annotationSet of the session
+     * @param sessionId
+     * @param annotationSet
+     */
     public static void updateSessionTable(int sessionId, AnnotationSet annotationSet) {
 
         String where = COL_ID + " = " +  sessionId;
@@ -1720,12 +1773,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void updateRecordsInSession(String table_name, long splittingTime, int currentSessionId, int newSessionid) {
+    /**
+     * Update session information when splitting a session
+     * @param tableName
+     * @param splittingTime
+     * @param currentSessionId
+     * @param newSessionId
+     */
+    public static void updateRecordsInSession(String tableName, long splittingTime, int currentSessionId, int newSessionId) {
 
 //        String where = COL_SESSION_ID + " = " + currentSessionId;
 
         //get the exact session id in the delimiters
-        String querySessionidInDelimiters = "( '" +Constants.SESSION_DELIMITER + "' || RTRIM(" +COL_SESSION_ID+ ") || '" + Constants.SESSION_DELIMITER+ "' )"
+        String querySessionIdInDelimiters = "( '" +Constants.SESSION_DELIMITER + "' || RTRIM(" +COL_SESSION_ID+ ") || '" + Constants.SESSION_DELIMITER+ "' )"
                 + "LIKE ('%" +Constants.SESSION_DELIMITER + "' || " + currentSessionId + " || '" + Constants.SESSION_DELIMITER + "%')";
 
         String querySessionid = COL_SESSION_ID + " = " + currentSessionId;
@@ -1736,9 +1796,9 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
             ContentValues values = new ContentValues();
 
-            values.put(COL_SESSION_ID, newSessionid);
+            values.put(COL_SESSION_ID, newSessionId);
 
-            db.update(table_name, values, querySessionidInDelimiters
+            db.update(tableName, values, querySessionIdInDelimiters
 //                            + " or " + querySessionidBetweenSpaceAndDelimiter
 //                            + " or " + querySessionid
                             + " and " + afterSplitting
