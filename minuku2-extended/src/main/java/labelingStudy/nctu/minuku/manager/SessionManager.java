@@ -152,10 +152,10 @@ public class SessionManager {
 
         Log.d(TAG, " [test combine] tyring to see if the session is ongoing:" + sessionId);
 
-        for (int i = 0; i< sOngoingSessionIdList.size(); i++) {
+        for (int i = 0; i< getOngoingSessionIdList().size(); i++) {
             //       Log.d(LOG_TAG, " [getCurRecordingSession] looping to " + i + "th session of which the id is " + mCurRecordingSessions.get(i).getId());
 
-            if (sOngoingSessionIdList.get(i)==sessionId) {
+            if (getOngoingSessionIdList().get(i)==sessionId) {
                 return true;
             }
         }
@@ -181,9 +181,9 @@ public class SessionManager {
      * Update the ongoing session. In this edition of Minuku, there is always a removal of ongoing session id before calling addOngoingSessionId, thus the size of sOngoingSessionIdList keep at 1
      * @param id the id of the session that is set to be ongoing
      */
-    public void addOngoingSessionId(int id) {
-        Log.d(TAG, "test combine: adding ongonig session " + id );
-        this.sOngoingSessionIdList.add(id);
+    public static void addOngoingSessionId(int id) {
+        Log.d(TAG, "test combine: adding ongoing session " + id );
+        getOngoingSessionIdList().add(id);
 
     }
 
@@ -195,10 +195,10 @@ public class SessionManager {
      * Remove the session given by id in the ongoingSessionList
      * @param id  id the id of the session that is set not to be ongoing anymore
      */
-    public void removeOngoingSessionid(int id) {
-        Log.d(TAG, "test replay: inside removeongogint session renove " + id );
-        this.sOngoingSessionIdList.remove(id);
-        Log.d(TAG, "test replay: inside removeongogint session the ongoiong list is  " + sOngoingSessionIdList.toString() );
+    public static void removeOngoingSessionid(int id) {
+        Log.d(TAG, "test replay: inside remove ongoing session renove " + id );
+        getOngoingSessionIdList().remove(id);
+        Log.d(TAG, "test replay: inside remove ongoing session the ongoing list is  " + sOngoingSessionIdList.toString() );
     }
 
     /**
@@ -208,9 +208,9 @@ public class SessionManager {
 
         Log.d(TAG, " [test combine] tyring to see if the session is ongoing:" + sessionId);
 
-        for (int i = 0; i < sEmptyOngoingSessionIdList.size(); i++) {
+        for (int i = 0; i < getEmptyOngoingSessionIdList().size(); i++) {
 
-            if (sEmptyOngoingSessionIdList.get(i) == sessionId) {
+            if (getEmptyOngoingSessionIdList().get(i) == sessionId) {
                 return true;
             }
         }
@@ -235,12 +235,62 @@ public class SessionManager {
         return sEmptyOngoingSessionIdList;
     }
 
-    public static void addEmptyOngoingSessionid(int id) {
-        Log.d(TAG, "test combine: adding ongonig session " + id );
-        sEmptyOngoingSessionIdList.add(id);
-
+    public static void addEmptyOngoingSessionId(int id) {
+        Log.d(TAG, "test combine: adding ongoing session " + id );
+        getEmptyOngoingSessionIdList().add(id);
     }
 
+    public static void removeEmptyOngoingSessionId(int id) {
+        Log.d(TAG, "test replay: inside remove emptyOngoing session remove " + id );
+        getEmptyOngoingSessionIdList().remove(id);
+        Log.d(TAG, "test replay: inside remove emptyOngoing session the emptyOngoing list is  " + sOngoingSessionIdList.toString() );
+    }
+    /**
+     * Get session from database with id
+     * @param id id of the requiring session
+     * @return the session get from database
+     */
+    public static Session getSession (String id) {
+
+        int sessionId = Integer.parseInt(id);
+        ArrayList<String> res =  DBHelper.querySession(sessionId);
+        Log.d(TAG, "[test show trip]query session from LocalDB is " + res);
+        Session session = null;
+
+        for (int i = 0; i < res.size() ; i++) {
+
+            session = convertStringToSession(res.get(i));
+            Log.d(TAG, " test show trip  testGetData id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+
+        }
+
+        return session;
+    }
+
+    /**
+     * Get session from database by id
+     * @param sessionId id of requiring session
+     * @return the requiring session data in session object
+     */
+    public static Session getSession (int sessionId) {
+
+        Log.d(TAG, "sessionId : " + sessionId);
+        String sessionStr =  DBHelper.querySession(sessionId).get(0);
+        Log.d(TAG, "query session from LocalDB is " + sessionStr);
+        Session session = convertStringToSession(sessionStr);
+        Log.d(TAG, " testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
+
+        return session;
+    }
+
+    /**
+     * Get the ongoingSession in session type
+     * @return
+     */
+    public static Session getOngoingSession () {
+        int ongoingSessionId = getOngoingSessionIdList().get(0);
+        return getSession(ongoingSessionId);
+    }
     /**
      * Return time in text by the given time value
      * @param time the given time in long
@@ -364,28 +414,6 @@ public class SessionManager {
     }
 
     /**
-     * Get session from database with id
-     * @param id id of the requiring session
-     * @return the session get from database
-     */
-    public static Session getSession (String id) {
-
-        int sessionId = Integer.parseInt(id);
-        ArrayList<String> res =  DBHelper.querySession(sessionId);
-        Log.d(TAG, "[test show trip]query session from LocalDB is " + res);
-        Session session = null;
-
-        for (int i = 0; i < res.size() ; i++) {
-
-            session = convertStringToSession(res.get(i));
-            Log.d(TAG, " test show trip  testGetData id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
-
-        }
-
-        return session;
-    }
-
-    /**
      * Get last session from database. should avoid the discarded session
      * @return last recorded session
      */
@@ -457,21 +485,8 @@ public class SessionManager {
         }
     }
 
-    /**
-     * Get session from database by id
-     * @param sessionId id of requiring session
-     * @return the requiring session data in session object
-     */
-    public static Session getSession (int sessionId) {
 
-        Log.d(TAG, "sessionId : " + sessionId);
-        String sessionStr =  DBHelper.querySession(sessionId).get(0);
-        Log.d(TAG, "query session from LocalDB is " + sessionStr);
-        Session session = convertStringToSession(sessionStr);
-        Log.d(TAG, " testgetdata id " + session.getId() + " startTime " + session.getStartTime() + " end time " + session.getEndTime() + " annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
-        return session;
-    }
 
     /**
      * Get count of sessions in database
@@ -595,7 +610,7 @@ public class SessionManager {
     public static void continueSecondLastSession(Session session) {
 
         //remove the ongoing session
-        getOngoingSessionIdList().add(session.getId());
+        addOngoingSessionId(session.getId());
 
         //update session with end time and long enough flag.
         updateCurSessionEndInfoTo(session.getId(),0,true);
@@ -618,7 +633,7 @@ public class SessionManager {
 
         //remove the ongoing session
         // should use function to remove
-        sOngoingSessionIdList.remove(Integer.valueOf(session.getId()));
+        removeOngoingSessionid(Integer.valueOf(session.getId()));
 
         Log.d(TAG, "test show trip: after remove going the list is  " + getOngoingSessionIdList().toString());
 

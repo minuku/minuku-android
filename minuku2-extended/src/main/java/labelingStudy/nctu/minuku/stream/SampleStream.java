@@ -16,7 +16,7 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
 public class SampleStream extends AbstractStreamFromDevice<SampleDataRecord> {
 
     /**
-     * Define a constructor with initializing maxSize
+     * Define a constructor with initializing mMaxSize
      * @param maxSize
      */
     public SampleStream(int maxSize) {

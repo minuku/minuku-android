@@ -187,8 +187,8 @@ public class CheckPointActivity extends AppCompatActivity {
         sessionEmptyActivity.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
         sessionEmptyActivity.setType(Constants.SESSION_TYPE_DETECTED_BY_USER);
 
-        SessionManager.addEmptyOngoingSessionid(sessionId);
-        SessionManager.getOngoingSessionIdList().add(sessionId);
+        SessionManager.addEmptyOngoingSessionId(sessionId);
+        SessionManager.addOngoingSessionId(sessionId);
 
         DBHelper.insertSessionTable(sessionEmptyActivity);
     }

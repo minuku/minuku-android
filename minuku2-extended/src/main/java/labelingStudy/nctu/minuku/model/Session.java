@@ -8,28 +8,28 @@ import java.util.ArrayList;
 
 public class Session {
 
-    private long mCreatedTime=0;
-    private long mStartTime=0;
-    private long mEndtime=0;
+    private long mCreatedTime = 0;
+    private long mStartTime = 0;
+    private long mEndTime = 0;
     private int mId;
     private int mTaskId;
-    private boolean mPaused=false;
+    private boolean mPaused = false;
     private float mBatteryLife = -1;
     //we need to rememeber this number in order to cancel the ongoing notification when the current session is done.
-    private int mOngoingNotificationId=-1;
+    private int mOngoingNotificationId = -1;
     protected AnnotationSet mAnnotationSet;
     private boolean mUserPressOrNot;
     private boolean mIsModified;
-    private boolean hidedOrNot;
+    private boolean mHidedOrNot;
     private int mIsSent;
-    private String type;
+    private String mType;
 
     ArrayList<String> mContextSourceNames;
 
     /**
      * @param sessionId Set session Id
      */
-    public Session (int sessionId){
+    public Session (int sessionId) {
         mId = sessionId;
         mAnnotationSet = new AnnotationSet();
     }
@@ -37,7 +37,7 @@ public class Session {
     /**
      * @param timestamp Set session StartTime and CreatedTime
      */
-    public Session (long timestamp){
+    public Session (long timestamp) {
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
@@ -48,7 +48,7 @@ public class Session {
      * @param timestamp Set session StartTime and CreatedTime
      * @param sessionId Set session Id
      */
-    public Session (long timestamp, int sessionId){
+    public Session (long timestamp, int sessionId) {
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mId = sessionId;
@@ -60,7 +60,7 @@ public class Session {
     }
 
     public void addContextSourceType(String sourceType) {
-        if ( this.mContextSourceNames==null){
+        if ( this.mContextSourceNames == null) {
             mContextSourceNames = new ArrayList<String>();
         }
         this.mContextSourceNames.add(sourceType);
@@ -70,9 +70,9 @@ public class Session {
         this.mContextSourceNames = sourceTypes;
     }
 
-    public void setContextSourceTypes(String[] contextsources) {
-        for (int i=0; i<contextsources.length; i++){
-            addContextSourceType(contextsources[i]);
+    public void setContextSourceTypes(String[] contextSources) {
+        for (int i = 0; i<contextSources.length; i++) {
+            addContextSourceType(contextSources[i]);
         }
     }
 
@@ -84,36 +84,36 @@ public class Session {
         return mIsModified;
     }
 
-    public void setUserPressOrNot(boolean userPressOrNot){
+    public void setUserPressOrNot(boolean userPressOrNot) {
         mUserPressOrNot = userPressOrNot;
     }
 
-    public void setModified(boolean isModified){
+    public void setModified(boolean isModified) {
         mIsModified = isModified;
     }
 
-    public boolean isHide(){
-        return hidedOrNot;
+    public boolean isHide() {
+        return mHidedOrNot;
     }
 
-    public void setHidedOrNot(boolean hidedOrNot){
-        this.hidedOrNot = hidedOrNot;
+    public void setHidedOrNot(boolean hidedOrNot) {
+        mHidedOrNot = hidedOrNot;
     }
 
-    public void setIsSent(int isSent){
+    public void setIsSent(int isSent) {
         mIsSent = isSent;
     }
 
-    public int getIsSent(){
+    public int getIsSent() {
         return mIsSent;
     }
 
-    public void setType(String type){
-        this.type = type;
+    public void setType(String type) {
+        mType = type;
     }
 
-    public String getType(){
-        return type;
+    public String getType() {
+        return mType;
     }
 
     public boolean isPaused() {
@@ -121,14 +121,14 @@ public class Session {
     }
 
     public void setPaused(boolean paused) {
-        this.mPaused = paused;
+        mPaused = paused;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         mId = id;
     }
 
-    public int getId(){
+    public int getId() {
         return mId;
     }
 
@@ -137,7 +137,7 @@ public class Session {
     }
 
     public void setOngoingNotificationId(int ongoingNotificationId) {
-        this.mOngoingNotificationId = ongoingNotificationId;
+        mOngoingNotificationId = ongoingNotificationId;
     }
 
     public void setTask(int taskId) {
@@ -145,32 +145,32 @@ public class Session {
     }
 
     public void setTaskId(int taskId) {
-        this.mTaskId = taskId;
+        mTaskId = taskId;
     }
 
 
-    public int getTaskId(){
+    public int getTaskId() {
         return mTaskId;
     }
 
 
-    public void setStartTime(long startTime){
+    public void setStartTime(long startTime) {
         mStartTime = startTime;
     }
 
-    public long getStartTime(){
+    public long getStartTime() {
         return mStartTime;
     }
 
     public long getEndTime() {
-        return mEndtime;
+        return mEndTime;
     }
 
-    public void setEndTime(long endtime) {
-        this.mEndtime = endtime;
+    public void setEndTime(long endTime) {
+        mEndTime = endTime;
     }
 
-    public AnnotationSet getAnnotationsSet(){
+    public AnnotationSet getAnnotationsSet() {
 
         return mAnnotationSet;
     }
@@ -180,10 +180,10 @@ public class Session {
     }
 
     public void setBatteryLife(float batteryStatus) {
-        this.mBatteryLife = batteryStatus;
+        mBatteryLife = batteryStatus;
     }
 
-    public void setAnnotationSet(AnnotationSet annotationSet){
+    public void setAnnotationSet(AnnotationSet annotationSet) {
         mAnnotationSet = annotationSet;
     }
 
@@ -193,7 +193,7 @@ public class Session {
      */
     public void addAnnotation (Annotation annotation) {
 
-        if (mAnnotationSet==null){
+        if (mAnnotationSet==null) {
             mAnnotationSet = new AnnotationSet();
         }
         mAnnotationSet.addAnnotation(annotation);

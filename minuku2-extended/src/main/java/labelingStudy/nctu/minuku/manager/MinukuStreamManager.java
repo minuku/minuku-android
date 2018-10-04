@@ -84,49 +84,50 @@ public class MinukuStreamManager implements StreamManager {
     protected Map<Stream.StreamType, List<Stream<? extends DataRecord>>> mStreamTypeStreamMap;
     protected Map<Class, StreamGenerator> mRegisteredStreamGenerators;
 
-    private ActivityRecognitionDataRecord activityRecognitionDataRecord;
-    private TransportationModeDataRecord transportationModeDataRecord;
-    private LocationDataRecord locationDataRecord;
+    private ActivityRecognitionDataRecord mActivityRecognitionDataRecord;
+    private TransportationModeDataRecord mTransportationModeDataRecord;
+    private LocationDataRecord mLocationDataRecord;
 
-    private static int counter = 0;
+    private static int sCounter = 0;
 
-    private Handler handler = new Handler();
+    private Handler mHandler = new Handler();
 
-    private static MinukuStreamManager instance;
+    private static MinukuStreamManager sInstance;
 
     private MinukuStreamManager() throws Exception {
         mStreamMap = new HashMap<>();
         mStreamTypeStreamMap = new HashMap<>();
         mRegisteredStreamGenerators = new HashMap<>();
-
-
     }
 
     public static MinukuStreamManager getInstance() {
-        if(MinukuStreamManager.instance == null) {
+        if (MinukuStreamManager.sInstance == null) {
             try {
-                MinukuStreamManager.instance = new MinukuStreamManager();
+                MinukuStreamManager.sInstance = new MinukuStreamManager();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return MinukuStreamManager.instance;
+        return MinukuStreamManager.sInstance;
     }
 
+    /**
+     * Maintaining all StreamGenerators and trigger their updateStream if it is time to update
+     */
     public void updateStreamGenerators() {
-        for(StreamGenerator streamGenerator: mRegisteredStreamGenerators.values()) {
+        for (StreamGenerator streamGenerator : mRegisteredStreamGenerators.values()) {
             Log.d(TAG, "Stream generator : " + streamGenerator.getClass() + " \n" +
                     "Update frequency: " + streamGenerator.getUpdateFrequency() + "\n" +
-                    "Counter: " + counter);
-            if(streamGenerator.getUpdateFrequency() == -1) {
+                    "Counter: " + sCounter);
+            if (streamGenerator.getUpdateFrequency() == -1) {
                 continue;
             }
-            if(counter % streamGenerator.getUpdateFrequency() == 0) {
+            if (sCounter % streamGenerator.getUpdateFrequency() == 0) {
                 Log.d(TAG, "Calling update stream generator for " + streamGenerator.getClass());
                 streamGenerator.updateStream();
             }
         }
-        counter++;
+        sCounter++;
     }
 
 
@@ -135,41 +136,50 @@ public class MinukuStreamManager implements StreamManager {
         return new LinkedList<>(mStreamMap.values());
     }
 
+    /**
+     * Register the given StreamGenerator so MinukuStreamManager can maintain it
+     */
     @Override
-    public <T extends DataRecord> void register(Stream s,
+    public <T extends DataRecord> void register(Stream stream,
                                                 Class<T> clazz,
-                                                StreamGenerator aStreamGenerator)
+                                                StreamGenerator streamGenerator)
             throws StreamNotFoundException, StreamAlreadyExistsException {
-        if(mStreamMap.containsKey(clazz)) {
+        if (mStreamMap.containsKey(clazz)) {
             throw new StreamAlreadyExistsException();
         }
-        for(Object dependsOnClass:s.dependsOnDataRecordType()) {
-            if(!mStreamMap.containsKey(dependsOnClass)) {
+        for (Object dependsOnClass:stream.dependsOnDataRecordType()) {
+            if (!mStreamMap.containsKey(dependsOnClass)) {
                 Log.e(TAG, "Stream not found : " + dependsOnClass.toString());
                 throw new StreamNotFoundException();
             }
         }
-        mStreamMap.put(clazz, s);
-        mRegisteredStreamGenerators.put(clazz, aStreamGenerator);
-        aStreamGenerator.onStreamRegistration();
+        mStreamMap.put(clazz, stream);
+        mRegisteredStreamGenerators.put(clazz, streamGenerator);
+        streamGenerator.onStreamRegistration();
         Log.d(TAG, "Registered a new stream generator for " + clazz);
     }
 
+    /**
+     * Remove  the required StreamGenerator from MinukuStreamManager
+     */
     @Override
-    public void unregister(Stream s, StreamGenerator sg)
+    public void unregister(Stream stream, StreamGenerator streamGenerator)
             throws StreamNotFoundException {
-        Class classType = s.getCurrentValue().getClass();
-        if(!mStreamMap.containsKey(classType)) {
+        Class classType = stream.getCurrentValue().getClass();
+        if (!mStreamMap.containsKey(classType)) {
             throw new StreamNotFoundException();
         }
-        mStreamMap.remove(s);
-        mRegisteredStreamGenerators.remove(sg);
+        mStreamMap.remove(stream);
+        mRegisteredStreamGenerators.remove(streamGenerator);
     }
 
+    /**
+     * Get the corresponding Stream of the given dataRecord
+     */
     @Override
     public <T extends DataRecord> Stream<T> getStreamFor(Class<T> clazz)
             throws StreamNotFoundException {
-        if(mStreamMap.containsKey(clazz)) {
+        if (mStreamMap.containsKey(clazz)) {
             return mStreamMap.get(clazz);
         } else {
             throw new StreamNotFoundException();
@@ -205,7 +215,7 @@ public class MinukuStreamManager implements StreamManager {
     @Override
     public <T extends DataRecord> StreamGenerator<T> getStreamGeneratorFor(Class<T> clazz)
             throws StreamNotFoundException {
-        if(mRegisteredStreamGenerators.containsKey(clazz)) {
+        if (mRegisteredStreamGenerators.containsKey(clazz)) {
             return mRegisteredStreamGenerators.get(clazz);
         } else {
             throw new StreamNotFoundException();
@@ -215,7 +225,7 @@ public class MinukuStreamManager implements StreamManager {
     private StreamSnapshot getStreamSnapshot() {
         Map<Class<? extends DataRecord>, List<? extends DataRecord>> streamSnapshotData =
                 new HashMap<>();
-        for(Map.Entry<Class, Stream> entry: mStreamMap.entrySet()) {
+        for (Map.Entry<Class, Stream> entry: mStreamMap.entrySet()) {
             List list = createListOfType(entry.getKey());
             list.add(entry.getValue().getCurrentValue());
             list.add(entry.getValue().getPreviousValue());
@@ -228,141 +238,107 @@ public class MinukuStreamManager implements StreamManager {
         return new ArrayList<T>();
     }
 
-    public void setActivityRecognitionDataRecord(ActivityRecognitionDataRecord activityRecognitionDataRecord){
-        this.activityRecognitionDataRecord = activityRecognitionDataRecord;
+    public void setActivityRecognitionDataRecord(ActivityRecognitionDataRecord activityRecognitionDataRecord) {
+        this.mActivityRecognitionDataRecord = activityRecognitionDataRecord;
     }
 
-    public ActivityRecognitionDataRecord getActivityRecognitionDataRecord(){
-        return activityRecognitionDataRecord;
+    public ActivityRecognitionDataRecord getActivityRecognitionDataRecord() {
+        return mActivityRecognitionDataRecord;
     }
 
-    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord, final Context context, SharedPreferences sharedPrefs){
+
+    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord, final Context context, SharedPreferences sharedPrefs) {
 
         Log.d(TAG, "[test triggering] incoming transportation: " + transportationModeDataRecord.getConfirmedActivityString());
 
         Boolean addSessionFlag = false;
 
-        //the first time we see incoming transportation mode data
-        if (this.transportationModeDataRecord==null){
+        if (mTransportationModeDataRecord == null) {
+            //Init mTransportationModeDataRecord
+            mTransportationModeDataRecord = new TransportationModeDataRecord(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA);
+            Log.d(TAG, "[test triggering] test trip original null updated to " + this.mTransportationModeDataRecord.getConfirmedActivityString());
 
-//            this.transportationModeDataRecord = transportationModeDataRecord;
-            this.transportationModeDataRecord = new TransportationModeDataRecord(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA);
-            Log.d(TAG, "[test triggering] test trip original null updated to " + this.transportationModeDataRecord.getConfirmedActivityString());
-        }
-        else {
+        } else {
 
-            Log.d(TAG, "[test triggering] NEW: " + transportationModeDataRecord.getConfirmedActivityString() + " vs OLD:" + this.transportationModeDataRecord.getConfirmedActivityString());
-
-            /**
-             *  check if the new activity label is different from the previous activity label. IF it is different, we should do something
-             * **/
+            Log.d(TAG, "[test triggering] NEW: " + transportationModeDataRecord.getConfirmedActivityString() + " vs OLD:" + mTransportationModeDataRecord.getConfirmedActivityString());
 
             String currentWork = context.getResources().getString(R.string.current_task);
 
-            Log.d(TAG,"in setTransportationModeDataRecord, currentWork is "+currentWork);
+            Log.d(TAG,"in setTransportationModeDataRecord, currentWork is " +currentWork);
 
-            //in PART, the Session is controlled by the user, no need to detect by the app.
-            if(!currentWork.equals("PART")) {
+            // in PART mode, the Session is controlled by the user, so no need to detect transportation by the app
+            if (!currentWork.equals("PART")) {
 
-                //if the current activity is different from the latest one
-                if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(transportationModeDataRecord.getConfirmedActivityString())) {
+                // if the current activity is different from the latest one, should
+                if (!mTransportationModeDataRecord.getConfirmedActivityString().equals(transportationModeDataRecord.getConfirmedActivityString())) {
 
                     Log.d(TAG, "[test triggering] test trip: the new acitivty is different from the previous!");
 
-                    /** we first see if the this is the first session **/
                     int sessionCount = SessionManager.getNumOfSession();
 
-                    //if this is the first time seeing a session and the new transportation is neither static nor NA, we should just insert a session
+                    // if there is no session in the database and the new transportation is neither static nor NA, insert a session
                     if (sessionCount == 0
-                                && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
+                                && !transportationModeDataRecord.getConfirmedActivityString().
+                            equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
                         Log.d(TAG, "[test triggering] addSessionFlag = true there's no session in the db");
                         addSessionFlag = true;
-                    }
-                    //there's exizstint sessions in the DB
-                    else if (sessionCount > 0) {
+                    } else if (sessionCount > 0) {  // there are sessions in the database, so the transportation given as the parameter isn't for the first session
 
-                        //get the latest session (which should be the ongoing one)
-                        Session lastSession = SessionManager.getLastSession();
+                        // TODO: must test
+                        // get the ongoingSession
+                        Session ongoingSession = SessionManager.getOngoingSession();
 
-                        int sessionIdOfLastSession = lastSession.getId();
-                        AnnotationSet annotationSet = lastSession.getAnnotationsSet();
-                        long endTimeOfLastSession = lastSession.getEndTime();
-                        long startTimeOfLastSession = lastSession.getStartTime();
+                        int sessionIdOfLastSession = ongoingSession.getId();
 
-                        Log.d(TAG, "[test triggering] session " + sessionIdOfLastSession + " with annotation string " + annotationSet.toString() + " end time " + endTimeOfLastSession + " startTime " + startTimeOfLastSession);
+                        Log.d(TAG, "[test triggering] session " + sessionIdOfLastSession +
+                                " with annotation string " + ongoingSession.getAnnotationsSet().toString() +
+                                " end time " + ongoingSession.getEndTime() +
+                                " startTime " + ongoingSession.getStartTime());
 
-                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                        if (!mTransportationModeDataRecord.getConfirmedActivityString().
+                                equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
-                        if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
+                            boolean isEmptyOngoingSession = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "not emptySessionOn ? " + (!isEmptyOngoingSession));
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "not emptySessionOn ? "+(!emptySessionOn));
-
-                            //if there is an empty session, don't stop it
-                            if(!emptySessionOn){
-
-                                //if we end the current session, we should update its time and set a long enough flag
-                                long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
-
-                                //check the suspect end time
-                                //set the current time for default
-                                lastSession.setEndTime(endTime);
-
-                                //query suspect start time PREVIOUS id
-                                    ArrayList<String> firstDiffSuspectStopTransportation = DBHelper.queryTransportationWithSuspectedStopTransportation(transportationModeDataRecord.getConfirmedActivityString());
-                                if(firstDiffSuspectStopTransportation.size() > 0) {
-
-                                    String diff1stSuspectedStopTransportation_ID = firstDiffSuspectStopTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
-
-                                    //query suspect start time id (the next one from the above data)
-                                    ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStopTransportation_ID));
-
-                                    if(suspectedStopTransportation.size() > 0){
-
-                                        String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
-
-                                        lastSession.setEndTime(Long.valueOf(suspectTime));
-                                    }
-                                }
-
-                                CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " lastSession EndTime : "+ScheduleAndSampleManager.getTimeString(lastSession.getEndTime()));
-
-                                //end the current session
-                                SessionManager.endCurSession(lastSession);
-
-                                sharedPrefs.edit().putInt("ongoingSessionid", -1).apply();
-
+                            // if the ongoingSession isn't a emptyOngoingSession, stop the ongoingSession
+                            if (!isEmptyOngoingSession) {
                                 addSessionFlag = true;
+                                sharedPrefs.edit().putInt("ongoingSessionid", -1).apply();
+                                stopOngoingSession(ongoingSession, transportationModeDataRecord.getConfirmedActivityString());
                             }
                         }
                     }
 
-                    Log.d(TAG, "[test triggering] addSessionFlag : "+addSessionFlag);
-                    Log.d(TAG, "[test triggering] is NA ? : "+!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA));
+                    Log.d(TAG, "[test triggering] addSessionFlag : " + addSessionFlag);
+                    Log.d(TAG, "[test triggering] is NA ? : " + !transportationModeDataRecord.getConfirmedActivityString().
+                            equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA));
 
-                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " addSessionFlag ? "+addSessionFlag);
-                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " tranp not NA ? "+(!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)));
+                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " addSessionFlag ? " + addSessionFlag);
+                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " tranp not NA ? " + (!transportationModeDataRecord.getConfirmedActivityString().
+                            equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)));
 
-                    //if we need to add a session
-                    if (addSessionFlag && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
+                    // if we need to add a session
+                    if (addSessionFlag) {
 
                         Log.d(TAG, "[test triggering] we should add session " + ((int) sessionCount + 1));
 
                         Session lastSession = SessionManager.getLastSession();
 
                         int sessionIdOfLastSession = lastSession.getId();
-                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                        boolean isEmptyOngoingSession = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
 
                         Log.d(TAG, "[test triggering] is CAR ? " + (currentWork.equals("CAR")));
-                        Log.d(TAG, "[test triggering] is emptySessionOn ? " + emptySessionOn);
-                        Log.d(TAG, "[test triggering] is CAR & emptySessionOn ? " + (currentWork.equals("CAR") && emptySessionOn));
+                        Log.d(TAG, "[test triggering] is emptySessionOn ? " + isEmptyOngoingSession);
+                        Log.d(TAG, "[test triggering] is CAR & emptySessionOn ? " + (currentWork.equals("CAR") && isEmptyOngoingSession));
 
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR ? "+(currentWork.equals("CAR")));
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is emptySessionOn ? "+emptySessionOn);
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR & emptySessionOn ? "+(currentWork.equals("CAR") && emptySessionOn));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR ? " +(currentWork.equals("CAR")));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is emptySessionOn ? " +isEmptyOngoingSession);
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR & emptySessionOn ? " +(currentWork.equals("CAR") && isEmptyOngoingSession));
 
                         //if there is an emptySession, update it to the next different system detected transportationMode
-                        if (currentWork.equals("CAR") && emptySessionOn) {
+                        if (currentWork.equals("CAR") && isEmptyOngoingSession) {
 
                             Annotation annotation = new Annotation();
                             annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
@@ -388,14 +364,14 @@ public class MinukuStreamManager implements StreamManager {
 
                             //query suspect start time PREVIOUS id
                             ArrayList<String> firstDiffSuspectedStartTransportation = DBHelper.queryLastTransportationWithSuspectedStartTransportation(transportationModeDataRecord.getConfirmedActivityString());
-                            if(firstDiffSuspectedStartTransportation.size() > 0) {
+                            if (firstDiffSuspectedStartTransportation.size() > 0) {
 
                                 String diff1stSuspectedStartTransportation_ID = firstDiffSuspectedStartTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
 
                                 //query suspect start time id (the next one from the above data)
                                 ArrayList<String> suspectedStartTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStartTransportation_ID));
 
-                                if(suspectedStartTransportation.size() > 0){
+                                if (suspectedStartTransportation.size() > 0) {
 
                                     String suspectTime = suspectedStartTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
 
@@ -403,7 +379,7 @@ public class MinukuStreamManager implements StreamManager {
                                 }
                             }
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " Session StartTime : "+ScheduleAndSampleManager.getTimeString(session.getStartTime()));
+                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " Session StartTime : " +ScheduleAndSampleManager.getTimeString(session.getStartTime()));
 
                             Annotation annotation = new Annotation();
                             annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
@@ -414,7 +390,7 @@ public class MinukuStreamManager implements StreamManager {
                             session.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
                             session.setType(Constants.SESSION_TYPE_DETECTED_BY_SYSTEM);
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " insert the session is with annotation : "+session.getAnnotationsSet().toJSONObject().toString());
+                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " insert the session is with annotation : " +session.getAnnotationsSet().toJSONObject().toString());
 
                             Log.d(TAG, "[test triggering] insert the session is with annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
@@ -443,18 +419,18 @@ public class MinukuStreamManager implements StreamManager {
                             //CAR need to be in the start of the session, after a threshold of the time, send the notification to remind the user
 
                             // set it earlier than other conditions due to the CountDownTimer
-                            this.transportationModeDataRecord = transportationModeDataRecord;
+                            this.mTransportationModeDataRecord = transportationModeDataRecord;
 
                             SessionManager.sSessionIsWaiting = true;
 
                             //wait for a minute to the user
-                            handler.postDelayed(new Runnable() {
+                            mHandler.postDelayed(new Runnable() {
 
                                 @Override
                                 public void run() {
 
                                     //detect the user has pressed the current trip(Session) or not.
-                                    if(SessionManager.getOngoingSessionIdList().size() != 0){
+                                    if (SessionManager.getOngoingSessionIdList().size() != 0) {
 
                                         int ongoingSessionid = SessionManager.getOngoingSessionIdList().get(0);
 
@@ -484,7 +460,7 @@ public class MinukuStreamManager implements StreamManager {
                                         String checkCAR = "the ongoing session is removed, assumed it was checkpoioned";
                                         CSVHelper.storeToCSV(CSVHelper.CSV_CAR, checkCAR);
 
-                                        Log.d(TAG, "[test triggering] "+ checkCAR);
+                                        Log.d(TAG, "[test triggering] " + checkCAR);
                                     }
 
                                     SessionManager.sSessionIsWaiting = false;
@@ -496,11 +472,11 @@ public class MinukuStreamManager implements StreamManager {
                 }
             }
 
-            this.transportationModeDataRecord = transportationModeDataRecord;
+            mTransportationModeDataRecord = transportationModeDataRecord;
         }
     }
 
-    private void sendNotification(Context context){
+    private void sendNotification(Context context) {
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -511,7 +487,7 @@ public class MinukuStreamManager implements StreamManager {
         mNotificationManager.notify(MinukuNotificationManager.sReminderNotificationID, notification);
     }
 
-    private Notification getNotification(String text, Context context){
+    private Notification getNotification(String text, Context context) {
 
         Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
         bigTextStyle.setBigContentTitle("LS");
@@ -537,16 +513,51 @@ public class MinukuStreamManager implements StreamManager {
         return note;
     }
 
-    public TransportationModeDataRecord getTransportationModeDataRecord(){
-        return transportationModeDataRecord;
+    public TransportationModeDataRecord getTransportationModeDataRecord() {
+        return mTransportationModeDataRecord;
     }
 
-    public void setLocationDataRecord(LocationDataRecord locationDataRecord){
-        this.locationDataRecord = locationDataRecord;
+    public void setLocationDataRecord(LocationDataRecord locationDataRecord) {
+        this.mLocationDataRecord = locationDataRecord;
     }
 
-    public LocationDataRecord getLocationDataRecord(){
-        return locationDataRecord;
+    public LocationDataRecord getLocationDataRecord() {
+        return mLocationDataRecord;
+    }
+
+    /**
+     * End the ongoing session by removing it from ongoingSessionList and set its end time accurately.
+     * If its confirmedActivity has once been recorded with a suspect-stop time, set the end time to its suspect-stop time since it is when the ongoingSession actually ended
+     * @param ongoingSession
+     * @param confirmedActivity
+     */
+    public void stopOngoingSession(Session ongoingSession, String confirmedActivity) {
+        // update end time of ongoingSession
+        long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+        ongoingSession.setEndTime(endTime);
+
+        // set the end time of the session to the suspect stop time if necessary.
+        ArrayList<String> firstDiffSuspectStopTransportation =
+                DBHelper.queryTransportationWithSuspectedStopTransportation(confirmedActivity);
+        if (firstDiffSuspectStopTransportation.size() > 0) {
+
+            String diff1stSuspectedStopTransportationId = firstDiffSuspectStopTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
+
+            //query suspect start time id (the next one from the above data)
+            ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStopTransportationId));
+
+            if (suspectedStopTransportation.size() > 0) {
+
+                String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
+
+                ongoingSession.setEndTime(Long.valueOf(suspectTime));
+            }
+        }
+
+        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " lastSession EndTime : " + ScheduleAndSampleManager.getTimeString(ongoingSession.getEndTime()));
+
+        //end the current session
+        SessionManager.endCurSession(ongoingSession);
     }
 
 }

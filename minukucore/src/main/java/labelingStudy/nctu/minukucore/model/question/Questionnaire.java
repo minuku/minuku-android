@@ -29,28 +29,28 @@ import java.util.List;
  */
 public class Questionnaire {
 
-    private int ID;
+    private int mId;
 
-    private List<Question> questionnaire;
+    private List<Question> mQuestionnaire;
 
-    public Questionnaire(int ID, List<Question> questionnaire) {
-        this.ID = ID;
-        this.questionnaire = questionnaire;
+    public Questionnaire(int id, List<Question> questionnaire) {
+        mId = id;
+        mQuestionnaire = questionnaire;
     }
 
     public int getID() {
-        return ID;
+        return mId;
     }
 
     public List<Question> getQuestionnaire() {
-        return questionnaire;
+        return mQuestionnaire;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setID(int id) {
+        mId = id;
     }
 
     public void setQuestionnaire(List<Question> questionnaire) {
-        this.questionnaire = questionnaire;
+        this.mQuestionnaire = questionnaire;
     }
 }
