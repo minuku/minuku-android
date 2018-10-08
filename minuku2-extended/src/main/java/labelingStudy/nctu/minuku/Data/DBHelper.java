@@ -734,7 +734,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         } catch (Exception e) {
             e.printStackTrace();
-            rowId = -1;
+            rowId = Constants.DATABASE_INVALID_VALUE;
         }
 
         DBManager.getInstance().closeDatabase();
@@ -1167,7 +1167,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static long querySessionCount () {
 
 
-        long count = 0;
+        long count = Constants.DATABASE_INVALID_VALUE;
 
         try {
             SQLiteDatabase db = DBManager.getInstance().openDatabase();
@@ -1785,7 +1785,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //        String where = COL_SESSION_ID + " = " + currentSessionId;
 
         //get the exact session id in the delimiters
-        String querySessionIdInDelimiters = "( '" +Constants.SESSION_DELIMITER + "' || RTRIM(" +COL_SESSION_ID+ ") || '" + Constants.SESSION_DELIMITER+ "' )"
+        String querySessionIdInDelimiters = "( '" + Constants.SESSION_DELIMITER + "' || RTRIM(" +COL_SESSION_ID + ") || '" + Constants.SESSION_DELIMITER + "' )"
                 + "LIKE ('%" +Constants.SESSION_DELIMITER + "' || " + currentSessionId + " || '" + Constants.SESSION_DELIMITER + "%')";
 
         String querySessionid = COL_SESSION_ID + " = " + currentSessionId;

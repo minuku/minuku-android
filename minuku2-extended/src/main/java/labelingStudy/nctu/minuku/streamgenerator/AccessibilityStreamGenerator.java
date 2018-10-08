@@ -16,8 +16,6 @@ import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
 import labelingStudy.nctu.minuku.service.MobileAccessibilityService;
 import labelingStudy.nctu.minuku.stream.AccessibilityStream;
-import labelingStudy.nctu.minuku.stream.BatteryStream;
-import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
@@ -39,32 +37,32 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
     private AccessibilityStream mStream;
     private Context mContext;
     AccessibilityDataRecordDAO mDAO;
-    MobileAccessibilityService mobileAccessibilityService;
+    MobileAccessibilityService mMobileAccessibilityService;
 
-    private String pack;
-    private String text;
-    private String type;
-    private String extra;
+    private String mPack;
+    private String mText;
+    private String mType;
+    private String mExtra;
 
     /**
      * Initial constructor
      * @param applicationContext
      */
-    public AccessibilityStreamGenerator(Context applicationContext){
+    public AccessibilityStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new AccessibilityStream(Constants.DEFAULT_QUEUE_SIZE);
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AccessibilityDataRecord.class);
 
-        mobileAccessibilityService = new MobileAccessibilityService(this);
+        mMobileAccessibilityService = new MobileAccessibilityService(this);
 
-        pack = text = type = extra = "";
+        mPack = mText = mType = mExtra = "";
 
         this.register();
     }
 
     /**
-     * Register a stream with AccessibilityDataRecord
+     * Register to MinukuStreamManager with a AccessibilityDataRecord stream
      */
     @Override
     public void register() {
@@ -104,9 +102,9 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         Log.d(TAG, "updateStream called");
 
         AccessibilityDataRecord accessibilityDataRecord
-                = new AccessibilityDataRecord(pack, text, type, extra);
+                = new AccessibilityDataRecord(mPack, mText, mType, mExtra);
         mStream.add(accessibilityDataRecord);
-        Log.d(TAG,"pack = "+pack+" text = "+text+" type = "+type+" extra = "+extra);
+        Log.d(TAG,"pack = " + mPack + " text = " + mText + " type = " + mType + " extra = " + mExtra);
         Log.d(TAG, "Accessibility to be sent to event bus" + accessibilityDataRecord);
         // also post an event.
         EventBus.getDefault().post(accessibilityDataRecord);
@@ -120,18 +118,18 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
             List<AccessibilityDataRecord> accessibilityDataRecords = db.accessibilityDataRecordDao().getAll();
 
             for (AccessibilityDataRecord a : accessibilityDataRecords) {
-                Log.e(TAG, "pack in db: "+a.getPack());
-                Log.e(TAG, "Type in db: "+a.getType());
-                Log.e(TAG, "Text in db: "+a.getText());
-                Log.e(TAG, "Extra in db: "+a.getExtra());
+                Log.e(TAG, "mPack in db: " + a.getPack());
+                Log.e(TAG, "Type in db: " + a.getType());
+                Log.e(TAG, "Text in db: " + a.getText());
+                Log.e(TAG, "Extra in db: " + a.getExtra());
             }
-        }catch (NullPointerException e){ //Sometimes no data is normal
+        } catch (NullPointerException e) { //Sometimes no data is normal
             e.printStackTrace();
             return false;
         }
 
         // Remove to avoid asyc error
-        //pack = text = type = extra = "";
+        //mPack = mText = mType = mExtra = "";
 
         return false;
     }
@@ -149,20 +147,18 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
     /**
      * Update Accessibility data from MobileAccessibilityService
      */
-    public void setLatestInAppAction(String pack, String text, String type, String extra){
+    public void setLatestInAppAction(String pack, String text, String type, String extra) {
 
-        this.pack = pack;
-        this.text = text;
-        this.type = type;
-        this.extra = extra;
+        this.mPack = pack;
+        this.mText = text;
+        this.mType = type;
+        this.mExtra = extra;
 
     }
 
     @Override
     public void onStreamRegistration() {
-
         activateAccessibilityService();
-
     }
 
     @Override

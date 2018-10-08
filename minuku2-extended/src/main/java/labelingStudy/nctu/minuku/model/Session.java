@@ -18,9 +18,9 @@ public class Session {
     //we need to rememeber this number in order to cancel the ongoing notification when the current session is done.
     private int mOngoingNotificationId = -1;
     protected AnnotationSet mAnnotationSet;
-    private boolean mUserPressOrNot;
+    private boolean mIsUserPress;
     private boolean mIsModified;
-    private boolean mHidedOrNot;
+    private boolean mIsHided;
     private int mIsSent;
     private String mType;
 
@@ -77,15 +77,15 @@ public class Session {
     }
 
     public boolean isUserPress() {
-        return mUserPressOrNot;
+        return mIsUserPress;
     }
 
     public boolean isModified() {
         return mIsModified;
     }
 
-    public void setUserPressOrNot(boolean userPressOrNot) {
-        mUserPressOrNot = userPressOrNot;
+    public void setIsUserPress(boolean isUserPress) {
+        mIsUserPress = isUserPress;
     }
 
     public void setModified(boolean isModified) {
@@ -93,11 +93,11 @@ public class Session {
     }
 
     public boolean isHide() {
-        return mHidedOrNot;
+        return mIsHided;
     }
 
-    public void setHidedOrNot(boolean hidedOrNot) {
-        mHidedOrNot = hidedOrNot;
+    public void setIsHided(boolean isHided) {
+        mIsHided = isHided;
     }
 
     public void setIsSent(int isSent) {

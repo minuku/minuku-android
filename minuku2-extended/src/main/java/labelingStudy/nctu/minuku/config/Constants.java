@@ -246,4 +246,6 @@ public class Constants {
 
     public static final String ACTIVITY_CONFIDENCE_CONNECTOR = ":";
 
+    /*Database*/
+    public static final long DATABASE_INVALID_VALUE = -1;
 }

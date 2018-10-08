@@ -47,7 +47,6 @@ import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.model.Annotation;
-import labelingStudy.nctu.minuku.model.AnnotationSet;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
@@ -289,9 +288,9 @@ public class MinukuStreamManager implements StreamManager {
                         // get the ongoingSession
                         Session ongoingSession = SessionManager.getOngoingSession();
 
-                        int sessionIdOfLastSession = ongoingSession.getId();
+                        int lastSessionId = ongoingSession.getId();
 
-                        Log.d(TAG, "[test triggering] session " + sessionIdOfLastSession +
+                        Log.d(TAG, "[test triggering] session " + lastSessionId +
                                 " with annotation string " + ongoingSession.getAnnotationsSet().toString() +
                                 " end time " + ongoingSession.getEndTime() +
                                 " startTime " + ongoingSession.getStartTime());
@@ -299,10 +298,10 @@ public class MinukuStreamManager implements StreamManager {
                         if (!mTransportationModeDataRecord.getConfirmedActivityString().
                                 equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
-                            boolean isEmptyOngoingSession = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                            boolean isEmptyOngoingSession = SessionManager.isSessionEmptyOngoing(lastSessionId);
                             CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "not emptySessionOn ? " + (!isEmptyOngoingSession));
 
-                            // if the ongoingSession isn't a emptyOngoingSession, stop the ongoingSession
+                            // if the lastSession isn't a emptyOngoingSession, then it is a ongoingSession, stop the ongoingSession
                             if (!isEmptyOngoingSession) {
                                 addSessionFlag = true;
                                 sharedPrefs.edit().putInt("ongoingSessionid", -1).apply();
@@ -324,30 +323,23 @@ public class MinukuStreamManager implements StreamManager {
 
                         Log.d(TAG, "[test triggering] we should add session " + ((int) sessionCount + 1));
 
-                        Session lastSession = SessionManager.getLastSession();
+                        Session ongoingSession = SessionManager.getOngoingSession();
 
-                        int sessionIdOfLastSession = lastSession.getId();
+                        int sessionIdOfLastSession = ongoingSession.getId();
                         boolean isEmptyOngoingSession = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
 
                         Log.d(TAG, "[test triggering] is CAR ? " + (currentWork.equals("CAR")));
                         Log.d(TAG, "[test triggering] is emptySessionOn ? " + isEmptyOngoingSession);
                         Log.d(TAG, "[test triggering] is CAR & emptySessionOn ? " + (currentWork.equals("CAR") && isEmptyOngoingSession));
 
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR ? " +(currentWork.equals("CAR")));
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is emptySessionOn ? " +isEmptyOngoingSession);
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR & emptySessionOn ? " +(currentWork.equals("CAR") && isEmptyOngoingSession));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR ? " + (currentWork.equals("CAR")));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is emptySessionOn ? " + isEmptyOngoingSession);
+                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR & emptySessionOn ? " + (currentWork.equals("CAR") && isEmptyOngoingSession));
 
-                        //if there is an emptySession, update it to the next different system detected transportationMode
+                        // if the ongoingSession is also the emptyOngoingSession, update the emptyOngoingSession
                         if (currentWork.equals("CAR") && isEmptyOngoingSession) {
 
-                            Annotation annotation = new Annotation();
-                            annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
-                            annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
-                            lastSession.addAnnotation(annotation);
-
-                            DataHandler.updateSession(lastSession.getId(), lastSession.getAnnotationsSet());
-
-                            SessionManager.getEmptyOngoingSessionIdList().remove(Integer.valueOf(lastSession.getId()));
+                            updateEmptySession(ongoingSession, transportationModeDataRecord.getConfirmedActivityString());
 
                             //to end a session (the previous is moving)
                             //we first need to check whether the previous is a transportation
@@ -379,18 +371,18 @@ public class MinukuStreamManager implements StreamManager {
                                 }
                             }
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " Session StartTime : " +ScheduleAndSampleManager.getTimeString(session.getStartTime()));
+                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " Session StartTime : " + ScheduleAndSampleManager.getTimeString(session.getStartTime()));
 
                             Annotation annotation = new Annotation();
                             annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
                             annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
                             session.addAnnotation(annotation);
-                            session.setUserPressOrNot(false);
+                            session.setIsUserPress(false);
                             session.setModified(false);
                             session.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
                             session.setType(Constants.SESSION_TYPE_DETECTED_BY_SYSTEM);
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " insert the session is with annotation : " +session.getAnnotationsSet().toJSONObject().toString());
+                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " insert the session is with annotation : " +  session.getAnnotationsSet().toJSONObject().toString());
 
                             Log.d(TAG, "[test triggering] insert the session is with annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
@@ -419,7 +411,7 @@ public class MinukuStreamManager implements StreamManager {
                             //CAR need to be in the start of the session, after a threshold of the time, send the notification to remind the user
 
                             // set it earlier than other conditions due to the CountDownTimer
-                            this.mTransportationModeDataRecord = transportationModeDataRecord;
+                            mTransportationModeDataRecord = transportationModeDataRecord;
 
                             SessionManager.sSessionIsWaiting = true;
 
@@ -432,9 +424,7 @@ public class MinukuStreamManager implements StreamManager {
                                     //detect the user has pressed the current trip(Session) or not.
                                     if (SessionManager.getOngoingSessionIdList().size() != 0) {
 
-                                        int ongoingSessionid = SessionManager.getOngoingSessionIdList().get(0);
-
-                                        Session ongoingSession = SessionManager.getSession(ongoingSessionid);
+                                        Session ongoingSession = SessionManager.getOngoingSession();
 
                                         //if the user hasn't pressed the current trip(Session); after ending a trip(session), send a notification to the user
                                         if (!ongoingSession.isUserPress()) {
@@ -448,16 +438,16 @@ public class MinukuStreamManager implements StreamManager {
                                         } else {
 
                                             //recording
-                                            String checkCAR = "the CAR record has been checkpointed by the user";
+                                            String checkCAR = "the CAR record has been checked by the user";
                                             CSVHelper.storeToCSV(CSVHelper.CSV_CAR, checkCAR);
 
                                             Log.d(TAG, "[test triggering] CAR check");
                                         }
 
                                         //the ongoing session might be removed because of the empty ongoing one.
-                                    }else{
+                                    } else {
 
-                                        String checkCAR = "the ongoing session is removed, assumed it was checkpoioned";
+                                        String checkCAR = "the ongoing session is removed, assumed it was checked";
                                         CSVHelper.storeToCSV(CSVHelper.CSV_CAR, checkCAR);
 
                                         Log.d(TAG, "[test triggering] " + checkCAR);
@@ -526,7 +516,7 @@ public class MinukuStreamManager implements StreamManager {
     }
 
     /**
-     * End the ongoing session by removing it from ongoingSessionList and set its end time accurately.
+     * End the last session by removing it from ongoingSessionList and set its end time accurately.
      * If its confirmedActivity has once been recorded with a suspect-stop time, set the end time to its suspect-stop time since it is when the ongoingSession actually ended
      * @param ongoingSession
      * @param confirmedActivity
@@ -558,6 +548,17 @@ public class MinukuStreamManager implements StreamManager {
 
         //end the current session
         SessionManager.endCurSession(ongoingSession);
+    }
+
+    public void updateEmptySession(Session ongoingEmptySession, String confirmedActivity) {
+        Annotation annotation = new Annotation();
+        annotation.setContent(confirmedActivity);
+        annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
+        ongoingEmptySession.addAnnotation(annotation);
+
+        DataHandler.updateSession(ongoingEmptySession.getId(), ongoingEmptySession.getAnnotationsSet());
+
+        SessionManager.removeEmptyOngoingSessionId(Integer.valueOf(ongoingEmptySession.getId()));
     }
 
 }

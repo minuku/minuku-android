@@ -18,11 +18,9 @@ import java.util.List;
 
 import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.BatteryDataRecord;
 import labelingStudy.nctu.minuku.stream.BatteryStream;
-import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
@@ -30,21 +28,23 @@ import labelingStudy.nctu.minukucore.stream.Stream;
 /**
  * Created by Lawrence on 2017/8/22.
  */
-
+/**
+ * BatteryStreamGenerator collects data about battery conditions and status.
+ */
 public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRecord> {
 
     private final String TAG = "BatteryStreamGenerator";
     private BatteryStream mStream;
-    private static Context mContext;
+    private static Context sContext;
 
-    public static int mBatteryLevel= -1;
-    public static float mBatteryPercentage = -1;
-    private static String mBatteryChargingState = "NA";
-    public static boolean isCharging = false;
+    public static int sBatteryLevel = -1;
+    public static float sBatteryPercentage = -1;
+    private static String sBatteryChargingState = "NA";
+    public static boolean sIsCharging = false;
 
-    public BatteryStreamGenerator(Context applicationContext){
+    public BatteryStreamGenerator(Context applicationContext) {
         super(applicationContext);
-        mContext = applicationContext;
+        sContext = applicationContext;
 
         this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
         this.register();
@@ -53,7 +53,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     @Override
     public void register() {
-        Log.d(TAG, "Registring with StreamManage");
+        Log.d(TAG, "Registering with StreamManager");
 
         try {
             MinukuStreamManager.getInstance().register(mStream, BatteryDataRecord.class, this);
@@ -77,14 +77,14 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         Log.d(TAG, "updateStream called");
         //TODO get service data
         BatteryDataRecord batteryDataRecord
-                = new BatteryDataRecord(mBatteryLevel, mBatteryPercentage, mBatteryChargingState, isCharging);
+                = new BatteryDataRecord(sBatteryLevel, sBatteryPercentage, sBatteryChargingState, sIsCharging);
         mStream.add(batteryDataRecord);
         Log.d(TAG, "CheckFamiliarOrNot to be sent to event bus" + batteryDataRecord);
         // also post an event.
         EventBus.getDefault().post(batteryDataRecord);
         try {
             appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+            db = Room.databaseBuilder(sContext,appDatabase.class,"dataCollection")
                     .allowMainThreadQueries()
                     .build();
             db.batteryDataRecordDao().insertAll(batteryDataRecord);
@@ -95,10 +95,10 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
             List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
             for (BatteryDataRecord b : batteryDataRecords) {
-                Log.e(TAG, " BatteryChargingState "+b.getBatteryChargingState());
-                Log.e(TAG, " BatteryPercentage "+String.valueOf(b.getBatteryPercentage()));
-                Log.e(TAG, " BatteryLevel: "+String.valueOf(b.getBatteryLevel()));
-                Log.e(TAG, " isCharging: "+String.valueOf(b.isCharging()));
+                Log.e(TAG, " BatteryChargingState " + b.getBatteryChargingState());
+                Log.e(TAG, " BatteryPercentage " + String.valueOf(b.getBatteryPercentage()));
+                Log.e(TAG, " BatteryLevel: " + String.valueOf(b.getBatteryLevel()));
+                Log.e(TAG, " isCharging: " + String.valueOf(b.isCharging()));
             }
 
 //            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
@@ -116,7 +116,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 //                Log.d(TAG, time);
 //            }
 
-        } catch (NullPointerException e){ //Sometimes no data is normal
+        } catch (NullPointerException e) { //Sometimes no data is normal
             e.printStackTrace();
             return false;
         } catch (ParseException e) {
@@ -160,14 +160,14 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 //int health = intent.getIntExtra("health", 0);
                 //boolean present = intent.getBooleanExtra("present",false);
                 //int mBatteryLevel = intent.getIntExtra("mBatteryLevel", 0);
-                mBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                sBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
                 //boolean
-                isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                sIsCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                         status == BatteryManager.BATTERY_STATUS_FULL;
 
-                mBatteryPercentage = mBatteryLevel / (float)scale;
+                sBatteryPercentage = sBatteryLevel / (float)scale;
 //                int icon_small = intent.getIntExtra("icon-small", 0);
 //                int plugged = intent.getIntExtra("plugged", 0);
 //                int voltage = intent.getIntExtra("voltage", 0);
@@ -195,56 +195,25 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                         break;
                 }
 
-                if (!isCharging){
-                    mBatteryChargingState = "not charging";
-                }else if (chargePlug==BatteryManager.BATTERY_PLUGGED_USB){
-                    mBatteryChargingState = "usb charging";
-                }else if (chargePlug==BatteryManager.BATTERY_PLUGGED_AC){
-                    mBatteryChargingState = "ac charging";
+                if (!sIsCharging) {
+                    sBatteryChargingState = "not charging";
+                } else if (chargePlug==BatteryManager.BATTERY_PLUGGED_USB) {
+                    sBatteryChargingState = "usb charging";
+                } else if (chargePlug==BatteryManager.BATTERY_PLUGGED_AC) {
+                    sBatteryChargingState = "ac charging";
                 }
 
-//                String healthString = "";
-//                switch (health) {
-//                    case BatteryManager.BATTERY_HEALTH_UNKNOWN:
-//                        healthString = "unknown";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_GOOD:
-//                        healthString = "good";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_OVERHEAT:
-//                        healthString = "overheat";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_DEAD:
-//                        healthString = "dead";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-//                        healthString = "voltage";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
-//                        healthString = "unspecified failure";
-//                        break;
-//                }
-//                String acString = "";
-//                switch (plugged) {
-//                    case BatteryManager.BATTERY_PLUGGED_AC:
-//                        acString = "plugged ac";
-//                        break;
-//                    case BatteryManager.BATTERY_PLUGGED_USB:
-//
-//                        acString = "plugged usb";
-//                        break;
-//                }
-                Log.d("Batterystatus", statusString);
+                Log.d("BatteryStatus", statusString);
                 //Log.d("Batteryhealth", healthString);
                 //Log.d("Batterypresent", String.valueOf(present));
-                Log.d("mBatteryLevel", String.valueOf(mBatteryLevel));
+                Log.d("mBatteryLevel", String.valueOf(sBatteryLevel));
                 Log.d("BatteryScale", String.valueOf(scale));
-                Log.d("mBatteryPercentage", String.valueOf(mBatteryPercentage));
+                Log.d("sBatteryPercentage", String.valueOf(sBatteryPercentage));
                 //Log.d("Batteryicon_small", String.valueOf(icon_small));
 
-                Log.d("IsCharging",String.valueOf(isCharging));
+                Log.d("IsCharging", String.valueOf(sIsCharging));
 
-                Log.d("BatteryChargingState",mBatteryChargingState);
+                Log.d("BatteryChargingState", sBatteryChargingState);
 
                 //Log.d("Batteryplugged", acString);
                 //Log.d("Batteryvoltage", String.valueOf(voltage));

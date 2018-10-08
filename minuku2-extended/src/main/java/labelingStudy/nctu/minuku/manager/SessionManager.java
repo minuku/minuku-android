@@ -353,10 +353,10 @@ public class SessionManager {
 
             if (isUserPress == 1) {
 
-                session.setUserPressOrNot(true);
+                session.setIsUserPress(true);
             } else {
 
-                session.setUserPressOrNot(false);
+                session.setIsUserPress(false);
             }
         }
 

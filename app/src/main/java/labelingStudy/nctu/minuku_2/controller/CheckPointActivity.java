@@ -126,7 +126,7 @@ public class CheckPointActivity extends AppCompatActivity {
 
                 if( SessionManager.sSessionIsWaiting){
 
-                    lastSession.setUserPressOrNot(true);
+                    lastSession.setIsUserPress(true);
 
                     SessionManager.updateCurSession(lastSession.getId(), ScheduleAndSampleManager.getCurrentTimeInMillis(), lastSession.isUserPress());
 
@@ -181,7 +181,7 @@ public class CheckPointActivity extends AppCompatActivity {
         //don't add transportation here
 
         //set the UserPressOrNot true, because it's the checkpointed session
-        sessionEmptyActivity.setUserPressOrNot(true);
+        sessionEmptyActivity.setIsUserPress(true);
 
         sessionEmptyActivity.setModified(false);
         sessionEmptyActivity.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
