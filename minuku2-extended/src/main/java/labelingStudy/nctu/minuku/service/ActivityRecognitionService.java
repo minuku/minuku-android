@@ -99,7 +99,7 @@ public class ActivityRecognitionService extends IntentService {
                 if (mProbableActivities != null && mMostProbableActivity != null){
 
                      /*  cancel setting because we want to directly feed activity data in the test file */
-                    mActivityRecognitionStreamGenerator.setActivitiesandDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
+                    mActivityRecognitionStreamGenerator.setActivitiesAndDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
 
                     Log.d(TAG, "[test replay] before store to CSV in AR Service");
 
@@ -144,7 +144,7 @@ public class ActivityRecognitionService extends IntentService {
                         Log.d("ARService", "[test replay] test trip going to feed " +   activityRecognitionDataRecord.getDetectedtime() +  " :"  +  activityRecognitionDataRecord.getProbableActivities()  +  " : " +activityRecognitionDataRecord.getMostProbableActivity()    + " at index " + activityRecordCurIndex  + " to the AR streamgenerator");
 
                         //user the record from mActivityRecognitionRecords to update the  mActivityRecognitionStreamGenerator
-                        mActivityRecognitionStreamGenerator.setActivitiesandDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
+                        mActivityRecognitionStreamGenerator.setActivitiesAndDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);
 
                         //move on to the next activity Record
                         activityRecordCurIndex++;

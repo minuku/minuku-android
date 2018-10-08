@@ -103,11 +103,11 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         //loadAppAndPackage();
 
         mContext = applicationContext;
-        this.mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
+        mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
 
         mPowerManager = (PowerManager) applicationContext.getSystemService(POWER_SERVICE);
 
-        this.register();
+        register();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         AppUsageDataRecord appUsageDataRecord = new AppUsageDataRecord(mScreenStatus, sLatestForegroundPackage, sLatestForegroundActivity);
 
         //appUsageDataRecord.setCreationTime();
-        if (appUsageDataRecord!=null) {
+        if (appUsageDataRecord != null) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
@@ -314,7 +314,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             //UsageStatsManager mIs available after Lollipop
-            UsageStatsManager usm = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
 
             List<UsageStats> appList = null;
 
@@ -323,15 +322,15 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                     + " and " + new AppUsageDataRecord().getCurrentTimeInMillis());
 
 
+            UsageStatsManager usm = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
             //get the application usage statistics
             appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                     //start time
-                    new AppUsageDataRecord().getCurrentTimeInMillis()- sApplicationUsageSinceLastDurationInMilliseconds,
+                    new AppUsageDataRecord().getCurrentTimeInMillis() - sApplicationUsageSinceLastDurationInMilliseconds,
                     //end time: until now
                     new AppUsageDataRecord().getCurrentTimeInMillis());
 
             sRecentUsedAppsInLastHour = "";
-
 
             //if there's an app list
             if (appList != null && appList.size() > 0) {
@@ -340,9 +339,8 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 for (UsageStats usageStats : appList) {
                     mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
                     Log.d(TAG, "test app:  " + "ScheduleAndSampleManager.getTimeString(usageStats.getLastTimeUsed())" +
-                            " usage stats " + usageStats.getPackageName() + " total time in foreground " + usageStats.getTotalTimeInForeground()/60000
+                            " usage stats " + usageStats.getPackageName() + " total time in foreground " + usageStats.getTotalTimeInForeground() / 60000
                             + " between " + "ScheduleAndSampleManager.getTimeString(usageStats.getFirstTimeStamp())" + " and " + "ScheduleAndSampleManager.getTimeString(usageStats.getLastTimeStamp())");
-
                 }
 
 
@@ -363,12 +361,10 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                     UsageStats stats = entry.getValue();
 
                     //sRecentUsedAppsInLastHour += stats.getPackageName() + ":" + ScheduleAndSampleManager.getTimeString(key);
-                    if (key != mySortedMap.lastKey())
+                    if (key != mySortedMap.lastKey()) {
                         sRecentUsedAppsInLastHour += "::";
-
+                    }
                 }
-
-
             }
         } else {
             getForegroundActivityBeforeAPI21();
@@ -378,16 +374,17 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
     protected void getForegroundActivityBeforeAPI21() {
 
-        String curRunningForegroundActivity = "";
-        String curRunningForegroundPackName = "";
+
         /** get the info from the currently foreground running activity **/
         List<ActivityManager.RunningTaskInfo> taskInfo = null;
 
         //get the latest (or currently running) foreground activity and package name
-        if ( mActivityManager != null) {
+        if (mActivityManager != null) {
 
             taskInfo = mActivityManager.getRunningTasks(1);
 
+            String curRunningForegroundActivity = "";
+            String curRunningForegroundPackName = "";
             curRunningForegroundActivity = taskInfo.get(0).topActivity.getClassName();
             curRunningForegroundPackName = taskInfo.get(0).topActivity.getPackageName();
 
@@ -400,13 +397,12 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
             }
 
         }
-
     }
 
     public void setCurrentForegroundActivityAndPackage(String curForegroundActivity, String curForegroundPackage) {
 
-        sLatestForegroundActivity =curForegroundActivity;
-        sLatestForegroundPackage =curForegroundPackage;
+        sLatestForegroundActivity = curForegroundActivity;
+        sLatestForegroundPackage = curForegroundPackage;
 
         Log.d(TAG, "[setCurrentForegroundActivityAndPackage] the current running package mIs " + sLatestForegroundActivity + " and the activity mIs " + sLatestForegroundPackage);
     }

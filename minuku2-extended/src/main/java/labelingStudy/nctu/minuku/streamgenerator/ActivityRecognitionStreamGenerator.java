@@ -82,9 +82,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     public static long ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL =
             ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL_IN_SECONDS * Constants.MILLISECONDS_PER_SECOND;
 
-    public static ArrayList<ActivityRecognitionDataRecord> mLocalRecordPool;
+    public static ArrayList<ActivityRecognitionDataRecord> sLocalRecordPool;
 
-    private static ActivityRecognitionStreamGenerator mInstance;
+    private static ActivityRecognitionStreamGenerator sInstance;
 
     /**
      * Initial constructor
@@ -93,31 +93,31 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     public ActivityRecognitionStreamGenerator(Context applicationContext) { //,Context mContext
         super(applicationContext);
         //this.mContext = mMainServiceContext;
-        this.mContext = applicationContext;
-        this.mStream = new ActivityRecognitionStream(Constants.LOCATION_QUEUE_SIZE);
+        mContext = applicationContext;
+        mStream = new ActivityRecognitionStream(Constants.LOCATION_QUEUE_SIZE);
 
-        mLocalRecordPool = new ArrayList<ActivityRecognitionDataRecord>();
+        sLocalRecordPool = new ArrayList<ActivityRecognitionDataRecord>();
 
-        ActivityRecognitionStreamGenerator.mInstance = this;
+        ActivityRecognitionStreamGenerator.sInstance = this;
 
         mRecordCount = 0;
         mKeepAlive = mKeepAliveMinute * Constants.MILLISECONDS_PER_MINUTE;
 
-        this.register();
+        register();
     }
 
     public static ActivityRecognitionStreamGenerator getInstance(Context applicationContext) {
 
-        if (ActivityRecognitionStreamGenerator.mInstance == null) {
+        if (ActivityRecognitionStreamGenerator.sInstance == null) {
             try {
                 Log.e(TAG,"creating new ActivityRecognitionStreamGenerator.");
-                ActivityRecognitionStreamGenerator.mInstance = new ActivityRecognitionStreamGenerator(applicationContext);
+                ActivityRecognitionStreamGenerator.sInstance = new ActivityRecognitionStreamGenerator(applicationContext);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return ActivityRecognitionStreamGenerator.mInstance;
+        return ActivityRecognitionStreamGenerator.sInstance;
     }
 
     /**
@@ -143,7 +143,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     protected synchronized void buildGoogleApiClient() {
 
-        if (mGoogleApiClient==null) {
+        if (mGoogleApiClient == null) {
 
             mGoogleApiClient =
                     new GoogleApiClient.Builder(mApplicationContext) // "mApplicationContext" is inspired by LocationStreamGenerator,it might not wrong.
@@ -182,9 +182,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
                 db.activityRecognitionDataRecordDao().insertAll(mActivityRecognitionDataRecord);
                 List<ActivityRecognitionDataRecord> activityRecognitionDataRecords = db.activityRecognitionDataRecordDao().getAll();
                 for (ActivityRecognitionDataRecord a : activityRecognitionDataRecords) {
-                    Log.e(TAG, "Detectedtime" +String.valueOf(a.getDetectedtime()));
-                    Log.e(TAG, "ostProbableActivity" +a.getMostProbableActivity().toString());
-                    Log.e(TAG, "ProbableActivities" +String.valueOf(a.getProbableActivities()));
+                    Log.e(TAG, "Detectedtime" + String.valueOf(a.getDetectedtime()));
+                    Log.e(TAG, "ostProbableActivity" + a.getMostProbableActivity().toString());
+                    Log.e(TAG, "ProbableActivities" + String.valueOf(a.getProbableActivities()));
                 }
 
             } catch (NullPointerException e) {
@@ -229,7 +229,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         mActivityRecognitionPendingIntent = createRequestPendingIntent();
 
         //request activity recognition update
-        if (com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi!=null && !ActivityRecognitionService.isServiceRunning()) {
+        if (com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi != null && !ActivityRecognitionService.isServiceRunning()) {
             com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
                     mGoogleApiClient,
                     ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL,//detectionIntervalMillis
@@ -262,7 +262,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         }
     }
 
-    public void setActivitiesandDetectedtime (List<DetectedActivity> probableActivities, DetectedActivity mostProbableActivity, long detectedTime) {
+    public void setActivitiesAndDetectedtime(List<DetectedActivity> probableActivities, DetectedActivity mostProbableActivity, long detectedTime) {
         //set activities
 
         //set a list of probable activities
@@ -282,12 +282,11 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     }
 
-    public void saveRecordToLocalRecordPool(DetectedActivity MostProbableActivity,long detectedTime) {
+    public void saveRecordToLocalRecordPool(DetectedActivity MostProbableActivity, long detectedTime) {
         /** create a Record to save timestamp, session it belongs to, and Data**/
-        ActivityRecognitionDataRecord record = new ActivityRecognitionDataRecord(MostProbableActivity,detectedTime);
+        ActivityRecognitionDataRecord record = new ActivityRecognitionDataRecord(MostProbableActivity, detectedTime);
         record.setProbableActivities(sProbableActivities);
 
-        JSONObject data = new JSONObject();
 
         //also set data:
         JSONArray activitiesJSON = new JSONArray();
@@ -300,6 +299,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         }
 
         //add activityJSON Array to data
+        JSONObject data = new JSONObject();
         try {
             data.put(RECORD_DATA_PROPERTY_NAME, activitiesJSON);
         } catch (JSONException e) {
@@ -323,16 +323,16 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         activityRecognitionDataRecord.set_id(id);
         Log.d(TAG,"CreateTime:" + activityRecognitionDataRecord.getCreationTime() + " MostProbableActivity:" + activityRecognitionDataRecord.getMostProbableActivity());
 
-        mLocalRecordPool.add(activityRecognitionDataRecord); //it's working.
+        sLocalRecordPool.add(activityRecognitionDataRecord); //it's working.
         Log.d(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getCreationTime() );
 
         /**2. check whether we should remove old record **/
         removeOutDatedRecord();
         //**** update the latest ActivityRecognitionDataRecord in mLocalRecordPool to MinukuStreamManager;
-        mLocalRecordPool.get(mLocalRecordPool.size() - 1).set_id(999);
-        Log.d(TAG,"size : " + mLocalRecordPool.size());
-        MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(mLocalRecordPool.get(mLocalRecordPool.size() - 1));
-        Log.d(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size() - 1).getCreationTime() + " MostProbableActivity:" + mLocalRecordPool.get(mLocalRecordPool.size() - 1).getMostProbableActivity());
+        sLocalRecordPool.get(sLocalRecordPool.size() - 1).set_id(999);
+        Log.d(TAG,"size : " + sLocalRecordPool.size());
+        MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(sLocalRecordPool.get(sLocalRecordPool.size() - 1));
+        Log.d(TAG,"CreateTime:" + sLocalRecordPool.get(sLocalRecordPool.size() - 1).getCreationTime() + " MostProbableActivity:" + sLocalRecordPool.get(sLocalRecordPool.size() - 1).getMostProbableActivity());
 
 
         this.mActivityRecognitionDataRecord = activityRecognitionDataRecord;
@@ -346,16 +346,16 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
      */
     protected void removeOutDatedRecord() {
 
-        for (int i = 0; i<mLocalRecordPool.size(); i++) {
+        for (int i = 0; i< sLocalRecordPool.size(); i++) {
 
-            ActivityRecognitionDataRecord record = mLocalRecordPool.get(i);
+            ActivityRecognitionDataRecord record = sLocalRecordPool.get(i);
 
             //calculate time difference
-            long diff =  getCurrentTimeInMillis() - mLocalRecordPool.get(i).getCreationTime();
+            long diff =  getCurrentTimeInMillis() - sLocalRecordPool.get(i).getCreationTime();
 
             //remove outdated records.
             if (diff >= mKeepAlive) {
-                mLocalRecordPool.remove(record);
+                sLocalRecordPool.remove(record);
                 //Log.d(TAG, "[test logging]remove record " + record.getSource() + record.getID() + " logged at " + record.getTimeString() + " to " + this.getName());
                 Log.e(TAG,"mKeepAlive");
                 i--;
@@ -365,15 +365,15 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     //TODO might be useless
     public static ArrayList<ActivityRecognitionDataRecord> getLocalRecordPool() {
-        return mLocalRecordPool;
+        return sLocalRecordPool;
     }
 
     public static ActivityRecognitionDataRecord getLastSavedRecord() {
-        if (mLocalRecordPool == null) {
+        if (sLocalRecordPool == null) {
             Log.e("getLastSavedRecord","null");
             return null;
-        } else if (mLocalRecordPool.size() > 0){
-            return mLocalRecordPool.get(mLocalRecordPool.size()-1);
+        } else if (sLocalRecordPool.size() > 0){
+            return sLocalRecordPool.get(sLocalRecordPool.size()-1);
         } else {
             Log.e("getLastSavedRecord","mLocalRecordPool.size()<0");
             return null;

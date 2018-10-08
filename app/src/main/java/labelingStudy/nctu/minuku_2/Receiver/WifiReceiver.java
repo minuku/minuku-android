@@ -140,7 +140,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "onReceive, "+intent.getAction().toString());
 
-            if(ConnectivityStreamGenerator.mIsWifiConnected || ConnectivityStreamGenerator.mIsMobileConnected){
+            if(ConnectivityStreamGenerator.sIsWifiConnected || ConnectivityStreamGenerator.sIsMobileConnected){
 
                 Log.d(TAG, "IsWifiConnected going to upload availSite");
 
@@ -342,7 +342,7 @@ public class WifiReceiver extends BroadcastReceiver {
         if(!Constants.DEVICE_ID.equals("NA")) {
 
             //dump only can be sent when wifi is connected
-            if (ConnectivityStreamGenerator.mIsWifiConnected) {
+            if (ConnectivityStreamGenerator.sIsWifiConnected) {
 
                 //TODO update endtime to get the latest availSite's time from MongoDB
                 //TODO endtime = latest availSite's time + nextinterval
@@ -378,14 +378,14 @@ public class WifiReceiver extends BroadcastReceiver {
 //                        nowTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
                 Log.d(TAG, "NowTimeString : " + ScheduleAndSampleManager.getTimeString(nowTime));
 
-                if (nowTime > endTime && ConnectivityStreamGenerator.mIsWifiConnected == true) {
+                if (nowTime > endTime && ConnectivityStreamGenerator.sIsWifiConnected == true) {
 
                     sendingDumpData();
                 }
             }
 
             // Trip, isAlive
-            if (ConnectivityStreamGenerator.mIsWifiConnected || ConnectivityStreamGenerator.mIsMobileConnected) {
+            if (ConnectivityStreamGenerator.sIsWifiConnected || ConnectivityStreamGenerator.sIsMobileConnected) {
 
                 sendingTripData(nowTime);
 
@@ -412,7 +412,7 @@ public class WifiReceiver extends BroadcastReceiver {
                 if(!Constants.DEVICE_ID.equals("NA")) {
 
                     //dump only can be sent when wifi is connected
-                    if (ConnectivityStreamGenerator.mIsWifiConnected) {
+                    if (ConnectivityStreamGenerator.sIsWifiConnected) {
 
                         //TODO update endtime to get the latest availSite's time from MongoDB
                         //TODO endtime = latest availSite's time + nextinterval
@@ -448,14 +448,14 @@ public class WifiReceiver extends BroadcastReceiver {
 //                        nowTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
                         Log.d(TAG, "NowTimeString : " + ScheduleAndSampleManager.getTimeString(nowTime));
 
-                        if (nowTime > endTime && ConnectivityStreamGenerator.mIsWifiConnected == true) {
+                        if (nowTime > endTime && ConnectivityStreamGenerator.sIsWifiConnected == true) {
 
                             sendingDumpData();
                         }
                     }
 
                     // Trip, isAlive
-                    if (ConnectivityStreamGenerator.mIsWifiConnected || ConnectivityStreamGenerator.mIsMobileConnected) {
+                    if (ConnectivityStreamGenerator.sIsWifiConnected || ConnectivityStreamGenerator.sIsMobileConnected) {
 
                         sendingTripData(nowTime);
 

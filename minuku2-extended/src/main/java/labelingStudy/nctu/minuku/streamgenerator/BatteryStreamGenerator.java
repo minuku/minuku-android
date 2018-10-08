@@ -89,10 +89,6 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                     .build();
             db.batteryDataRecordDao().insertAll(batteryDataRecord);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date start =sdf.parse("2018/03/26 00:00:00");
-            Date end =sdf.parse("2018/03/26 15:37:00");
-
             List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
             for (BatteryDataRecord b : batteryDataRecords) {
                 Log.e(TAG, " BatteryChargingState " + b.getBatteryChargingState());
@@ -161,12 +157,12 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 //boolean present = intent.getBooleanExtra("present",false);
                 //int mBatteryLevel = intent.getIntExtra("mBatteryLevel", 0);
                 sBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
                 //boolean
                 sIsCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                         status == BatteryManager.BATTERY_STATUS_FULL;
 
+                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
                 sBatteryPercentage = sBatteryLevel / (float)scale;
 //                int icon_small = intent.getIntExtra("icon-small", 0);
 //                int plugged = intent.getIntExtra("plugged", 0);
@@ -174,7 +170,6 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 int temperature = intent.getIntExtra("temperature",0);
                 //String technology = intent.getStringExtra("technology");
 
-                int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 
                 String statusString = "";
                 switch (status) {
@@ -195,11 +190,12 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                         break;
                 }
 
+                int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
                 if (!sIsCharging) {
                     sBatteryChargingState = "not charging";
-                } else if (chargePlug==BatteryManager.BATTERY_PLUGGED_USB) {
+                } else if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB) {
                     sBatteryChargingState = "usb charging";
-                } else if (chargePlug==BatteryManager.BATTERY_PLUGGED_AC) {
+                } else if (chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
                     sBatteryChargingState = "ac charging";
                 }
 
