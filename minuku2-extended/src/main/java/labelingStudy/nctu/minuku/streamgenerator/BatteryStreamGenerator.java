@@ -46,8 +46,8 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         super(applicationContext);
         sContext = applicationContext;
 
-        this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.register();
+        mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
+        register();
     }
 
 

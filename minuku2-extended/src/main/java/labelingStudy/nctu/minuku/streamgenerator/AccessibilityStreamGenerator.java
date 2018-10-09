@@ -50,9 +50,9 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
      */
     public AccessibilityStreamGenerator(Context applicationContext) {
         super(applicationContext);
-        this.mContext = applicationContext;
-        this.mStream = new AccessibilityStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AccessibilityDataRecord.class);
+        mContext = applicationContext;
+        mStream = new AccessibilityStream(Constants.DEFAULT_QUEUE_SIZE);
+        mDAO = MinukuDAOManager.getInstance().getDaoFor(AccessibilityDataRecord.class);
 
         mMobileAccessibilityService = new MobileAccessibilityService(this);
 

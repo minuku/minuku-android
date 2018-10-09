@@ -324,7 +324,6 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
         Log.d(TAG,"StoreToCSV");
 
-        String sFileName = "LocationOnChange.csv";
 
         try {
             File root = new File(Environment.getExternalStorageDirectory() + Constants.PACKAGE_DIRECTORY_PATH);
@@ -332,6 +331,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
                 root.mkdirs();
             }
 
+            String sFileName = "LocationOnChange.csv";
             csv_writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory()+Constants.PACKAGE_DIRECTORY_PATH + sFileName,true));
 
 
