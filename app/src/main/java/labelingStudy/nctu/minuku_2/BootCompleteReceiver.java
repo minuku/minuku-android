@@ -43,10 +43,10 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                 //recover the ongoing session
                 int ongoingSessionId = sharedPrefs.getInt("ongoingSessionid", -1);
 
-                if(ongoingSessionId != -1){
+//                if(ongoingSessionId != -1){
 
-                    SessionManager.getInstance(context).addOngoingSessionId(ongoingSessionId);
-                }
+//                    SessionManager.getInstance(context).addOngoingSessionid(ongoingSessionId);
+//                }
 
             }finally {
 

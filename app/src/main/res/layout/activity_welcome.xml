@@ -17,41 +17,9 @@
         android:drawableBottom="@drawable/head"
         android:paddingLeft="16dp"
         android:paddingTop="20dp"
-        android:text="歡迎參與本研究\n請每天記錄\n您的移動路程"
+        android:text="歡迎使用Minuku記錄您的移動路程"
         android:textColor="@color/black"
         android:textSize="40sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <Button
-            android:id="@+id/chooseMyMobility"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:gravity="center"
-            android:text="選擇移動方式"
-            android:textAlignment="center"
-            android:textColor="@color/cardview_light_background"
-            android:textSize="24sp" />
-
-        <Button
-            android:id="@+id/watchMyTimeline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:gravity="center"
-            android:text="觀看我的記錄"
-            android:textAlignment="center"
-            android:textColor="@color/cardview_light_background"
-            android:textSize="24sp" />
-
-    </LinearLayout>
 
 </LinearLayout>

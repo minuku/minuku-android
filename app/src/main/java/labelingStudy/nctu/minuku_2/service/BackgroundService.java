@@ -58,7 +58,7 @@ import labelingStudy.nctu.minuku.model.Session;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.Receiver.RestarterBroadcastReceiver;
-import labelingStudy.nctu.minuku_2.Receiver.WifiReceiver;
+//import labelingStudy.nctu.minuku_2.Receiver.WifiReceiver;
 import labelingStudy.nctu.minuku_2.Utils;
 import labelingStudy.nctu.minuku_2.controller.Dispatch;
 import labelingStudy.nctu.minuku_2.manager.InstanceManager;
@@ -71,7 +71,7 @@ public class BackgroundService extends Service {
     final static String CHECK_RUNNABLE_ACTION = "checkRunnable";
     final static String CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
 
-    WifiReceiver mWifiReceiver;
+//    WifiReceiver mWifiReceiver;
     IntentFilter intentFilter;
 
     MinukuStreamManager streamManager;
@@ -108,7 +108,7 @@ public class BackgroundService extends Service {
         intentFilter = new IntentFilter();
         intentFilter.addAction(CONNECTIVITY_ACTION);
         intentFilter.addAction(Constants.ACTION_CONNECTIVITY_CHANGE);
-        mWifiReceiver = new WifiReceiver();
+//        mWifiReceiver = new WifiReceiver();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class BackgroundService extends Service {
         createNotificationChannel();
 
         //make the WifiReceiver start sending availSite to the server.
-        registerReceiver(mWifiReceiver, intentFilter);
+//        registerReceiver(mWifiReceiver, intentFilter);
         registerConnectivityNetworkMonitorForAPI21AndUp();
 
         IntentFilter checkRunnableFilter = new IntentFilter(CHECK_RUNNABLE_ACTION);
@@ -254,7 +254,7 @@ public class BackgroundService extends Service {
         sharedPrefs.edit().putInt("CurrentState", TransportationModeStreamGenerator.mCurrentState).apply();
         sharedPrefs.edit().putInt("ConfirmedActivityType", TransportationModeStreamGenerator.mConfirmedActivityType).apply();
 
-        unregisterReceiver(mWifiReceiver);
+//        unregisterReceiver(mWifiReceiver);
         unregisterReceiver(CheckRunnableReceiver);
     }
 

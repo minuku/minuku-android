@@ -58,10 +58,8 @@ import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
-import labelingStudy.nctu.minuku_2.controller.CheckPointActivity;
-import labelingStudy.nctu.minuku_2.controller.CounterActivity;
+//import labelingStudy.nctu.minuku_2.controller.CounterActivity;
 import labelingStudy.nctu.minuku_2.controller.DeviceIdPage;
-import labelingStudy.nctu.minuku_2.controller.Timeline;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,10 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean firstTimeOrNot;
 
-    private CheckPointActivity checkPointActivity;
-    private CounterActivity mCounterActivity;
-    private Timeline mtimeline;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,27 +91,17 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
 
-        final LayoutInflater mInflater = getLayoutInflater().from(this);
-        timerview = mInflater.inflate(R.layout.counteractivtiy, null);
-        recordview = mInflater.inflate(R.layout.activity_timeline, null);
-        checkpointview = mInflater.inflate(R.layout.checkpoint_activity, null);
-
-        current_task = getResources().getString(R.string.current_task);
+//        current_task = getResources().getString(R.string.current_task);
 
         sharedPrefs.edit().putString("currentWork", Constants.currentWork).apply();
 
-        if(current_task.equals("PART")) {
-            initViewPager(timerview, recordview);
-//            mtimeline = new Timeline(this);
-//            mtimeline.initTime(recordview);
-        }else{
-            initViewPager(checkpointview, recordview);
-//            mtimeline = new Timeline(this);
-//            mtimeline.initTime(recordview);
-        }
+//        if(current_task.equals("PART")) {
+//            initViewPager(timerview, recordview);
+//        }else{
+//            initViewPager(checkpointview, recordview);
+//        }
 
         SettingViewPager();
-//        startService(new Intent(getBaseContext(), BackgroundService.class));
 
         EventBus.getDefault().register(this);
 
@@ -149,15 +133,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void createShortCut(){
-        Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-        shortcutintent.putExtra("duplicate", false);
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-        Parcelable icon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.drawable.self_reflection); //TODO change the icon with the Ohio one.
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), MainActivity.class));
-        sendBroadcast(shortcutintent);
-    }
+
 
     @Override
     public void onResume(){
@@ -173,85 +149,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
         startActivity(intent1);
 
-//        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
-//        startActivity(intent);
-
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-    }
-
-    //public for update
-    public void initViewPager(View timerview, View recordview){
-        mTabs = (android.support.design.widget.TabLayout) findViewById(R.id.tablayout);
-        mTabs.addTab(mTabs.newTab().setText("計時"));
-        mTabs.addTab(mTabs.newTab().setText("紀錄"));
-
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        timerview.setTag(Constants.home_tag);
-    }
-
-    public void improveMenu(boolean bool){
-        Constants.tabpos = bool;
-        ActivityCompat.invalidateOptionsMenu(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-        //TODO we might not need to select date, see on pilot
-        /*if(Constants.tabpos)
-            menu.findItem(R.id.action_selectdate).setVisible(true);
-        else
-            menu.findItem(R.id.action_selectdate).setVisible(false);*/
-
-        super.onPrepareOptionsMenu(menu);
-
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_getWantedOrder:
-                startActivity(new Intent(MainActivity.this, DeviceIdPage.class));
-                return true;
-
-            //TODO we might not need to select date, see on pilot
-            /*case R.id.action_selectdate:
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-                new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        String format = setDateFormat(year,month,day);
-
-                        Constants.Day = day;
-                        Constants.Year = year;
-                        Constants.Month = month+ 1;//
-
-                        Log.d(TAG,"month : " + (month) + "year : " + year + "day : " + day);
-
-                        timeline = new Timeline(); //Timeline
-                        timeline.initTime(recordview);
-                        //startdate.setText(format);
-                    }
-
-                }, mYear, mMonth, mDay).show();
-                return true;*/
-        }
-        return true;
     }
 
     private void checkAndRequestPermissions() {
@@ -325,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
                 // Initialize the map with both permissions
                 perms.put(android.Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                //perms.put(Manifest.permission.SYSTEM_ALERT_WINDOW, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
@@ -382,8 +279,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "initialize tab (Swipe)");
 
-                //everytime the user swipe the screen, we set a new Timeline view with the latest availSite
-                mtimeline.initTime(recordview);
 
                 invalidateOptionsMenu();
 
@@ -392,8 +287,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
-//                Log.d(TAG, "initialize tab (Swipe)");
-//                mtimeline.initTime(recordview);
             }
 
             @Override
@@ -410,17 +303,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    @Subscribe
-    public void incrementLoadingProcessCount(IncrementLoadingProcessCountEvent event) {
-        Integer loadingCount = loadingProcessCount.incrementAndGet();
-        Log.d(TAG, "Incrementing loading processes count: " + loadingCount);
-    }
-
-    @Subscribe
-    public void decrementLoadingProcessCountEvent(DecrementLoadingProcessCountEvent event) {
-        Integer loadingCount = loadingProcessCount.decrementAndGet();
-        Log.d(TAG, "Decrementing loading processes count: " + loadingCount);
-    }
 
 
     public class TimerOrRecordPagerAdapter extends PagerAdapter {
@@ -452,44 +334,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View view = mListViews.get(position);
-            switch (position){
-                case 0:
-
-                    if(current_task.equals("PART")) {
-
-                        mCounterActivity = new CounterActivity(mContext);
-//                        mCounterActivity.initCounterActivity(timerview);
-                    }else{
-
-                        checkPointActivity = new CheckPointActivity(mContext);
-                        checkPointActivity.initCheckPoint(checkpointview);
-                    }
-
-                    break;
-                case 1:
-
-                    mtimeline = new Timeline(mContext); //Timeline
-                    mtimeline.initTime(recordview);
-
-                    break;
-            }
-
 
             container.addView(view);
 
             return view;
         }
 
-        /*
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }*/
-
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
-
-
     }
 }
