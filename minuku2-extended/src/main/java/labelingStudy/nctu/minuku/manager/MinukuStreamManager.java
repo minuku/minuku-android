@@ -28,12 +28,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,9 +44,11 @@ import java.util.Map;
 
 import labelingStudy.nctu.minuku.Data.DBHelper;
 import labelingStudy.nctu.minuku.Data.DataHandler;
+import labelingStudy.nctu.minuku.NearbyPlaces.GetUrl;
 import labelingStudy.nctu.minuku.R;
 import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
+import labelingStudy.nctu.minuku.Utilities.Utils;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.model.Annotation;
 import labelingStudy.nctu.minuku.model.AnnotationSet;
@@ -53,6 +57,7 @@ import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku.model.DataRecord.TransportationModeDataRecord;
 import labelingStudy.nctu.minuku.model.MinukuStreamSnapshot;
 import labelingStudy.nctu.minuku.model.Session;
+import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minukucore.event.IsDataExpectedEvent;
 import labelingStudy.nctu.minukucore.event.NoDataChangeEvent;
@@ -95,11 +100,10 @@ public class MinukuStreamManager implements StreamManager {
     private static MinukuStreamManager instance;
 
     private MinukuStreamManager() throws Exception {
+
         mStreamMap = new HashMap<>();
         mStreamTypeStreamMap = new HashMap<>();
         mRegisteredStreamGenerators = new HashMap<>();
-
-
     }
 
     public static MinukuStreamManager getInstance() {
@@ -123,7 +127,14 @@ public class MinukuStreamManager implements StreamManager {
             }
             if(counter % streamGenerator.getUpdateFrequency() == 0) {
                 Log.d(TAG, "Calling update stream generator for " + streamGenerator.getClass());
-                streamGenerator.updateStream();
+                try{
+
+                    streamGenerator.updateStream();
+                }catch (Exception e){
+
+                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "Class : "+streamGenerator.getClass().getName());
+                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, Utils.getStackTrace(e));
+                }
             }
         }
         counter++;
@@ -236,7 +247,7 @@ public class MinukuStreamManager implements StreamManager {
         return activityRecognitionDataRecord;
     }
 
-    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord, final Context context, SharedPreferences sharedPrefs){
+    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord, final Context context, final SharedPreferences sharedPrefs){
 
         Log.d(TAG, "[test triggering] incoming transportation: " + transportationModeDataRecord.getConfirmedActivityString());
 
@@ -245,7 +256,6 @@ public class MinukuStreamManager implements StreamManager {
         //the first time we see incoming transportation mode data
         if (this.transportationModeDataRecord==null){
 
-//            this.transportationModeDataRecord = transportationModeDataRecord;
             this.transportationModeDataRecord = new TransportationModeDataRecord(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA);
             Log.d(TAG, "[test triggering] test trip original null updated to " + this.transportationModeDataRecord.getConfirmedActivityString());
         }
@@ -262,7 +272,7 @@ public class MinukuStreamManager implements StreamManager {
             Log.d(TAG,"in setTransportationModeDataRecord, currentWork is "+currentWork);
 
             //in PART, the Session is controlled by the user, no need to detect by the app.
-            if(!currentWork.equals("PART")) {
+            if(!currentWork.equals(context.getResources().getString(R.string.task_PART))) {
 
                 //if the current activity is different from the latest one
                 if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(transportationModeDataRecord.getConfirmedActivityString())) {
@@ -277,6 +287,8 @@ public class MinukuStreamManager implements StreamManager {
                                 && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
                         Log.d(TAG, "[test triggering] addSessionFlag = true there's no session in the db");
+                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "addSessionFlag = true there's no session in the db");
+
                         addSessionFlag = true;
                     }
                     //there's exizstint sessions in the DB
@@ -292,14 +304,20 @@ public class MinukuStreamManager implements StreamManager {
 
                         Log.d(TAG, "[test triggering] session " + sessionIdOfLastSession + " with annotation string " + annotationSet.toString() + " end time " + endTimeOfLastSession + " startTime " + startTimeOfLastSession);
 
-                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "session id : " + sessionIdOfLastSession +
+                                " with annotation string : " + annotationSet.toString() + ", end time : " + ScheduleAndSampleManager.getTimeString(endTimeOfLastSession) +
+                                ", startTime : " + ScheduleAndSampleManager.getTimeString(startTimeOfLastSession));
+
+                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession, sharedPrefs);
 
                         if (!this.transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, "not emptySessionOn ? "+(!emptySessionOn));
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "not emptySessionOn ? "+(!emptySessionOn));
 
-                            //if there is an empty session, don't stop it
+                            //if there are no empty session, stop it
                             if(!emptySessionOn){
+
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "lastSession id : "+lastSession.getId() + " is not empty Session ");
 
                                 //if we end the current session, we should update its time and set a long enough flag
                                 long endTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
@@ -315,33 +333,40 @@ public class MinukuStreamManager implements StreamManager {
                                     String diff1stSuspectedStopTransportation_ID = firstDiffSuspectStopTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
 
                                     //query suspect start time id (the next one from the above data)
-                                    ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStopTransportation_ID));
+                                    ArrayList<String> suspectedStopTransportation = DBHelper.queryNextData(DBHelper.transportationMode_table, Integer.valueOf(diff1stSuspectedStopTransportation_ID));
 
                                     if(suspectedStopTransportation.size() > 0){
 
-                                        String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
+                                        String suspectTime = suspectedStopTransportation.get(DBHelper.COL_INDEX_Suspected_Transportation_TIME);
 
                                         lastSession.setEndTime(Long.valueOf(suspectTime));
                                     }
                                 }
 
-                                CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " lastSession EndTime : "+ScheduleAndSampleManager.getTimeString(lastSession.getEndTime()));
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " lastSession EndTime : "+ScheduleAndSampleManager.getTimeString(lastSession.getEndTime()));
 
                                 //end the current session
                                 SessionManager.endCurSession(lastSession);
 
-                                sharedPrefs.edit().putInt("ongoingSessionid", -1).apply();
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " End lastSession which is not empty Session.");
 
-                                addSessionFlag = true;
+                                sharedPrefs.edit().putInt("ongoingSessionid", Constants.INVALID_INT_VALUE).apply();
+
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " Update ongoing session id with : -1(invalid id)");
                             }
+
+                            addSessionFlag = true;
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " addSessionFlag : "+addSessionFlag);
                         }
                     }
 
                     Log.d(TAG, "[test triggering] addSessionFlag : "+addSessionFlag);
                     Log.d(TAG, "[test triggering] is NA ? : "+!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA));
 
-                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " addSessionFlag ? "+addSessionFlag);
-                    CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " tranp not NA ? "+(!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)));
+                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " addSessionFlag ? "+addSessionFlag);
+                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " tranp not NA ? "+(!transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)));
+                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " tranp is : "+transportationModeDataRecord.getConfirmedActivityString());
 
                     //if we need to add a session
                     if (addSessionFlag && !transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NA)) {
@@ -351,18 +376,20 @@ public class MinukuStreamManager implements StreamManager {
                         Session lastSession = SessionManager.getLastSession();
 
                         int sessionIdOfLastSession = lastSession.getId();
-                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession);
+                        boolean emptySessionOn = SessionManager.isSessionEmptyOngoing(sessionIdOfLastSession, sharedPrefs);
 
-                        Log.d(TAG, "[test triggering] is CAR ? " + (currentWork.equals("CAR")));
+                        Log.d(TAG, "[test triggering] is CAR ? " + (currentWork.equals(context.getResources().getString(R.string.task_CAR))));
                         Log.d(TAG, "[test triggering] is emptySessionOn ? " + emptySessionOn);
-                        Log.d(TAG, "[test triggering] is CAR & emptySessionOn ? " + (currentWork.equals("CAR") && emptySessionOn));
+                        Log.d(TAG, "[test triggering] is CAR & emptySessionOn ? " + (currentWork.equals(context.getResources().getString(R.string.task_CAR)) && emptySessionOn));
 
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR ? "+(currentWork.equals("CAR")));
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is emptySessionOn ? "+emptySessionOn);
-                        CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " is CAR & emptySessionOn ? "+(currentWork.equals("CAR") && emptySessionOn));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " is CAR ? "+(currentWork.equals(context.getResources().getString(R.string.task_CAR))));
+                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " is emptySessionOn ? "+emptySessionOn);
+                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " is CAR & emptySessionOn ? "+(currentWork.equals(context.getResources().getString(R.string.task_CAR)) && emptySessionOn));
 
                         //if there is an emptySession, update it to the next different system detected transportationMode
-                        if (currentWork.equals("CAR") && emptySessionOn) {
+                        if (currentWork.equals(context.getResources().getString(R.string.task_CAR)) && emptySessionOn) {
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " update the empty session");
 
                             Annotation annotation = new Annotation();
                             annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
@@ -371,11 +398,19 @@ public class MinukuStreamManager implements StreamManager {
 
                             DataHandler.updateSession(lastSession.getId(), lastSession.getAnnotationsSet());
 
-                            SessionManager.getEmptyOngoingSessionIdList().remove(Integer.valueOf(lastSession.getId()));
+                            sharedPrefs.edit().putInt("emptyOngoingSessionid", Constants.INVALID_INT_VALUE).apply();
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION,"update empty sessionid to "+Constants.INVALID_INT_VALUE);
+
+//                            SessionManager.getEmptyOngoingSessionIdList().remove(Integer.valueOf(lastSession.getId()));
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION,
+                                    " filled the transportation : "+transportationModeDataRecord.getConfirmedActivityString()+" in the emptysession : "+lastSession.getId());
 
                             //to end a session (the previous is moving)
                             //we first need to check whether the previous is a transportation
                         } else {
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " insert a new session");
 
                             //insert into the session table;
                             int sessionId = (int) sessionCount + 1;
@@ -393,59 +428,161 @@ public class MinukuStreamManager implements StreamManager {
                                 String diff1stSuspectedStartTransportation_ID = firstDiffSuspectedStartTransportation.get(DBHelper.COL_INDEX_RECORD_ID);
 
                                 //query suspect start time id (the next one from the above data)
-                                ArrayList<String> suspectedStartTransportation = DBHelper.queryNextData(DBHelper.TRANSPORTATION_MODE_TABLE, Integer.valueOf(diff1stSuspectedStartTransportation_ID));
+                                ArrayList<String> suspectedStartTransportation = DBHelper.queryNextData(DBHelper.transportationMode_table, Integer.valueOf(diff1stSuspectedStartTransportation_ID));
 
                                 if(suspectedStartTransportation.size() > 0){
 
-                                    String suspectTime = suspectedStartTransportation.get(DBHelper.COL_INDEX_SUSPECTED_TRANSPORTATION_TIME);
+                                    String suspectTime = suspectedStartTransportation.get(DBHelper.COL_INDEX_Suspected_Transportation_TIME);
 
                                     session.setStartTime(Long.valueOf(suspectTime));
+
+                                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " set Session StartTime with the suspectStartTime : "+ScheduleAndSampleManager.getTimeString(session.getStartTime()));
                                 }
                             }
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " Session StartTime : "+ScheduleAndSampleManager.getTimeString(session.getStartTime()));
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " Session StartTime : "+ScheduleAndSampleManager.getTimeString(session.getStartTime()));
 
-                            Annotation annotation = new Annotation();
-                            annotation.setContent(transportationModeDataRecord.getConfirmedActivityString());
-                            annotation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
-                            session.addAnnotation(annotation);
+                            Annotation annotationForTransportation = new Annotation();
+                            annotationForTransportation.setContent(transportationModeDataRecord.getConfirmedActivityString());
+                            annotationForTransportation.addTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
+                            session.addAnnotation(annotationForTransportation);
+
+                            //if transportationMode is static, add site by getUrl
+                            if(transportationModeDataRecord.getConfirmedActivityString().equals(TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION)){
+
+                                Annotation annotationForSite = new Annotation();
+                                Annotation annotationForSiteLoc = new Annotation();
+                                //add site by getUrl
+                                //get the latest location for searching site
+                                ArrayList<String> locations = DBHelper.queryLastRecord(DBHelper.location_table);
+                                if(locations.size() > 0){
+
+                                    Log.d(TAG, "locations : "+locations);
+                                    String location = locations.get(locations.size() - 1);
+                                    String[] locationPieces = location.split(Constants.DELIMITER);
+                                    double lat = Double.parseDouble(locationPieces[DBHelper.COL_INDEX_LOC_LATITUDE]);
+                                    double lng = Double.parseDouble(locationPieces[DBHelper.COL_INDEX_LOC_LONGITUDE]);
+
+                                    //check the customizedTable first
+                                    String siteInform;
+                                    boolean checkFromNet = true;
+
+                                    ArrayList<String> customizedSite = DBHelper.queryCustomizedSites();
+
+                                    float smallestDist = Float.MAX_VALUE;
+                                    String closestSite = "", closestLat = "", closestLng = "";
+                                    //check the distance between the session's first location and the customizedSite
+                                    for(int index = 0; index < customizedSite.size(); index++){
+
+                                        String eachData = customizedSite.get(index);
+
+                                        String[] dataPieces = eachData.split(Constants.DELIMITER);
+
+                                        Log.d(TAG, "check 精準度");
+                                        Log.d(TAG, "sitename : "+dataPieces[1]+", siteLat : "+dataPieces[2]+", siteLng : "+dataPieces[3]);
+
+                                        double siteLat = Double.parseDouble(dataPieces[2]);
+                                        double siteLng = Double.parseDouble(dataPieces[3]);
+
+                                        float[] results = new float[1];
+                                        Location.distanceBetween(lat, lng, siteLat, siteLng, results);
+                                        float distance = results[0];
+
+                                        Log.d(TAG, "customizedSite");
+                                        Log.d(TAG, "sitename : "+dataPieces[1]+", siteLat : "+siteLat+", siteLng : "+siteLng);
+
+                                        if(smallestDist >= distance){
+
+                                            smallestDist = distance;
+                                            closestSite = dataPieces[1];
+                                            closestLat = dataPieces[2];
+                                            closestLng = dataPieces[3];
+                                        }
+
+                                    }
+
+                                    //if still no site close enough then check from the net
+                                    if(smallestDist <= Constants.siteRange){
+
+                                        siteInform = closestSite+Constants.DELIMITER+"("+closestLat+","+closestLng+")";
+                                    }else {
+
+                                        siteInform = GetUrl.getSiteInformFromNet(lat, lng);
+                                    }
+
+                                    String siteName = siteInform.split(Constants.DELIMITER)[0];
+                                    String siteLoc = siteInform.split(Constants.DELIMITER)[1];
+                                    annotationForSite.setContent(siteName);
+                                    annotationForSite.addTag(Constants.ANNOTATION_TAG_DETECTED_SITENAME);
+                                    session.addAnnotation(annotationForSite);
+                                    annotationForSiteLoc.setContent(siteLoc);
+                                    annotationForSiteLoc.addTag(Constants.ANNOTATION_TAG_DETECTED_SITELOCATION);
+                                    session.addAnnotation(annotationForSiteLoc);
+
+                                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " Session detected site name : "+ siteName);
+
+                                    Log.d(TAG, "[test triggering] detected siteName");
+                                }
+                            }
+
                             session.setUserPressOrNot(false);
                             session.setModified(false);
                             session.setIsSent(Constants.SESSION_SHOULDNT_BEEN_SENT_FLAG);
                             session.setType(Constants.SESSION_TYPE_DETECTED_BY_SYSTEM);
+                            session.setHidedOrNot(Constants.SESSION_NEVER_GET_HIDED_FLAG);
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " insert the session is with annotation : "+session.getAnnotationsSet().toJSONObject().toString());
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " insert the session with annotation : "+session.getAnnotationsSet().toJSONObject().toString());
 
                             Log.d(TAG, "[test triggering] insert the session is with annotation " + session.getAnnotationsSet().toJSONObject().toString());
 
                             String beforeSendESM = "Preparing to send ESM";
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, beforeSendESM);
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, beforeSendESM);
 
-                            SessionManager.startNewSession(session);
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " Examine if combine sessions, please check "+CSVHelper.CSV_EXAMINE_COMBINE_SESSION);
 
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, " after startNewSession ");
+                            if (SessionManager.examineSessionCombinationByActivityAndTime(transportationModeDataRecord.getConfirmedActivityString(), session.getStartTime()) == true) {
+
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " continue2ndLastSession ");
+
+                                //Should combine
+                                SessionManager.continue2ndLastSession(sharedPrefs);
+                            } else {
+
+                                CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " startNewSession ");
+
+                                SessionManager.startNewSession(session);
+                            }
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " after startNewSession ");
 
                             sharedPrefs.edit().putInt("ongoingSessionid", session.getId()).apply();
+
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, " update ongoingSessionid to : "+session.getId());
                         }
 
-                        if (currentWork.equals("ESM")) {
+                        final Session sessionJustStart = SessionManager.getLastSession();
 
-                            //after starting a trip(session), send a notification to the user
-                            sendNotification(context);
+                        // set it earlier
+                        this.transportationModeDataRecord = transportationModeDataRecord;
+
+                        if (currentWork.equals(context.getResources().getString(R.string.task_ESM))) {
+
+                            Log.d(TAG, "[test triggering] show session StartTime : "+sessionJustStart.getStartTime());
+                            Log.d(TAG, "[test triggering] show session StartTime String : "+ScheduleAndSampleManager.getTimeString(sessionJustStart.getStartTime()));
+
+                            String sessionTransportation = getTransportationNameOrSite(sessionJustStart, context);
+                            sendNotification(context, sessionJustStart.getStartTime(), sessionTransportation);
 
                             String afterSendESM = "After sending ESM";
-                            CSVHelper.storeToCSV(CSVHelper.CSV_ESM, afterSendESM);
+                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, afterSendESM);
 
                             Log.d(TAG, "[test triggering] ESM Notification");
 
-                        } else if (currentWork.equals("CAR")) {
+                        } else if (currentWork.equals(context.getResources().getString(R.string.task_CAR))) {
 
                             //CAR need to be in the start of the session, after a threshold of the time, send the notification to remind the user
 
-                            // set it earlier than other conditions due to the CountDownTimer
-                            this.transportationModeDataRecord = transportationModeDataRecord;
-
-                            SessionManager.sSessionIsWaiting = true;
+                            SessionManager.sessionIsWaiting = true;
 
                             //wait for a minute to the user
                             handler.postDelayed(new Runnable() {
@@ -453,27 +590,32 @@ public class MinukuStreamManager implements StreamManager {
                                 @Override
                                 public void run() {
 
+                                    CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, "after the delay for a minute");
+
+                                    int ongoingSessionid = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
                                     //detect the user has pressed the current trip(Session) or not.
-                                    if(SessionManager.getOngoingSessionIdList().size() != 0){
+//                                    if(SessionManager.getOngoingSessionIdList().size() != 0){
+                                    if(ongoingSessionid != Constants.INVALID_INT_VALUE){
 
-                                        int ongoingSessionid = SessionManager.getOngoingSessionIdList().get(0);
-
+//                                        int ongoingSessionid = SessionManager.getOngoingSessionIdList().get(0);
                                         Session ongoingSession = SessionManager.getSession(ongoingSessionid);
 
                                         //if the user hasn't pressed the current trip(Session); after ending a trip(session), send a notification to the user
                                         if (!ongoingSession.isUserPress()) {
 
-                                            sendNotification(context);
+                                            String sessionTransportation = getTransportationNameOrSite(sessionJustStart, context);
+                                            sendNotification(context, sessionJustStart.getStartTime(), sessionTransportation);
 
                                             String afterSendCAR = "After sending CAR";
-                                            CSVHelper.storeToCSV(CSVHelper.CSV_CAR, afterSendCAR);
+                                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, afterSendCAR);
 
                                             Log.d(TAG, "[test triggering] CAR Notification");
                                         } else {
 
                                             //recording
                                             String checkCAR = "the CAR record has been checkpointed by the user";
-                                            CSVHelper.storeToCSV(CSVHelper.CSV_CAR, checkCAR);
+                                            CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, checkCAR);
 
                                             Log.d(TAG, "[test triggering] CAR check");
                                         }
@@ -481,13 +623,13 @@ public class MinukuStreamManager implements StreamManager {
                                         //the ongoing session might be removed because of the empty ongoing one.
                                     }else{
 
-                                        String checkCAR = "the ongoing session is removed, assumed it was checkpoioned";
-                                        CSVHelper.storeToCSV(CSVHelper.CSV_CAR, checkCAR);
+                                        String checkCAR = "the ongoing session is removed, assumed it was checkpointed";
+                                        CSVHelper.storeToCSV(CSVHelper.CSV_CHECK_SESSION, checkCAR);
 
                                         Log.d(TAG, "[test triggering] "+ checkCAR);
                                     }
 
-                                    SessionManager.sSessionIsWaiting = false;
+                                    SessionManager.sessionIsWaiting = false;
 
                                 }
                             }, Constants.MILLISECONDS_PER_MINUTE);
@@ -500,15 +642,40 @@ public class MinukuStreamManager implements StreamManager {
         }
     }
 
-    private void sendNotification(Context context){
+    private String getTransportationNameOrSite(Session sessionJustStart, Context context){
+
+        ArrayList<Annotation> sessionTransportations = sessionJustStart.getAnnotationsSet().getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
+
+        String sessionTransportation = "";
+
+        if(sessionTransportations.size() > 0)
+            sessionTransportation = sessionTransportations.get(sessionTransportations.size()-1).getContent();
+
+        if(sessionTransportation.equals("static")){
+
+            ArrayList<Annotation> sessionSites = sessionJustStart.getAnnotationsSet().getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_SITENAME);
+
+            if(sessionSites.size() > 0)
+                sessionTransportation = sessionSites.get(sessionSites.size()-1).getContent();
+        }else{
+
+            //TODO convert into Chinese name
+            sessionTransportation = getTrafficInChinese(sessionTransportation, context);
+        }
+
+        return sessionTransportation;
+    }
+
+    private void sendNotification(Context context, long startTime, String sessionTransportation){
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String notificationText = "您有新的移動紀錄";
+        SimpleDateFormat sdf_ampm_hhmm = new SimpleDateFormat(Constants.DATE_FORMAT_AMPM_HOUR_MIN);
+        String notificationText = "您有新的移動紀錄 : "+sessionTransportation+"\r\n"+"始於 "+ScheduleAndSampleManager.getTimeString(startTime, sdf_ampm_hhmm);
         Notification notification = getNotification(notificationText, context);
 
-        mNotificationManager.notify(MinukuNotificationManager.sReminderNotificationID, notification);
+        mNotificationManager.notify(MinukuNotificationManager.reminderNotificationID, notification);
     }
 
     private Notification getNotification(String text, Context context){
@@ -543,6 +710,23 @@ public class MinukuStreamManager implements StreamManager {
 
     public void setLocationDataRecord(LocationDataRecord locationDataRecord){
         this.locationDataRecord = locationDataRecord;
+    }
+
+    private String getTrafficInChinese(String activity, Context context){
+
+        Log.d(TAG, "getTrafficInChinese activity : "+ activity);
+
+        switch (activity){
+
+            case ActivityRecognitionStreamGenerator.STRING_DETECTED_ACTIVITY_ON_FOOT:
+                return context.getResources().getString(R.string.walk_activity_type_in_chinese);
+            case ActivityRecognitionStreamGenerator.STRING_DETECTED_ACTIVITY_ON_BICYCLE:
+                return context.getResources().getString(R.string.bike_activity_type_in_chinese);
+            case ActivityRecognitionStreamGenerator.STRING_DETECTED_ACTIVITY_IN_VEHICLE:
+                return context.getResources().getString(R.string.car_activity_type_in_chinese);
+        }
+
+        return activity;
     }
 
     public LocationDataRecord getLocationDataRecord(){

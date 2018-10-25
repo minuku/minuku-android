@@ -26,11 +26,18 @@ public class CSVHelper {
 
     public static final String CSV_UserInteract = "UserInteraction.csv";
     public static final String CSV_CheckService_alive = "CheckService.csv";
+
+    public static final String CSV_Wifi = "CheckWifi.csv";
+
     public static final String CSV_ESM = "CheckESM.csv";
     public static final String CSV_CAR = "CheckCAR.csv";
+    public static final String CSV_CHECK_SESSION = "CheckSession.csv";
+    public static final String CSV_CHECK_ISALIVE = "CheckIsAlive.csv";
     public static final String CSV_CHECK_TRANSPORTATION = "CheckTransportationMode.csv";
     public static final String CSV_RUNNABLE_CHECK = "Runnable_check.csv";
     public static final String CSV_WIFI_RECEIVER_CHECK = "Wifi_Receiver_check.csv";
+    public static final String CSV_EXAMINE_COMBINE_SESSION = "ExamineCombineSession.csv";
+
 
     public static void storeToCSV(String fileName, String... texts){
 

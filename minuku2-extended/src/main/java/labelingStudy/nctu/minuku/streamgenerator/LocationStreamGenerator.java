@@ -22,7 +22,6 @@
 
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -55,14 +54,13 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.LocationDataRecordDAO;
 import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
-import labelingStudy.nctu.minuku.manager.SessionManager;
 import labelingStudy.nctu.minuku.model.DataRecord.LocationDataRecord;
 import labelingStudy.nctu.minuku.stream.LocationStream;
 import labelingStudy.nctu.minukucore.dao.DAOException;
@@ -105,6 +103,10 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     private static AtomicDouble latestLatitude;
     private static AtomicDouble latestLongitude;
     private static float latestAccuracy;
+    private static float latestAltitude;
+    private static float latestSpeed;
+    private static float latestBearing;
+    private static String latestProvider;
 
     private Context context;
 
@@ -119,18 +121,18 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     private Location location;
 
+    LocationDataRecordDAO mDAO;
 
     private SharedPreferences sharedPrefs;
 
     public LocationStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new LocationStream(Constants.LOCATION_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(LocationDataRecord.class);
         this.latestLatitude = new AtomicDouble();
         this.latestLongitude = new AtomicDouble();
 
         this.context = applicationContext;
-//        tripManager = new SessionManager();
-
 
         mLocationDataRecords = new ArrayList<LocationDataRecord>();
 
@@ -174,7 +176,11 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
             //TODO uncomment them when we stop testing
             this.latestLatitude.set(location.getLatitude());
             this.latestLongitude.set(location.getLongitude());
-            latestAccuracy = location.getAccuracy();
+            this.latestAccuracy = location.getAccuracy();
+            this.latestAltitude = (float) location.getAltitude();
+            this.latestSpeed = location.getSpeed();
+            this.latestBearing = location.getBearing();
+            this.latestProvider = location.getProvider();
 
             //the lastposition update value timestamp
             lastposupdate = new Date().getTime();
@@ -219,30 +225,30 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
         EventBus.getDefault().post(new IncrementLoadingProcessCountEvent());
 
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                try
-//                {
-//                    Log.d(TAG, "Stream " + TAG + "initialized from previous state");
-//                    Future<List<LocationDataRecord>> listFuture =
-//                            mDAO.getLast(Constants.LOCATION_QUEUE_SIZE);
-//                    while(!listFuture.isDone()) {
-//                        Thread.sleep(1000);
-//                    }
-//                    Log.d(TAG, "Received data from Future for " + TAG);
-////                    mStream.addAll(new LinkedList<>(listFuture.get()));
-//                } catch (DAOException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
-//                }
-//            }
-//        });
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    Log.d(TAG, "Stream " + TAG + "initialized from previous state");
+                    Future<List<LocationDataRecord>> listFuture =
+                            mDAO.getLast(Constants.LOCATION_QUEUE_SIZE);
+                    while(!listFuture.isDone()) {
+                        Thread.sleep(1000);
+                    }
+                    Log.d(TAG, "Received data from Future for " + TAG);
+                    mStream.addAll(new LinkedList<>(listFuture.get()));
+                } catch (DAOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } finally {
+                    EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
+                }
+            }
+        });
 
     }
 
@@ -267,31 +273,35 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     public boolean updateStream() {
 
         LocationDataRecord newlocationDataRecord;
-        int session_id = 0;
+//        int session_id = SessionManager.getOngoingSessionId();
 
-        int countOfOngoingSession = SessionManager.getInstance().getOngoingSessionIdList().size();
-
-        //if there exists an ongoing session
-        if (countOfOngoingSession>0){
-            session_id = SessionManager.getInstance().getOngoingSessionIdList().get(0);
-        }
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
 
 //        Log.d(TAG, "[test replay] Update stream session is " + session_id);
 
         try {
+
             newlocationDataRecord = new LocationDataRecord(
                     (float) latestLatitude.get(),
                     (float) latestLongitude.get(),
                     latestAccuracy,
-                    //TODO improve it to ArrayList, ex. the session id should be "0, 10".
+                    latestAltitude,
+                    latestSpeed,
+                    latestBearing,
+                    latestProvider,
                     String.valueOf(session_id));
         }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
+
             //no session now
             newlocationDataRecord = new LocationDataRecord(
                     (float) latestLatitude.get(),
                     (float) latestLongitude.get(),
                     latestAccuracy,
+                    latestAltitude,
+                    latestSpeed,
+                    latestBearing,
+                    latestProvider,
                     String.valueOf(session_id));
         }
 //        Log.e(TAG,"[test replay] newlocationDataRecord latestLatitude : "+ latestLatitude.get()+" latestLongitude : "+ latestLongitude.get() + "  session_id " +  session_id);
@@ -304,24 +314,9 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         // also post an event.
         EventBus.getDefault().post(newlocationDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(context,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.locationDataRecordDao().insertAll(newlocationDataRecord);
-            List<LocationDataRecord> locationDataRecords = db.locationDataRecordDao().getAll();
-            for (LocationDataRecord l : locationDataRecords) {
-                Log.e(TAG, " Latitude: "+String.valueOf(l.getLatitude()));
-                Log.e(TAG, " Longitude: "+String.valueOf(l.getLongitude()));
-                Log.e(TAG," Accuracy: "+ String.valueOf(l.getAccuracy()));
-                Log.e(TAG," Altitude: "+ String.valueOf(l.getAltitude()));
-                Log.e(TAG," Speed: "+ String.valueOf(l.getSpeed()));
-                Log.e(TAG," Bearing: "+ String.valueOf(l.getBearing()));
-                Log.e(TAG," Provider: "+l.getProvider());
-            }
 
-
-        } catch (NullPointerException e) {
+            mDAO.add(newlocationDataRecord);
+        } catch (DAOException e) {
             e.printStackTrace();
             return false;
         }
@@ -330,7 +325,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     @Override
     public long getUpdateFrequency() {
-        return 1; // 1 = 1 minutes
+        return 1;
     }
 
     @Override
@@ -438,8 +433,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
                     //the lastposition update value timestamp
                     lastposupdate = new Date().getTime();
 
-                    android.util.Log.d(TAG, "[test replay] going to feed location " +   locationDataRecord.getLatitude()+  " :"  + locationDataRecord.getLongitude()  +" at index " + locationRecordCurIndex  + " in the location streamgenerator");
-
+                    Log.d(TAG, "[test replay] going to feed location " +   locationDataRecord.getLatitude()+  " :"  + locationDataRecord.getLongitude()  +" at index " + locationRecordCurIndex  + " in the location streamgenerator");
 
                     //set Location
 

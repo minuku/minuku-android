@@ -25,4 +25,13 @@
 
     <!--  current_task: PART ESM CAR  -->
     <string name="current_task">ESM</string>
+    <string name="task_PART">PART</string>
+    <string name="task_ESM">ESM</string>
+    <string name="task_CAR">CAR</string>
+
+    <string name="walk_activity_type_in_chinese">走路</string>
+    <string name="bike_activity_type_in_chinese">自行車</string>
+    <string name="car_activity_type_in_chinese">汽機車</string>
+    <string name="static_activity_type_in_chinese">定點</string>
+
 </resources>

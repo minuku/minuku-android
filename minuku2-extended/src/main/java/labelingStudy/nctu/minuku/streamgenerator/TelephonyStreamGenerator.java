@@ -1,7 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.telephony.PhoneStateListener;
@@ -10,10 +10,8 @@ import android.telephony.TelephonyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
@@ -23,12 +21,12 @@ import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
 
-import static labelingStudy.nctu.minuku.manager.MinukuStreamManager.getInstance;
 import static android.telephony.TelephonyManager.CALL_STATE_IDLE;
 import static android.telephony.TelephonyManager.CALL_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.CALL_STATE_RINGING;
 import static android.telephony.TelephonyManager.NETWORK_TYPE_CDMA;
 import static android.telephony.TelephonyManager.NETWORK_TYPE_LTE;
+import static labelingStudy.nctu.minuku.manager.MinukuStreamManager.getInstance;
 
 /**
  * Created by Lucy on 2017/9/6.
@@ -38,7 +36,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     private String TAG = "TelephonyStreamGenerator";
     private TelephonyStream mStream;
-    private Context mContext;
+    private TelephonyDataRecordDAO mDAO;
     private TelephonyManager telephonyManager;
     private String mNetworkOperatorName;
     private int mCallState;
@@ -50,12 +48,15 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     private int mCdmaSignalStrengthLevel; // 1, 2, 3, 4
     private int GeneralSignalStrength;
     private boolean isGSM = false;
+    private Context mContext;
+    private SharedPreferences sharedPrefs;
 
     public TelephonyStreamGenerator (Context applicationContext) {
 
         super(applicationContext);
-        mContext = applicationContext;
+        this.mContext = applicationContext;
         this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TelephonyDataRecord.class);
         this.register();
 
         mCallState = -9999;
@@ -67,6 +68,9 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         mCdmaSignalStrengthLevel = -9999;
         GeneralSignalStrength = -9999;
         isGSM = false;
+
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
+
     }
     @Override
     public void register() {
@@ -92,30 +96,22 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     public boolean updateStream() {
         Log.d(TAG, "updateStream called");
 
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         TelephonyDataRecord telephonyDataRecord = new TelephonyDataRecord(mNetworkOperatorName, mCallState
-                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrength_dbm, mCdmaSignalStrengthLevel);
+                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrength_dbm, mCdmaSignalStrengthLevel, String.valueOf(session_id));
         mStream.add(telephonyDataRecord);
         Log.d(TAG, "Telephony to be sent to event bus" + telephonyDataRecord);
 
         //post an event
         EventBus.getDefault().post(telephonyDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.telephonyDataRecordDao().insertAll(telephonyDataRecord);
-
-            List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
-
-            for (TelephonyDataRecord t : telephonyDataRecords) {
-                Log.e(TAG," NetworkOperatorName: "+ t.getNetworkOperatorName());
-                Log.e(TAG," CallState: "+ String.valueOf(t.getCallState()));
-                Log.e(TAG," CdmaSignalStrengthLevel: "+ String.valueOf(t.getCdmaSignalStrengthLevel()));
-                Log.e(TAG," GsmSignalStrength: "+ String.valueOf(t.getGsmSignalStrength()));
-                Log.e(TAG," LTESignalStrength: "+ String.valueOf(t.getLTESignalStrength()));
-                Log.e(TAG," PhoneSignalType: "+ String.valueOf(t.getPhoneSignalType()));
-            }
+            mDAO.add(telephonyDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;

@@ -11,10 +11,6 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/10/4.
  */
 
-/**
- * The collection of SensorDataRecord
- *      {@link SensorDataRecord}
- */
 public class SensorStream extends AbstractStreamFromDevice<SensorDataRecord> {
 
     public SensorStream(int maxSize) {

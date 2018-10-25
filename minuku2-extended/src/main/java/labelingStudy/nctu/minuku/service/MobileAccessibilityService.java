@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent;
 
 import java.util.TimeZone;
 
+import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.AccessibilityDataRecord;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
@@ -52,7 +53,7 @@ public class MobileAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
-        // TODO Auto-generated method stub
+
         int eventType = accessibilityEvent.getEventType();
         String pack = "";
         String text = "";
@@ -79,7 +80,7 @@ public class MobileAccessibilityService extends AccessibilityService {
             extra = accessibilityEvent.getContentDescription().toString();
             Log.d(TAG,"extra : "+ extra);
         }
-        time = getCurrentTimeInMillis();
+        time = ScheduleAndSampleManager.getCurrentTimeInMillis();
 
 //        Log.d(TAG,"event : " + accessibilityEvent.toString());
 
@@ -174,7 +175,7 @@ public class MobileAccessibilityService extends AccessibilityService {
         //prevent the situation that the StreamGenerator is gone but the service is still running
         try {
 
-            accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra);
+            accessibilityStreamGenerator.setLatestInAppAction(pack, text, type, extra, time);
         }catch (NullPointerException e){
 
         }
@@ -185,11 +186,4 @@ public class MobileAccessibilityService extends AccessibilityService {
 
     }
 
-    public static long getCurrentTimeInMillis(){
-        //get timzone
-        TimeZone tz = TimeZone.getDefault();
-        java.util.Calendar cal = java.util.Calendar.getInstance(tz);
-        long t = cal.getTimeInMillis();
-        return t;
-    }
 }

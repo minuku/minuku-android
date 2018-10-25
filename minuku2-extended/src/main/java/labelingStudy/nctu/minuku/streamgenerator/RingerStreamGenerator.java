@@ -1,20 +1,17 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
-import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku.dao.RingerDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.RingerDataRecord;
@@ -32,11 +29,12 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
     private String TAG = "RingerStreamGenerator";
     private RingerStream mStream;
+    private RingerDataRecordDAO mDAO;
 
     //audio and ringer
     public static final String RINGER_MODE_NORMAL = "Normal";
-    public static final String RINGER_MODE_VIBRATE = "Silent";
-    public static final String RINGER_MODE_SILENT = "Vibrate";
+    public static final String RINGER_MODE_VIBRATE = "Vibrate";
+    public static final String RINGER_MODE_SILENT = "Silent";
 
     public static final String MODE_CURRENT = "Current";
     public static final String MODE_INVALID = "Invalid";
@@ -59,6 +57,8 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
     private static AudioManager mAudioManager;
 
+    private SharedPreferences sharedPrefs;
+
     public static int mainThreadUpdateFrequencyInSeconds = 10;
     public static long mainThreadUpdateFrequencyInMilliseconds = mainThreadUpdateFrequencyInSeconds *Constants.MILLISECONDS_PER_SECOND;
 
@@ -69,9 +69,11 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
     public RingerStreamGenerator (Context applicationContext) {
         super(applicationContext);
 
-        mContext = applicationContext;
-
+        this.mContext = applicationContext;
         this.mStream = new RingerStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(RingerDataRecord.class);
+
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
         mAudioManager = (AudioManager)mContext.getSystemService(mContext.AUDIO_SERVICE);
 
@@ -97,35 +99,27 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
         return mStream;
     }
 
-    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
 
         Log.d(TAG, "updateStream called");
+
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         //TODO get service data
         RingerDataRecord ringerDataRecord = new RingerDataRecord(mRingerMode,mAudioMode,mStreamVolumeMusic
-                ,mStreamVolumeNotification,mStreamVolumeRing,mStreamVolumeVoicecall,mStreamVolumeSystem);
+                ,mStreamVolumeNotification,mStreamVolumeRing,mStreamVolumeVoicecall,mStreamVolumeSystem, String.valueOf(session_id));
         mStream.add(ringerDataRecord);
         Log.d(TAG, "Ringer to be sent to event bus" + ringerDataRecord);
         // also post an event.
         EventBus.getDefault().post(ringerDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.ringerDataRecordDao().insertAll(ringerDataRecord);
-
-            List<RingerDataRecord> ringerDataRecords = db.ringerDataRecordDao().getAll();
-            for (RingerDataRecord r : ringerDataRecords) {
-                Log.e(TAG," RingerMode: "+ r.getRingerMode());
-                Log.e(TAG," AudioMode: "+ r.getAudioMode());
-                Log.e(TAG," StreamVolumeMusic: "+ String.valueOf(r.getStreamVolumeMusic()));
-                Log.e(TAG," StreamVolumeNotification: "+ String.valueOf(r.getStreamVolumeNotification()));
-                Log.e(TAG," StreamVolumeRing: "+ String.valueOf(r.getStreamVolumeRing()));
-                Log.e(TAG," StreamVolumeVoicecall: "+ String.valueOf(r.getStreamVolumeVoicecall()));
-                Log.e(TAG," StreamVolumeSystem: "+ String.valueOf(r.getStreamVolumeSystem()));
-            }
+            mDAO.add(ringerDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
@@ -137,7 +131,7 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
     @Override
     public long getUpdateFrequency() {
         return 1;
-    } //call updateStream everyminute
+    }
 
     @Override
     public void sendStateChangeEvent() {

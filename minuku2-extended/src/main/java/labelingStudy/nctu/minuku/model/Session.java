@@ -1,6 +1,12 @@
 package labelingStudy.nctu.minuku.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 
 /**
  * Created by jiangjiaen on 2017/9/3.
@@ -20,38 +26,34 @@ public class Session {
     protected AnnotationSet mAnnotationSet;
     private boolean mUserPressOrNot;
     private boolean mIsModified;
-    private boolean hidedOrNot;
+    private int hidedOrNot;
     private int mIsSent;
     private String type;
 
     ArrayList<String> mContextSourceNames;
 
-    /**
-     * @param sessionId Set session Id
-     */
     public Session (int sessionId){
         mId = sessionId;
         mAnnotationSet = new AnnotationSet();
     }
 
-    /**
-     * @param timestamp Set session StartTime and CreatedTime
-     */
     public Session (long timestamp){
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
-    /**
-     *
-     * @param timestamp Set session StartTime and CreatedTime
-     * @param sessionId Set session Id
-     */
     public Session (long timestamp, int sessionId){
         mStartTime = timestamp;
         mCreatedTime = timestamp;
         mId = sessionId;
+        mAnnotationSet = new AnnotationSet();
+    }
+
+    public Session (int id, long timestamp){
+        mId = id;
+        mStartTime = timestamp;
+        mCreatedTime = timestamp;
         mAnnotationSet = new AnnotationSet();
     }
 
@@ -92,11 +94,11 @@ public class Session {
         mIsModified = isModified;
     }
 
-    public boolean isHide(){
+    public int isHide(){
         return hidedOrNot;
     }
 
-    public void setHidedOrNot(boolean hidedOrNot){
+    public void setHidedOrNot(int hidedOrNot){
         this.hidedOrNot = hidedOrNot;
     }
 
@@ -187,10 +189,6 @@ public class Session {
         mAnnotationSet = annotationSet;
     }
 
-    /**
-     * Add annotation to annotation set
-     * @param annotation
-     */
     public void addAnnotation (Annotation annotation) {
 
         if (mAnnotationSet==null){
@@ -206,5 +204,53 @@ public class Session {
 
     public void setCreatedTime(long mCreatedTime) {
         this.mCreatedTime = mCreatedTime;
+    }
+    public String getTransporationType() {
+        ArrayList<Annotation> annotations_label = mAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_Label);
+        Annotation annotation_label = annotations_label.get(annotations_label.size() - 1);
+        String label = annotation_label.getContent();
+        String label_Transportation;
+        JSONObject labelJson = new JSONObject();
+        try {
+            labelJson = new JSONObject(label);
+            label_Transportation = labelJson.getString(Constants.ANNOTATION_Label_TRANSPORTATOIN);
+            switch (label_Transportation) {
+                case "走路":
+                    return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_FOOT;
+                case "自行車":
+                    return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_ON_BICYCLE;
+                case "汽機車":
+                    return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_IN_VEHICLE;
+                case "定點":
+                    return TransportationModeStreamGenerator.TRANSPORTATION_MODE_NAME_NO_TRANSPORTATION;
+                case "此移動不存在":
+                    return "此移動不存在";
+                case "與上一個相同":
+                    return "與上一個相同";
+                default:
+                    return "Unknown";
+            }
+
+        } catch (JSONException e) {
+
+        } catch (IndexOutOfBoundsException e) {
+
+        }
+        if (!labelJson.has(Constants.ANNOTATION_Label_TRANSPORTATOIN)) {
+
+            ArrayList<Annotation> annotations = mAnnotationSet.getAnnotationByTag(Constants.ANNOTATION_TAG_DETECTED_TRANSPORTATION_ACTIVITY);
+
+            String transportation;
+
+            if (annotations.size() == 0)
+                transportation = TransportationModeStreamGenerator.TRANSPORTATION_MODE_HASNT_DETECTED_FLAG;
+            else {
+                Annotation annotation = annotations.get(annotations.size() - 1);
+                transportation = annotation.getContent();
+                return transportation;
+            }
+
+        }
+        return "";
     }
 }

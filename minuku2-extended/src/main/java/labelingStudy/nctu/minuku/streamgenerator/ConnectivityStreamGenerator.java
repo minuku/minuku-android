@@ -1,7 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -10,10 +10,8 @@ import android.os.Handler;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.ConnectivityDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
@@ -23,10 +21,6 @@ import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
-
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileAvailable;
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileConnected;
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsWifiAvailable;
 
 /**
  * Created by Lawrence on 2017/8/22.
@@ -57,22 +51,20 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     private static ConnectivityManager mConnectivityManager;
 
     private ConnectivityStream mStream;
+    private ConnectivityDataRecordDAO mDAO;
 
-    public ConnectivityStreamGenerator(){
-
-        mConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
-
-    }
+    private SharedPreferences sharedPrefs;
 
     public ConnectivityStreamGenerator(Context applicationContext){
         super(applicationContext);
 
-        mContext = applicationContext;
-
+        this.mContext = applicationContext;
         this.mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ConnectivityDataRecord.class);
+
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
         mConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
-
 
         this.register();
     }
@@ -98,31 +90,24 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     public boolean updateStream() {
 
         Log.d(TAG, "updateStream called");
+
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         //TODO get service data
         ConnectivityDataRecord connectivityDataRecord =
                 new ConnectivityDataRecord(mNetworkType,mIsNetworkAvailable, mIsConnected, mIsWifiAvailable,
-                        mIsMobileAvailable, mIsWifiConnected, mIsMobileConnected);
+                        mIsMobileAvailable, mIsWifiConnected, mIsMobileConnected, String.valueOf(session_id));
         mStream.add(connectivityDataRecord);
         Log.d(TAG, "CheckFamiliarOrNot to be sent to event bus" + connectivityDataRecord);
         // also post an event.
         EventBus.getDefault().post(connectivityDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
-            List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
-            for (ConnectivityDataRecord c : connectivityDataRecords) {
-                Log.e(TAG, " isIsWifiConnected: "+String.valueOf(c.isIsWifiConnected()));
-                Log.e(TAG," NetworkType: "+c.getNetworkType());
-                Log.e(TAG, " isNetworkAvailable: "+String.valueOf(c.isNetworkAvailable()));
-                Log.e(TAG, " isIsConnected: "+ String.valueOf(c.isIsConnected()));
-                Log.e(TAG, " isIsWifiAvailable: "+String.valueOf(isIsWifiAvailable()));
-                Log.e(TAG, " isIsMobileAvailable: "+String.valueOf(isIsMobileAvailable()));
-                Log.e(TAG, " isIsMobileConnected: "+ String.valueOf(isIsMobileConnected()));
-
-            }
+            mDAO.add(connectivityDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
         }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
@@ -186,12 +171,16 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
             for (Network network : networks) {
                 activeNetwork = mConnectivityManager.getNetworkInfo(network);
 
+                //if there is no default network
+                if(activeNetwork == null){
+
+                    break;
+                }
+
                 if (activeNetwork.getType()== ConnectivityManager.TYPE_WIFI){
                     mIsWifiAvailable = activeNetwork.isAvailable();
                     mIsWifiConnected = activeNetwork.isConnected();
-                }
-
-                else if (activeNetwork.getType()==ConnectivityManager.TYPE_MOBILE){
+                } else if (activeNetwork.getType()==ConnectivityManager.TYPE_MOBILE){
                     mIsMobileAvailable = activeNetwork.isAvailable();
                     mIsMobileConnected = activeNetwork.isConnected();
                 }

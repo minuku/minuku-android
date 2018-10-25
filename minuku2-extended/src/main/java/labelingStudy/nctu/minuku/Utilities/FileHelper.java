@@ -204,7 +204,7 @@ public class FileHelper {
                 record.setProbableActivities(activityList);
                 record.setMostProbableActivity(activityList.get(0));
                 // Log.d("ARService", "[test replay] load activity is " + activityList.toString() + "  most probable activit is " + activityList.get(0));
-                record.setCreationTime(time);
+                record.setTimestamp(time);
                 Log.d(LOG_TAG, "[readTestFile] readline " + lines[i]);
 
                 //add to the AR service so that we can replay later

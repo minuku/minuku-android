@@ -1,23 +1,18 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
+import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.BatteryDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.BatteryDataRecord;
@@ -35,18 +30,26 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     private final String TAG = "BatteryStreamGenerator";
     private BatteryStream mStream;
-    private static Context mContext;
+    private BatteryDataRecordDAO mDAO;
 
     public static int mBatteryLevel= -1;
     public static float mBatteryPercentage = -1;
     private static String mBatteryChargingState = "NA";
     public static boolean isCharging = false;
+    private long detectedTime = Constants.INVALID_TIME_VALUE;
+    private Context mContext;
+
+    private SharedPreferences sharedPrefs;
 
     public BatteryStreamGenerator(Context applicationContext){
         super(applicationContext);
-        mContext = applicationContext;
 
+        this.mContext = applicationContext;
         this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(BatteryDataRecord.class);;
+
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
+
         this.register();
     }
 
@@ -71,56 +74,38 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         return mStream;
     }
 
-    @SuppressLint("LongLogTag")
     @Override
     public boolean updateStream() {
         Log.d(TAG, "updateStream called");
+
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         //TODO get service data
         BatteryDataRecord batteryDataRecord
-                = new BatteryDataRecord(mBatteryLevel, mBatteryPercentage, mBatteryChargingState, isCharging);
+                = new BatteryDataRecord(mBatteryLevel, mBatteryPercentage, mBatteryChargingState, isCharging, String.valueOf(session_id), detectedTime);
+
+        if((ScheduleAndSampleManager.getCurrentTimeInMillis() - detectedTime) >= Constants.MILLISECONDS_PER_MINUTE * 10
+                && (detectedTime != Constants.INVALID_TIME_VALUE)){
+
+            batteryDataRecord = new BatteryDataRecord(-1,
+                    -1, "NA", false, String.valueOf(session_id), detectedTime);
+        }
+
         mStream.add(batteryDataRecord);
         Log.d(TAG, "CheckFamiliarOrNot to be sent to event bus" + batteryDataRecord);
         // also post an event.
         EventBus.getDefault().post(batteryDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.batteryDataRecordDao().insertAll(batteryDataRecord);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date start =sdf.parse("2018/03/26 00:00:00");
-            Date end =sdf.parse("2018/03/26 15:37:00");
-
-            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
-            for (BatteryDataRecord b : batteryDataRecords) {
-                Log.e(TAG, " BatteryChargingState "+b.getBatteryChargingState());
-                Log.e(TAG, " BatteryPercentage "+String.valueOf(b.getBatteryPercentage()));
-                Log.e(TAG, " BatteryLevel: "+String.valueOf(b.getBatteryLevel()));
-                Log.e(TAG, " isCharging: "+String.valueOf(b.isCharging()));
-            }
-
-//            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
-//            for (BatteryDataRecord b : batteryDataRecords) {
-//                Date dt=new Date(b.getCreationTime());
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                String time=sdf.format(dt);
-//                Log.d(TAG, time);
-//            }
-
-//            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getRecordBetweenTimes(start.getTime(), end.getTime());
-//            for (BatteryDataRecord b : batteryDataRecords) {
-//                Date dt=new Date(b.getCreationTime());
-//                String time=sdf.format(dt);
-//                Log.d(TAG, time);
-//            }
-
-        } catch (NullPointerException e){ //Sometimes no data is normal
+            mDAO.add(batteryDataRecord);
+//            mDAO.query_counting();
+        } catch (DAOException e) {
             e.printStackTrace();
             return false;
-        } catch (ParseException e) {
+        }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
+            return false;
         }
 
         return false;
@@ -156,6 +141,9 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+
+                detectedTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
+
                 int status = intent.getIntExtra("status", -1);
                 //int health = intent.getIntExtra("health", 0);
                 //boolean present = intent.getBooleanExtra("present",false);

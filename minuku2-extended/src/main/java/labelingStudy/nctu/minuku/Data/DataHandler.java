@@ -28,7 +28,7 @@ public class DataHandler {
 
     public static ArrayList<String> getDataBySession(int sessionId, String sourceName) {
 
-        Log.d(TAG, "[test show trip] getDataBySession, seession id" + sessionId + " table name " + DBHelper.LOCATION_TABLE);
+        Log.d(TAG, "[test show trip] getDataBySession, seession id" + sessionId + " table name " + DBHelper.location_table);
         ArrayList<String> resultList = new ArrayList<String>();
 
         //first know which table and column to query..
@@ -63,7 +63,7 @@ public class DataHandler {
 
         long latestTime = 0;
 
-        res = DBHelper.queryLastRecord(
+        res = DBHelper.queryLastRecordBySession(
                 sourceName,
                 sessionId);
 

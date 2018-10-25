@@ -22,8 +22,8 @@
 
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -33,8 +33,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
@@ -45,8 +45,8 @@ import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
 
-import static labelingStudy.nctu.minuku.config.Constants.CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
 import static android.content.Context.SENSOR_SERVICE;
+import static labelingStudy.nctu.minuku.config.Constants.CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
 
 /**
  * Created by neerajkumar on 7/18/16.
@@ -58,6 +58,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     private SensorStream mStream;
     private String TAG = "SensorStreamGenerator";
     private Sensor sensor;
+    SensorDataRecordDAO mDAO;
     public static SensorDataRecord sensorDataRecord;
     /** Tag for logging. */
     private static final String LOG_TAG = "PhoneSensorMnger";
@@ -66,7 +67,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     public static final String RECORD_DATA_PROPERTY_NAME = "SensorValues";
     /**system components**/
     private static Context mContext;
-    private static SensorManager mSensorManager ;
+    private static SensorManager mSensorManager;
     private static List<Sensor> SensorList;
 
     public static final String STRING_PHONE_SENSOR_ACCELEROMETER = "Sensor-Accelerometer";
@@ -117,11 +118,14 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     String mAccele_str, mGyroscope_str, mGravity_str, mLinearAcceleration_str, mRotationVector_str,
             mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str,  mAmbientTemperature_str;
 
+    private SharedPreferences sharedPrefs;
+
     /** handle stream **/
     /**sensorStreamGenerator**/
     public SensorStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new SensorStream(Constants.SENSOR_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(SensorDataRecord.class);
 
         mContext = applicationContext;
         //call sensor manager from the service
@@ -137,6 +141,8 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         mHeartRate = mStepCount = mStepDetect = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
         mLight = mPressure = mRelativeHumidity = mProximity = mAmbientTemperature = CONTEXT_SOURCE_INVALID_VALUE_FLOAT;
 
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
+
         //initiate registered sensor list
         RegisterAvailableSensors();
         this.register();  // stream
@@ -150,7 +156,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     }
 
     /**register**/
-
     @Override
     public void register() {
         Log.d(TAG, "Registering with StreamManager.");
@@ -172,39 +177,25 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     @Override
     public boolean updateStream() {
         Log.d(TAG, "updateStream called");
+//        int session_id = SessionManager.getOngoingSessionId();
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
+        Log.d(TAG,"mAccele_str = "+mAccele_str+" mGyroscope_str = "+mGyroscope_str+" mGravity_str = "+mGravity_str+" mLinearAcceleration_str = "+mLinearAcceleration_str);
+        Log.d(TAG,"mRotationVector_str = "+mRotationVector_str+" mProximity_str = "+mProximity_str+" mMagneticField_str = "+mMagneticField_str+" mLight_str = "+mLight_str);
+        Log.d(TAG,"mPressure_str = "+mPressure_str+" mRelativeHumidity_str = "+mRelativeHumidity_str+" mAmbientTemperature_str = "+mAmbientTemperature_str+" session_id = "+session_id);
 
         SensorDataRecord sensorDataRecord = new SensorDataRecord(mAccele_str, mGyroscope_str, mGravity_str, mLinearAcceleration_str,
-                mRotationVector_str, mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str, mAmbientTemperature_str);
+                mRotationVector_str, mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str, mAmbientTemperature_str, String.valueOf(session_id));
         mStream.add(sensorDataRecord);
         Log.d(TAG, "Sensor to be sent to event bus" + sensorDataRecord);
 
         //post an event
         EventBus.getDefault().post(sensorDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.sensorDataRecordDao().insertAll(sensorDataRecord);
-            List<SensorDataRecord> sensorDataRecords = db.sensorDataRecordDao().getAll();
-
-            for (SensorDataRecord s : sensorDataRecords) {
-                Log.e(TAG," Accele: "+ s.getmAccele_str());
-                Log.e(TAG," AmbientTemperature: "+ s.getmAmbientTemperature_str());
-                Log.e(TAG," Gravity: "+ s.getmGravity_str());
-
-                Log.e(TAG," Gyroscope: "+ s.getmGyroscope_str());
-                Log.e(TAG," Light: "+ s.getmLight_str());
-                Log.e(TAG," LinearAcceleration: "+ s.getmLinearAcceleration_str());
-                Log.e(TAG," MagneticField: "+ s.getmMagneticField_str());
-                Log.e(TAG," Pressure: "+ s.getmPressure_str());
-                Log.e(TAG," Proximity: "+ s.getmProximity_str());
-                Log.e(TAG," RelativeHumidity: "+ s.getmRelativeHumidity_str());
-                Log.e(TAG," RotationVector: "+ s.getmRotationVector_str());
-
-            }
-
-
+            mDAO.add(sensorDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;
@@ -213,11 +204,9 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         return true;
     }
 
-
-
     @Override
     public long getUpdateFrequency() {
-        return 1; // 1 minutes
+        return 1;
     }
 
     @Override
@@ -229,10 +218,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     public void onStreamRegistration() {
 
     }
-
-    /**handle different json form convertion**/
-
-
 
     /** handle sensor **/
     /**register sensor - Not sure**/
