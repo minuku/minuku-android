@@ -74,19 +74,24 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCiV1bU3lnapK7kJJh-C1DIsGCZsf8JK8o" />
         -->
-
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.CheckPointActivity" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.DeviceIdPage" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.PlaceSelection" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_move" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_site" />
-        <activity android:name="labelingStudy.nctu.minuku_2.controller.Timeline">
-            <intent-filter>
-                <action android:name="app.intent.action.Launch" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+        <activity
+            android:name="labelingStudy.nctu.minuku_2.controller.WelcomeActivity"
+            android:launchMode="singleInstance"
+            android:persistent="true">
         </activity>
+
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.CheckPointActivity" />-->
+        <activity android:name="labelingStudy.nctu.minuku_2.controller.DeviceIdPage" />
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.PlaceSelection" />-->
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.CounterActivity" />-->
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_move" />-->
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.Timer_site" />-->
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.Timeline">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="app.intent.action.Launch" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
 
         <activity
             android:name="labelingStudy.nctu.minuku_2.controller.Dispatch"
@@ -98,11 +103,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="labelingStudy.nctu.minuku_2.controller.WelcomeActivity"
-            android:launchMode="singleInstance"
-            android:persistent="true">
-        </activity>
+
 
         <!-- Activities included from third party libraries -->
         <activity android:name="com.desmond.squarecamera.CameraActivity" />
@@ -134,7 +135,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="labelingStudy.nctu.minuku_2.MainActivity" />
+        <!--<activity android:name="labelingStudy.nctu.minuku_2.MainActivity" />-->
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="490219889f9c5227241662e1fa307d31f82f536d" />

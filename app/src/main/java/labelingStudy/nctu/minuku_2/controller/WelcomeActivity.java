@@ -12,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +27,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
-    private Button chooseMyMobility, watchMyTimeline;
-
-    private String current_task;
-
     private SharedPreferences sharedPrefs;
 
     private boolean firstTimeOrNot;
@@ -42,25 +36,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        chooseMyMobility = (Button) findViewById(R.id.chooseMyMobility);
-        chooseMyMobility.setOnClickListener(choosingMyMobility);
-
-        watchMyTimeline = (Button) findViewById(R.id.watchMyTimeline);
-        watchMyTimeline.setOnClickListener(watchingMyTimeline);
-
-//        startService(new Intent(getBaseContext(), BackgroundService.class));
-
-        current_task = getResources().getString(R.string.current_task);
-        if(current_task.equals("ESM")) {
-
-            //conceal the button
-            chooseMyMobility.setVisibility(View.GONE);
-        }else if(current_task.equals("CAR")){
-
-            chooseMyMobility.setText("切換移動方式");
-        }
-
-//        EventBus.getDefault().register(this);
 
         sharedPrefs = getSharedPreferences(Constants.sharedPrefString, MODE_PRIVATE);
 
@@ -71,10 +46,8 @@ public class WelcomeActivity extends AppCompatActivity {
             startServiceWork();
         }
 
-        Constants.currentWork = getResources().getString(R.string.current_task);
-
-        Intent intent = new Intent(getApplicationContext(), Timeline.class);
-        MinukuNotificationManager.setIntentToTimeline(intent);
+//        Intent intent = new Intent(getApplicationContext(), Timeline.class);
+//        MinukuNotificationManager.setIntentToTimeline(intent);
     }
 
     public void onResume(){
@@ -120,35 +93,35 @@ public class WelcomeActivity extends AppCompatActivity {
         return true;
     }
 
-    private Button.OnClickListener choosingMyMobility = new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//    private Button.OnClickListener choosingMyMobility = new Button.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            String current_task = getResources().getString(R.string.current_task);
+//
+//
+//            if(current_task.equals("PART")) {
+//
+//                Intent intent = new Intent(WelcomeActivity.this, Timer_move.class);
+//                startActivity(intent);
+//            }else if(current_task.equals("CAR")){
+//
+//                Intent intent = new Intent(WelcomeActivity.this, CheckPointActivity.class);
+//                startActivity(intent);
+//            }
+//        }
+//    };
 
-            String current_task = getResources().getString(R.string.current_task);
-
-
-            if(current_task.equals("PART")) {
-
-                Intent intent = new Intent(WelcomeActivity.this, Timer_move.class);
-                startActivity(intent);
-            }else if(current_task.equals("CAR")){
-
-                Intent intent = new Intent(WelcomeActivity.this, CheckPointActivity.class);
-                startActivity(intent);
-            }
-        }
-    };
-
-    private Button.OnClickListener watchingMyTimeline = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            Intent intent = new Intent(WelcomeActivity.this, Timeline.class);
-
-            startActivity(intent);
-
-        }
-    };
+//    private Button.OnClickListener watchingMyTimeline = new Button.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//
+//            Intent intent = new Intent(WelcomeActivity.this, Timeline.class);
+//
+//            startActivity(intent);
+//
+//        }
+//    };
 
     public void startpermission(){
 
@@ -156,9 +129,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);  //usage
         startActivity(intent1);
-
-//        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS); //notification
-//        startActivity(intent);
 
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));	//location
     }

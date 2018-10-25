@@ -22,11 +22,10 @@
 
 <resources>
     <!--  current_task: PART ESM CAR  -->
-    <string name="current_task">ESM</string>
 
     <string name="no_activity">未知</string>
 
-    <string name="app_name">Labeling Study</string>
+    <string name="app_name">Minuku</string>
     <string name="ok">OK</string>
     <string name="permission_location_rationale">The app needs location for context</string>
     <string name="squarecamera__app_name">Minuku</string>

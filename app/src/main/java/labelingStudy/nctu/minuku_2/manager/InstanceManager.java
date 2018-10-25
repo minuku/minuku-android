@@ -48,7 +48,7 @@ import labelingStudy.nctu.minuku.streamgenerator.SensorStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TelephonyStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TransportationModeStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.UserInteractionStreamGenerator;
-import labelingStudy.nctu.minuku_2.question.QuestionConfig;
+//import labelingStudy.nctu.minuku_2.question.QuestionConfig;
 
 /**
  * Created by neerajkumar on 8/28/16.
@@ -92,40 +92,6 @@ public class InstanceManager {
         DBHelper dBHelper = new DBHelper(getApplicationContext());
 
         MinukuDAOManager daoManager = MinukuDAOManager.getInstance();
-
-        //build new DAO here.
-//        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
-
-//        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
-//
-//        TransportationModeDAO transportationModeDAO = new TransportationModeDAO(getApplicationContext());
-//        daoManager.registerDaoFor(TransportationModeDataRecord.class, transportationModeDAO);
-//
-//        ConnectivityDataRecordDAO connectivityDataRecordDAO = new ConnectivityDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(ConnectivityDataRecord.class, connectivityDataRecordDAO);
-//
-//        BatteryDataRecordDAO batteryDataRecordDAO = new BatteryDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(BatteryDataRecord.class, batteryDataRecordDAO);
-//
-//        RingerDataRecordDAO ringerDataRecordDAO = new RingerDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(RingerDataRecord.class, ringerDataRecordDAO);
-//
-//        AppUsageDataRecordDAO appUsageDataRecordDAO = new AppUsageDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(AppUsageDataRecord.class, appUsageDataRecordDAO);
-
-//        TelephonyDataRecordDAO telephonyDataRecordDAO = new TelephonyDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(TelephonyDataRecord.class, telephonyDataRecordDAO);
-//
-//        AccessibilityDataRecordDAO accessibilityDataRecordDAO = new AccessibilityDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(AccessibilityDataRecord.class, accessibilityDataRecordDAO);
-//
-//        SensorDataRecordDAO sensorDataRecordDAO = new SensorDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(SensorDataRecord.class, sensorDataRecordDAO);
-//
-//        UserInteractionDataRecordDAO userInteractionDataRecordDAO = new UserInteractionDataRecordDAO(getApplicationContext());
-//        daoManager.registerDaoFor(UserInteractionDataRecord.class, userInteractionDataRecordDAO);
 
 
         // Create corresponding stream generators. Only to be created once in Main Activity
@@ -180,7 +146,7 @@ public class InstanceManager {
         //QuestionnaireManager questionnaireManager = new QuestionnaireManager(getApplicationContext());
 
         //create questionnaires
-        QuestionConfig.getInstance().setUpQuestions(getApplicationContext());
+//        QuestionConfig.getInstance().setUpQuestions(getApplicationContext());
 
         // Fetch tags
 //        Model tagsModel = Model.getInstance();
