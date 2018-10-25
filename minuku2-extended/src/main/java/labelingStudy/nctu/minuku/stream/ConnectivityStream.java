@@ -11,10 +11,6 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/8/22.
  */
 
-/**
- * The collection of ConnectivityDataRecord
- *      {@link ConnectivityDataRecord}
- */
 public class ConnectivityStream extends AbstractStreamFromDevice<ConnectivityDataRecord> {
     public ConnectivityStream(int maxSize) {
         super(maxSize);

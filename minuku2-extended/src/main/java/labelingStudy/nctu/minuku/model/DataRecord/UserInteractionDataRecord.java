@@ -1,24 +1,14 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
 
 /**
- * Created by tingwei on 2018/9/10.
+ * Created by Lawrence on 2018/8/29.
  */
 
-/**
- * UserInteractionDataRecord stores information about when the user present and unlock their phone.
- */
-@Entity
 public class UserInteractionDataRecord implements DataRecord {
-
-    @PrimaryKey(autoGenerate = true)
-    private int _id;
 
     public long creationTime;
 
@@ -34,14 +24,6 @@ public class UserInteractionDataRecord implements DataRecord {
         this.unlock = unlock;
         this.background = background;
         this.foreground = foreground;
-    }
-
-    public int get_id() {
-        return _id;
-    }
-
-    public void set_id(int _id) {
-        this._id = _id;
     }
 
     @Override

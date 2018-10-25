@@ -1,9 +1,6 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
+import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
@@ -12,43 +9,31 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/7/22.
  */
 
-/**
- * ConnectivityDataRecord stores information about network connecting condition and status
- */
-@Entity
-public class ConnectivityDataRecord implements DataRecord {
+public class ConnectivityDataRecord implements DataRecord{
 
-    @PrimaryKey(autoGenerate = true)
-    private long _id;
-
-    @ColumnInfo(name = "creationTime")
     public long creationTime;
+    private int taskDayCount;
+    private long hour;
+    //network connectivity
+    public static String NETWORK_TYPE_WIFI = "Wifi";
+    public static String NETWORK_TYPE_MOBILE = "Mobile";
 
-    @ColumnInfo(name = "NetworkType")
-    public static String NetworkType = "NA";
+    private static String NetworkType = "NA";
+    private static boolean IsNetworkAvailable = false;
+    private static boolean IsConnected = false;
+    private static boolean IsWifiAvailable = false;
+    private static boolean IsMobileAvailable = false;
+    private static boolean IsWifiConnected = false;
+    private static boolean IsMobileConnected = false;
+    private String sessionid;
 
-    @ColumnInfo(name = "IsNetworkAvailable")
-    public static boolean IsNetworkAvailable = false;
-
-    @ColumnInfo(name = "IsConnected")
-    public static boolean IsConnected = false;
-
-    @ColumnInfo(name = "IsWifiAvailable")
-    public static boolean IsWifiAvailable = false;
-
-    @ColumnInfo(name = "IsMobileAvailable")
-    public static boolean IsMobileAvailable = false;
-
-    @ColumnInfo(name = "IsWifiConnected")
-    public static boolean IsWifiConnected = false;
-
-    @ColumnInfo(name = "IsMobileConnected")
-    public static boolean IsMobileConnected = false;
-
+    public ConnectivityDataRecord(){}
 
     public ConnectivityDataRecord(String NetworkType,boolean IsNetworkAvailable, boolean IsConnected, boolean IsWifiAvailable,
                                   boolean IsMobileAvailable, boolean IsWifiConnected, boolean IsMobileConnected){
         this.creationTime = new Date().getTime();
+//        this.taskDayCount = Constants.TaskDayCount;
+//        this.hour = getmillisecondToHour(creationTime);
         this.NetworkType = NetworkType;
         this.IsNetworkAvailable = IsNetworkAvailable;
         this.IsConnected = IsConnected;
@@ -58,14 +43,43 @@ public class ConnectivityDataRecord implements DataRecord {
         this.IsMobileConnected = IsMobileConnected;
 
     }
-    public ConnectivityDataRecord() {}
 
-    public long get_id() {
-        return _id;
+    public ConnectivityDataRecord(String NetworkType,boolean IsNetworkAvailable, boolean IsConnected, boolean IsWifiAvailable,
+                                  boolean IsMobileAvailable, boolean IsWifiConnected, boolean IsMobileConnected, String sessionid){
+        this.creationTime = new Date().getTime();
+//        this.taskDayCount = Constants.TaskDayCount;
+//        this.hour = getmillisecondToHour(creationTime);
+        this.NetworkType = NetworkType;
+        this.IsNetworkAvailable = IsNetworkAvailable;
+        this.IsConnected = IsConnected;
+        this.IsWifiAvailable = IsWifiAvailable;
+        this.IsMobileAvailable = IsMobileAvailable;
+        this.IsWifiConnected = IsWifiConnected;
+        this.IsMobileConnected = IsMobileConnected;
+        this.sessionid = sessionid;
     }
 
-    public void set_id(long _id) {
-        this._id = _id;
+    public String getSessionid() {
+        return sessionid;
+    }
+
+    private long getmillisecondToHour(long timeStamp){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeStamp);
+
+        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        return mhour;
+
+    }
+
+    public long getHour(){
+        return hour;
+    }
+
+    public int getTaskDayCount(){
+        return taskDayCount;
     }
 
     @Override
@@ -73,63 +87,32 @@ public class ConnectivityDataRecord implements DataRecord {
         return creationTime;
     }
 
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public static String getNetworkType() {
+    public String getNetworkType(){
         return NetworkType;
     }
 
-    public static void setNetworkType(String networkType) {
-        NetworkType = networkType;
-    }
-
-    public static boolean isNetworkAvailable() {
+    public boolean getIsNetworkAvailable(){
         return IsNetworkAvailable;
     }
 
-    public static void setIsNetworkAvailable(boolean isNetworkAvailable) {
-        IsNetworkAvailable = isNetworkAvailable;
-    }
-
-    public static boolean isIsConnected() {
+    public boolean getIsConnected(){
         return IsConnected;
     }
 
-    public static void setIsConnected(boolean isConnected) {
-        IsConnected = isConnected;
-    }
-
-    public static boolean isIsWifiAvailable() {
+    public boolean getIsWifiAvailable(){
         return IsWifiAvailable;
     }
 
-    public static void setIsWifiAvailable(boolean isWifiAvailable) {
-        IsWifiAvailable = isWifiAvailable;
-    }
-
-    public static boolean isIsMobileAvailable() {
+    public boolean getIsMobileAvailable(){
         return IsMobileAvailable;
     }
 
-    public static void setIsMobileAvailable(boolean isMobileAvailable) {
-        IsMobileAvailable = isMobileAvailable;
-    }
-
-    public static boolean isIsWifiConnected() {
+    public boolean getIsWifiConnected(){
         return IsWifiConnected;
     }
 
-    public static void setIsWifiConnected(boolean isWifiConnected) {
-        IsWifiConnected = isWifiConnected;
-    }
-
-    public static boolean isIsMobileConnected() {
+    public boolean getIsMobileConnected(){
         return IsMobileConnected;
     }
 
-    public static void setIsMobileConnected(boolean isMobileConnected) {
-        IsMobileConnected = isMobileConnected;
-    }
 }

@@ -11,10 +11,6 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/5/22.
  */
 
-/**
- * The collection of TransportationModeDataRecord
- *      {@link TransportationModeDataRecord}
- */
 public class TransportationModeStream extends AbstractStreamFromDevice<TransportationModeDataRecord> {
 
     public TransportationModeStream(int maxSize) {

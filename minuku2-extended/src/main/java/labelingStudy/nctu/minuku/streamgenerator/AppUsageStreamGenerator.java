@@ -4,8 +4,8 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,12 +20,14 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.AppUsageDataRecord;
 import labelingStudy.nctu.minuku.stream.AppUsageStream;
+import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
@@ -35,9 +37,7 @@ import static android.content.Context.POWER_SERVICE;
 /**
  * Created by Jimmy on 2017/8/8.
  */
-/**
- * AppUsageStreamGenerator collects data about conditions of other applications user has used, while also collect the screen status to see the interaction with the screen.
- */
+
 public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageDataRecord>{
 
     private Context mContext;
@@ -53,17 +53,17 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
     /**Table Names**/
     public static final String RECORD_TABLE_NAME_APPUSAGE = "Record_Table_AppUsage";
 
-    public static int sMainThreadUpdateFrequencyInSeconds = 5;
-    public static long sMainThreadUpdateFrequencyInMilliseconds = sMainThreadUpdateFrequencyInSeconds * Constants.MILLISECONDS_PER_SECOND;
+    public static int mainThreadUpdateFrequencyInSeconds = 5;
+    public static long mainThreadUpdateFrequencyInMilliseconds = mainThreadUpdateFrequencyInSeconds *Constants.MILLISECONDS_PER_SECOND;
 
     /** Applicaiton Usage Access **/
     //how often we get the update
-    public static int sApplicationUsageUpdateFrequencyInSeconds = sMainThreadUpdateFrequencyInSeconds;
-    public static long sApplicaitonUsageUpdateFrequencyInMilliseconds = sApplicationUsageUpdateFrequencyInSeconds * Constants.MILLISECONDS_PER_SECOND;
+    public static int mApplicaitonUsageUpdateFrequencyInSeconds = mainThreadUpdateFrequencyInSeconds;
+    public static long mApplicaitonUsageUpdateFrequencyInMilliseconds = mApplicaitonUsageUpdateFrequencyInSeconds *Constants.MILLISECONDS_PER_SECOND;
 
     //how far we look back
-    public static int sApplicationUsageSinceLastDurationInSeconds = sApplicationUsageUpdateFrequencyInSeconds;
-    public static long sApplicationUsageSinceLastDurationInMilliseconds = sApplicationUsageSinceLastDurationInSeconds * Constants.MILLISECONDS_PER_SECOND;
+    public static int mApplicaitonUsageSinceLastDurationInSeconds = mApplicaitonUsageUpdateFrequencyInSeconds;
+    public static long mApplicaitonUsageSinceLastDurationInMilliseconds = mApplicaitonUsageSinceLastDurationInSeconds *Constants.MILLISECONDS_PER_SECOND;
 
     /** context measure **/
     public static final String CONTEXT_SOURCE_MEASURE_APPUSAGE_SCREEN_STATUS = "ScreenStatus";
@@ -80,22 +80,25 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
     public static final String RECORD_DATA_PROPERTY_APPUSAGE_USER_USING = "Users";
 
     /**latest running app **/
-    private static String sLatestForegroundActivity = "NA"; //Latest_Foreground_Activity
-    private static String sLatestForegroundPackage = "NA"; //Latest_Used_App
-    private static String sLatestForegroundPackageTime = "NA";
-    private static String sRecentUsedAppsInLastHour = "NA";
+    private static String mLastestForegroundActivity= "NA"; //Latest_Foreground_Activity
+    private static String mLastestForegroundPackage= "NA"; //Latest_Used_App
+    private static String mLastestForegroundPackageTime= "NA";
+    private static String mRecentUsedAppsInLastHour= "NA";
 
     //screen on and off
-    private String mScreenStatus;
+    private String Screen_Status;
     private static final String STRING_SCREEN_OFF = "Screen_off";
     private static final String STRING_SCREEN_ON = "Screen_on";
     private static final String STRING_INTERACTIVE = "Interactive";
     private static final String STRING_NOT_INTERACTIVE = "Not_Interactive";
 
+    AppUsageDataRecordDAO mDAO;
+
+    private SharedPreferences sharedPrefs;
 
     public static AppUsageDataRecord toCheckFamiliarOrNotLocationDataRecord;
 
-    public AppUsageStreamGenerator(Context applicationContext) {
+    public AppUsageStreamGenerator(Context applicationContext){
         super(applicationContext);
 
         //load app XML
@@ -103,11 +106,13 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         //loadAppAndPackage();
 
         mContext = applicationContext;
-        mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
+        this.mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AppUsageDataRecord.class);
 
         mPowerManager = (PowerManager) applicationContext.getSystemService(POWER_SERVICE);
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, mContext.MODE_PRIVATE);
 
-        register();
+        this.register();
     }
 
     @Override
@@ -133,11 +138,15 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 //        getScreenStatus();
 //        getAppUsageUpdate();
 
-        Log.d(TAG,"mScreenStatus : " + mScreenStatus + " LastestForegroundPackage : " + sLatestForegroundPackage + " LastestForegroundActivity : " + sLatestForegroundActivity);
-        AppUsageDataRecord appUsageDataRecord = new AppUsageDataRecord(mScreenStatus, sLatestForegroundPackage, sLatestForegroundActivity);
+        Log.d(TAG,"Screen_Status : "+Screen_Status+" LastestForegroundPackage : "+mLastestForegroundPackage+" LastestForegroundActivity : "+mLastestForegroundActivity);
+
+//        int session_id = SessionManager.getOngoingSessionId();
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
+        AppUsageDataRecord appUsageDataRecord = new AppUsageDataRecord(Screen_Status,mLastestForegroundPackage,mLastestForegroundActivity, String.valueOf(session_id));
 
         //appUsageDataRecord.setCreationTime();
-        if (appUsageDataRecord != null) {
+        if(appUsageDataRecord!=null) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
@@ -148,45 +157,28 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    appDatabase db;
-                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                            .allowMainThreadQueries()
-                            .build();
-                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
-                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
-                    Log.d(TAG, "test test");
-                    for (AppUsageDataRecord a : appUsageDataRecords) {
-                        Log.e(TAG, "Latest_Used_App " + a.getLatest_Used_App());
-                        Log.e(TAG, "Latest_Foreground_Activity " + a.getLatest_Foreground_Activity());
-                        Log.e(TAG, "getScreen_Status " + a.getScreen_Status());
-                    }
-
-                } catch (NullPointerException e) {
+                    mDAO.add(appUsageDataRecord);
+                } catch (DAOException e) {
                     e.printStackTrace();
                     return false;
                 }
 
             } else {
+                //AppUsageDataRecord newappUsageDataRecord = new AppUsageDataRecord();
+
+//                    appUsageDataRecord.getScreenStatus();
+//                            appUsageDataRecord.getLatestUsedApp();
+//                            appUsageDataRecord.getLatestForegroundActivity();
+                //appUsageDataRecord.getUsers());
+
                 mStream.add(appUsageDataRecord);
                 Log.e(TAG, "AppUsage to be sent to event bus" + appUsageDataRecord);
 
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    appDatabase db;
-                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                            .allowMainThreadQueries()
-                            .build();
-                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
-
-                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
-
-                    for (AppUsageDataRecord a : appUsageDataRecords) {
-                        Log.e(TAG, "Latest_Used_App " + a.getLatest_Used_App());
-                        Log.e(TAG, "Latest_Foreground_Activity " + a.getLatest_Foreground_Activity());
-                        Log.e(TAG, "getScreen_Status " + a.getScreen_Status());
-                    }
-                } catch (NullPointerException e) {
+                    mDAO.add(appUsageDataRecord);
+                } catch (DAOException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -228,7 +220,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 //                    // delay 5 second, wait for user confirmed.
 //                    Thread.sleep(5000);
 //
-//                } catch(InterruptedException e) {
+//                } catch(InterruptedException e){
 //                    e.printStackTrace();
 //                }
 //
@@ -238,7 +230,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         }
     }
 
-    public void runAppUsageMainThread() {
+    public void runAppUsageMainThread(){
 
         Log.d(TAG, "runAppUsageMainThread") ;
 
@@ -252,11 +244,11 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
                 if (!usageAccessPermissionGranted) {
                     Log.d(TAG, "[testing app] user has not granted permission, need to bring them to the setting");
-                } else {
+                }else {
                     getScreenStatus();
                     getAppUsageUpdate();
                 }
-                mMainThread.postDelayed(this, sMainThreadUpdateFrequencyInMilliseconds);
+                mMainThread.postDelayed(this, mainThreadUpdateFrequencyInMilliseconds);
 
             }
         };
@@ -314,23 +306,24 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             //UsageStatsManager mIs available after Lollipop
+            UsageStatsManager usm = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
 
             List<UsageStats> appList = null;
 
             Log.d(TAG, "test source being requested [testing app] API 21 query usage between:  " +
-                    String.valueOf( new AppUsageDataRecord().getCurrentTimeInMillis() - sApplicationUsageSinceLastDurationInMilliseconds)
+                    String.valueOf( new AppUsageDataRecord().getCurrentTimeInMillis() - mApplicaitonUsageSinceLastDurationInMilliseconds)
                     + " and " + new AppUsageDataRecord().getCurrentTimeInMillis());
 
 
-            UsageStatsManager usm = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
             //get the application usage statistics
             appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                     //start time
-                    new AppUsageDataRecord().getCurrentTimeInMillis() - sApplicationUsageSinceLastDurationInMilliseconds,
+                    new AppUsageDataRecord().getCurrentTimeInMillis()- mApplicaitonUsageSinceLastDurationInMilliseconds,
                     //end time: until now
                     new AppUsageDataRecord().getCurrentTimeInMillis());
 
-            sRecentUsedAppsInLastHour = "";
+            mRecentUsedAppsInLastHour = "";
+
 
             //if there's an app list
             if (appList != null && appList.size() > 0) {
@@ -339,95 +332,104 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 for (UsageStats usageStats : appList) {
                     mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
                     Log.d(TAG, "test app:  " + "ScheduleAndSampleManager.getTimeString(usageStats.getLastTimeUsed())" +
-                            " usage stats " + usageStats.getPackageName() + " total time in foreground " + usageStats.getTotalTimeInForeground() / 60000
+                            " usage stats " + usageStats.getPackageName() + " total time in foreground " + usageStats.getTotalTimeInForeground()/60000
                             + " between " + "ScheduleAndSampleManager.getTimeString(usageStats.getFirstTimeStamp())" + " and " + "ScheduleAndSampleManager.getTimeString(usageStats.getLastTimeStamp())");
+
                 }
 
 
 
                 if (mySortedMap != null && !mySortedMap.isEmpty()) {
 
-                    sLatestForegroundPackage = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                    //sLatestForegroundPackageTime = ScheduleAndSampleManager.getTimeString(mySortedMap.get(mySortedMap.lastKey()).getLastTimeUsed());
+                    mLastestForegroundPackage = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+                    //mLastestForegroundPackageTime = ScheduleAndSampleManager.getTimeString(mySortedMap.get(mySortedMap.lastKey()).getLastTimeUsed());
 
-                    Log.d(TAG, "test app " + sLatestForegroundPackage + " time " +
-                            "sLatestForegroundPackageTime");
+                    Log.d(TAG, "test app "  +  mLastestForegroundPackage + " time " +
+                            "mLastestForegroundPackageTime");
                 }
 
 
-                //create a string for sRecentUsedAppsInLastHour
-                for (Map.Entry<Long, UsageStats> entry : mySortedMap.entrySet()) {
+                //create a string for mRecentUsedAppsInLastHour
+                for(Map.Entry<Long, UsageStats> entry : mySortedMap.entrySet()) {
                     long key = entry.getKey();
                     UsageStats stats = entry.getValue();
 
-                    //sRecentUsedAppsInLastHour += stats.getPackageName() + ":" + ScheduleAndSampleManager.getTimeString(key);
-                    if (key != mySortedMap.lastKey()) {
-                        sRecentUsedAppsInLastHour += "::";
-                    }
+                    //mRecentUsedAppsInLastHour += stats.getPackageName() + ":" + ScheduleAndSampleManager.getTimeString(key);
+                    if (key!=mySortedMap.lastKey())
+                        mRecentUsedAppsInLastHour += "::";
+
                 }
+
+
             }
-        } else {
+        }
+
+
+        else {
             getForegroundActivityBeforeAPI21();
         }
 
     }
 
-    protected void getForegroundActivityBeforeAPI21() {
+    protected void getForegroundActivityBeforeAPI21(){
 
-
+        String curRunningForegrndActivity="";
+        String curRunningForegrndPackNamge="";
         /** get the info from the currently foreground running activity **/
-        List<ActivityManager.RunningTaskInfo> taskInfo = null;
+        List<ActivityManager.RunningTaskInfo> taskInfo=null;
 
         //get the latest (or currently running) foreground activity and package name
-        if (mActivityManager != null) {
+        if ( mActivityManager!=null){
 
             taskInfo = mActivityManager.getRunningTasks(1);
 
-            String curRunningForegroundActivity = "";
-            String curRunningForegroundPackName = "";
-            curRunningForegroundActivity = taskInfo.get(0).topActivity.getClassName();
-            curRunningForegroundPackName = taskInfo.get(0).topActivity.getPackageName();
+            curRunningForegrndActivity = taskInfo.get(0).topActivity.getClassName();
+            curRunningForegrndPackNamge = taskInfo.get(0).topActivity.getPackageName();
 
-            Log.d(TAG, "test app os version " + android.os.Build.VERSION.SDK_INT + " under 21 "
-                    + curRunningForegroundActivity + " " + curRunningForegroundPackName );
+            Log.d(TAG, "test app os version " +android.os.Build.VERSION.SDK_INT + " under 21 "
+                    + curRunningForegrndActivity + " " + curRunningForegrndPackNamge );
 
             //store the running activity and its package name in the Context Extractor
-            if (taskInfo != null) {
-                setCurrentForegroundActivityAndPackage(curRunningForegroundActivity, curRunningForegroundPackName);
+            if(taskInfo!=null){
+                setCurrentForegroundActivityAndPackage(curRunningForegrndActivity, curRunningForegrndPackNamge);
             }
 
         }
+
     }
 
     public void setCurrentForegroundActivityAndPackage(String curForegroundActivity, String curForegroundPackage) {
 
-        sLatestForegroundActivity = curForegroundActivity;
-        sLatestForegroundPackage = curForegroundPackage;
+        mLastestForegroundActivity=curForegroundActivity;
+        mLastestForegroundPackage=curForegroundPackage;
 
-        Log.d(TAG, "[setCurrentForegroundActivityAndPackage] the current running package mIs " + sLatestForegroundActivity + " and the activity mIs " + sLatestForegroundPackage);
+        Log.d(TAG, "[setCurrentForegroundActivityAndPackage] the current running package mIs " + mLastestForegroundActivity + " and the activity mIs " + mLastestForegroundPackage);
     }
 
     public String getScreenStatus() {
         Log.e(TAG, "GetScreenStatus called.");
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+
             //use isInteractive after api 20
-            if (mPowerManager.isInteractive()) {
-                mScreenStatus = STRING_INTERACTIVE;
-            } else {
-                mScreenStatus = STRING_SCREEN_OFF;
-            }
-        } else {
-            //before API20, we use screen on or off
-            if (mPowerManager.isScreenOn()) {
-                mScreenStatus = STRING_SCREEN_ON;
-            } else {
-                mScreenStatus = STRING_SCREEN_OFF;
-            }
+
+            if (mPowerManager.isInteractive())
+                Screen_Status = STRING_INTERACTIVE;
+            else
+                Screen_Status = STRING_SCREEN_OFF;
+
+        }
+        //before API20, we use screen on or off
+        else {
+            if(mPowerManager.isScreenOn())
+                Screen_Status = STRING_SCREEN_ON;
+            else
+                Screen_Status = STRING_SCREEN_OFF;
 
         }
 
-        Log.e(TAG, "test source being requested [testing app] SCREEN:  " + mScreenStatus);
+        Log.e(TAG, "test source being requested [testing app] SCREEN:  " + Screen_Status);
 
-        return mScreenStatus;
+        return Screen_Status;
     }
+
 }

@@ -8,11 +8,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b949b4fd-0c33-48f8-a28f-71e02383a299" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java" />
-      <change beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java" />
-      <change beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/LocationStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/LocationStreamGenerator.java" />
-      <change beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/SensorStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/SensorStreamGenerator.java" />
-      <change beforePath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java" afterPath="$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,11 +37,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="LocationStreamGenerator.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="LocationStreamGenerator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/LocationStreamGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5525">
-              <caret line="334" column="12" lean-forward="false" selection-start-line="334" selection-start-column="12" selection-end-line="334" selection-end-column="12" />
+            <state relative-caret-position="-1246">
+              <caret line="236" column="26" lean-forward="false" selection-start-line="236" selection-start-column="19" selection-end-line="236" selection-end-column="26" />
               <folding>
                 <element signature="e#9073#9074#0" expanded="true" />
                 <element signature="e#9103#9104#0" expanded="true" />
@@ -59,126 +54,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ConnectivityStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ConnectivityStreamGenerator.java">
+      <file leaf-file-name="TransportationModeStreamGenerator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4370">
-              <caret line="234" column="69" lean-forward="false" selection-start-line="234" selection-start-column="69" selection-end-line="234" selection-end-column="69" />
-              <folding>
-                <element signature="e#3541#3542#0" expanded="true" />
-                <element signature="e#3571#3572#0" expanded="true" />
-                <element signature="e#5483#5484#0" expanded="true" />
-                <element signature="e#5507#5508#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RingerStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2459">
-              <caret line="105" column="15" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="15" />
-              <folding>
-                <element signature="e#5343#5344#0" expanded="true" />
-                <element signature="e#5367#5368#0" expanded="true" />
-                <element signature="e#8542#8543#0" expanded="true" />
-                <element signature="e#8587#8588#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SensorStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/SensorStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7325">
-              <caret line="348" column="13" lean-forward="false" selection-start-line="348" selection-start-column="13" selection-end-line="348" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#10244#10245#0" expanded="true" />
-                <element signature="e#10281#10282#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TelephonyStreamGenerator.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="497">
-              <caret line="247" column="13" lean-forward="true" selection-start-line="247" selection-start-column="13" selection-end-line="247" selection-end-column="13" />
-              <folding>
-                <element signature="e#10233#10234#0" expanded="true" />
-                <element signature="e#10272#10273#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/config/Constants.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="139" column="68" lean-forward="false" selection-start-line="139" selection-start-column="68" selection-end-line="139" selection-end-column="68" />
+            <state relative-caret-position="342">
+              <caret line="250" column="30" lean-forward="true" selection-start-line="250" selection-start-column="30" selection-end-line="250" selection-end-column="30" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SensorDataRecord.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/model/DataRecord/SensorDataRecord.java">
+      <file leaf-file-name="MinukuStreamManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="25" column="11" lean-forward="false" selection-start-line="25" selection-start-column="11" selection-end-line="25" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ActivityRecognitionStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ActivityRecognitionStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-105">
-              <caret line="48" column="52" lean-forward="true" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
+            <state relative-caret-position="-4410">
+              <caret line="255" column="48" lean-forward="true" selection-start-line="255" selection-start-column="48" selection-end-line="255" selection-end-column="48" />
               <folding>
-                <element signature="e#6232#6233#0" expanded="true" />
-                <element signature="e#6262#6263#0" expanded="true" />
-                <element signature="e#7919#7920#0" expanded="true" />
-                <element signature="e#7943#7944#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AccessibilityStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="717">
-              <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#3222#3223#0" expanded="true" />
-                <element signature="e#3252#3253#0" expanded="true" />
-                <element signature="e#4923#4924#0" expanded="true" />
-                <element signature="e#4947#4948#0" expanded="true" />
-                <element signature="e#5358#5359#0" expanded="true" />
-                <element signature="e#5404#5405#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BatteryStreamGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="49" column="8" lean-forward="false" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="8" />
-              <folding>
-                <element signature="e#2474#2475#0" expanded="true" />
-                <element signature="e#2504#2505#0" expanded="true" />
-                <element signature="e#4864#4865#0" expanded="true" />
-                <element signature="e#4888#4889#0" expanded="true" />
+                <element signature="e#5804#5805#0" expanded="true" />
+                <element signature="e#5864#5865#0" expanded="true" />
+                <element signature="e#24738#24739#0" expanded="true" />
+                <element signature="e#24780#24781#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -188,7 +83,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>this.</find>
       <find>static</find>
       <find>ongoingSessionId</find>
       <find>i=</find>
@@ -218,6 +112,7 @@
       <find>&quot;+</find>
       <find>if(</find>
       <find>){</find>
+      <find>update</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -4510,22 +4405,23 @@
               <item name="minuku2-extended" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="minuku" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="streamgenerator" type="462c0819:PsiDirectoryNode" />
+              <item name="manager" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="minuku-android" type="1abcf292:AndroidViewProjectNode" />
               <item name="minuku2-extended" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="minuku" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="streamgenerator" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -4708,7 +4604,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -4726,8 +4621,7 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17643923" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26086956" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -4740,6 +4634,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26086956" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -4752,13 +4647,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Data/DBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3150">
-          <caret line="126" column="52" lean-forward="false" selection-start-line="126" selection-start-column="52" selection-end-line="126" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/DBManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
@@ -4802,18 +4690,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1613">
-          <caret line="258" column="54" lean-forward="false" selection-start-line="258" selection-start-column="54" selection-end-line="258" selection-end-column="54" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#27304#27305#0" expanded="false" />
-            <element signature="e#27354#27355#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/Data/DataHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2350">
@@ -4825,7 +4701,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11300">
           <caret line="515" column="92" lean-forward="false" selection-start-line="515" selection-start-column="92" selection-end-line="515" selection-end-column="92" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4958,7 +4833,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
           <caret line="15" column="26" lean-forward="false" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4988,10 +4862,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2000">
           <caret line="88" column="5" lean-forward="false" selection-start-line="88" selection-start-column="5" selection-end-line="88" selection-end-column="5" />
-          <folding>
-            <element signature="e#2326#2327#0" expanded="false" />
-            <element signature="e#2368#2369#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4999,7 +4869,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1175">
           <caret line="54" column="74" lean-forward="false" selection-start-line="54" selection-start-column="74" selection-end-line="54" selection-end-column="74" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5057,171 +4926,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1600">
           <caret line="71" column="28" lean-forward="false" selection-start-line="71" selection-start-column="28" selection-end-line="71" selection-end-column="28" />
-          <folding>
-            <marker date="1534434705357" expanded="false" signature="0:104" ph="/.../" />
-            <marker date="1534434705357" expanded="false" signature="137:281" ph="..." />
-            <marker date="1534434705357" expanded="true" signature="601:619" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="2517:2535" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="2650:2668" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="4022:4040" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="4974:4992" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5057:5075" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5145:5163" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5239:5257" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5331:5349" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5418:5436" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="5504:5522" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6282:6300" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6426:6444" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6518:6536" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6609:6627" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6709:6727" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="6807:6825" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="6914:6925" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="6961:6967" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="7025:7036" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7072:7078" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="7114:7125" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7161:7167" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="7246:7298" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="7354:7365" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7401:7407" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="7504:7556" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="7588:7599" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7635:7641" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="7692:7703" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7739:7745" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="7793:7804" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7840:7846" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="7893:7904" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="7940:7946" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="8018:8070" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="8076:8094" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="8172:8224" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="8230:8248" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="8326:8378" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="8427:8438" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="8474:8480" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="8486:8504" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="8570:8581" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="8617:8623" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="8629:8647" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="8713:8724" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="8760:8766" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="8772:8790" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="8878:8930" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="8977:8988" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9024:9030" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9069:9080" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9116:9122" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9175:9186" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9222:9228" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9265:9276" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9312:9318" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9354:9365" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9401:9407" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9454:9465" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9501:9507" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="9546:9557" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9593:9599" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="9605:9623" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="9686:9697" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9733:9739" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="9745:9763" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="9818:9829" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="9865:9871" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="9877:9895" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="9957:9968" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10004:10010" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="10016:10034" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="10088:10099" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10135:10141" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10188:10199" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10235:10241" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10280:10291" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10327:10333" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10368:10379" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10415:10421" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10447:10458" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10494:10500" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="10506:10524" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="10599:10610" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10646:10652" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="10658:10676" ph="/**...*/" />
-            <marker date="1534434705357" expanded="false" signature="10728:10739" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10775:10781" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10817:10828" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10864:10870" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="10911:10922" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="10958:10964" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="11017:11028" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="11064:11070" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="11116:11127" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="11163:11169" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="11218:11229" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="11265:11271" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="11335:11387" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="11423:11434" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="11470:11476" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="11514:11525" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="11561:11567" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="11573:11591" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="11718:11770" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="11837:11889" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="11963:12015" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12021:12039" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12132:12184" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12190:12208" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12303:12355" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12361:12379" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12474:12526" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12532:12550" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12647:12699" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12705:12723" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12820:12872" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="12878:12896" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="12987:13039" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13045:13063" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="13156:13208" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13214:13232" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="13317:13369" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13375:13393" ph="/**...*/" />
-            <marker date="1534434705357" expanded="true" signature="13477:13529" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13633:13685" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13774:13826" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="13906:13958" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="14064:14116" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="14207:14259" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="14341:14393" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="14436:14447" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="14483:14489" ph=" }" />
-            <marker date="1534434705357" expanded="false" signature="14541:14552" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="14588:14594" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="14687:14739" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="14817:14869" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="14927:15185" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="14968:14983" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="15019:15029" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="15119:15179" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="15242:15497" ph="{...}" />
-            <marker date="1534434705357" expanded="false" signature="15282:15297" ph=" { " />
-            <marker date="1534434705357" expanded="false" signature="15333:15343" ph=" }" />
-            <marker date="1534434705357" expanded="true" signature="15431:15491" ph="{...}" />
-            <marker date="1534434705357" expanded="true" signature="15547:15597" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="93" column="39" lean-forward="false" selection-start-line="93" selection-start-column="39" selection-end-line="93" selection-end-column="39" />
-          <folding>
-            <element signature="e#5804#5805#0" expanded="true" />
-            <element signature="e#5864#5865#0" expanded="true" />
-            <element signature="e#24738#24739#0" expanded="true" />
-            <element signature="e#24780#24781#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -5229,7 +4933,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="223">
           <caret line="25" column="11" lean-forward="false" selection-start-line="25" selection-start-column="11" selection-end-line="25" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5243,8 +4946,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/AccessibilityStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="717">
-          <caret line="48" column="32" lean-forward="true" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
+        <state relative-caret-position="700">
+          <caret line="48" column="32" lean-forward="false" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3222#3223#0" expanded="true" />
@@ -5257,37 +4960,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ActivityRecognitionStreamGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-105">
-          <caret line="48" column="52" lean-forward="true" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
-          <folding>
-            <element signature="e#6232#6233#0" expanded="true" />
-            <element signature="e#6262#6263#0" expanded="true" />
-            <element signature="e#7919#7920#0" expanded="true" />
-            <element signature="e#7943#7944#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/LocationStreamGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5525">
-          <caret line="334" column="12" lean-forward="false" selection-start-line="334" selection-start-column="12" selection-end-line="334" selection-end-column="12" />
-          <folding>
-            <element signature="e#9073#9074#0" expanded="true" />
-            <element signature="e#9103#9104#0" expanded="true" />
-            <element signature="e#11936#11937#0" expanded="true" />
-            <element signature="e#11977#11978#0" expanded="true" />
-            <element signature="e#12307#12308#0" expanded="true" />
-            <element signature="e#12350#12351#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ConnectivityStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4370">
+        <state relative-caret-position="5150">
           <caret line="234" column="69" lean-forward="false" selection-start-line="234" selection-start-column="69" selection-end-line="234" selection-end-column="69" />
           <folding>
             <element signature="e#3541#3542#0" expanded="true" />
@@ -5300,7 +4975,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/BatteryStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
+        <state relative-caret-position="650">
           <caret line="49" column="8" lean-forward="false" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="8" />
           <folding>
             <element signature="e#2474#2475#0" expanded="true" />
@@ -5311,22 +4986,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2459">
-          <caret line="105" column="15" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="15" />
-          <folding>
-            <element signature="e#5343#5344#0" expanded="true" />
-            <element signature="e#5367#5368#0" expanded="true" />
-            <element signature="e#8542#8543#0" expanded="true" />
-            <element signature="e#8587#8588#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/SensorStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7325">
+        <state relative-caret-position="7550">
           <caret line="348" column="13" lean-forward="false" selection-start-line="348" selection-start-column="13" selection-end-line="348" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -5338,11 +5000,81 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TelephonyStreamGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="247" column="13" lean-forward="true" selection-start-line="247" selection-start-column="13" selection-end-line="247" selection-end-column="13" />
+        <state relative-caret-position="5450">
+          <caret line="248" column="9" lean-forward="false" selection-start-line="247" selection-start-column="13" selection-end-line="249" selection-end-column="6" />
           <folding>
             <element signature="e#10233#10234#0" expanded="true" />
             <element signature="e#10272#10273#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/UserInteractionStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="42" column="30" lean-forward="false" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/RingerStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="31" column="25" lean-forward="false" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="25" />
+          <folding>
+            <element signature="e#5343#5344#0" expanded="true" />
+            <element signature="e#5367#5368#0" expanded="true" />
+            <element signature="e#8542#8543#0" expanded="true" />
+            <element signature="e#8587#8588#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/ActivityRecognitionStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="48" column="52" lean-forward="false" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
+          <folding>
+            <element signature="e#6232#6233#0" expanded="true" />
+            <element signature="e#6262#6263#0" expanded="true" />
+            <element signature="e#7919#7920#0" expanded="true" />
+            <element signature="e#7943#7944#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/manager/MinukuStreamManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4410">
+          <caret line="255" column="48" lean-forward="true" selection-start-line="255" selection-start-column="48" selection-end-line="255" selection-end-column="48" />
+          <folding>
+            <element signature="e#5804#5805#0" expanded="true" />
+            <element signature="e#5864#5865#0" expanded="true" />
+            <element signature="e#24738#24739#0" expanded="true" />
+            <element signature="e#24780#24781#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/TransportationModeStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="250" column="30" lean-forward="true" selection-start-line="250" selection-start-column="30" selection-end-line="250" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minuku2-extended/src/main/java/labelingStudy/nctu/minuku/streamgenerator/LocationStreamGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1246">
+          <caret line="236" column="26" lean-forward="false" selection-start-line="236" selection-start-column="19" selection-end-line="236" selection-end-column="26" />
+          <folding>
+            <element signature="e#9073#9074#0" expanded="true" />
+            <element signature="e#9103#9104#0" expanded="true" />
+            <element signature="e#11936#11937#0" expanded="true" />
+            <element signature="e#11977#11978#0" expanded="true" />
+            <element signature="e#12307#12308#0" expanded="true" />
+            <element signature="e#12350#12351#0" expanded="true" />
           </folding>
         </state>
       </provider>

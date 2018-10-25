@@ -11,10 +11,6 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2017/8/22.
  */
 
-/**
- * The collection of BatteryDataRecord
- *      {@link BatteryDataRecord}
- */
 public class BatteryStream extends AbstractStreamFromDevice<BatteryDataRecord> {
     public BatteryStream(int maxSize) {
         super(maxSize);

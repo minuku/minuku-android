@@ -1,7 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -10,72 +10,63 @@ import android.os.Handler;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.ConnectivityDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord;
 import labelingStudy.nctu.minuku.stream.ConnectivityStream;
+import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
-
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileAvailable;
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileConnected;
-import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsWifiAvailable;
 
 /**
  * Created by Lawrence on 2017/8/22.
  */
 
-/**
- * ConnectivityStreamGenerator collects data about network connecting condition and status
- */
 public class ConnectivityStreamGenerator extends AndroidStreamGenerator<ConnectivityDataRecord> {
 
     private final String TAG = "ConnectivityStreamGenerator";
 
     private Context mContext;
 
-    public static final String NETWORK_TYPE_WIFI = "Wifi";
-    public static final String NETWORK_TYPE_MOBILE = "Mobile";
-    private static boolean sIsNetworkAvailable = false;
-    private static boolean sIsConnected = false;
-    private static boolean sIsWifiAvailable = false;
-    private static boolean sIsMobileAvailable = false;
-    public static boolean sIsWifiConnected = false;
-    public static boolean sIsMobileConnected = false;
+    public static String NETWORK_TYPE_WIFI = "Wifi";
+    public static String NETWORK_TYPE_MOBILE = "Mobile";
+    private static boolean mIsNetworkAvailable = false;
+    private static boolean mIsConnected = false;
+    private static boolean mIsWifiAvailable = false;
+    private static boolean mIsMobileAvailable = false;
+    public static boolean mIsWifiConnected = false;
+    public static boolean mIsMobileConnected = false;
 
-    public static String sNetworkType = "NA";
+    public static String mNetworkType = "NA";
 
-    public static int sMainThreadUpdateFrequencyInSeconds = 5;
-    public static long sMainThreadUpdateFrequencyInMilliseconds = sMainThreadUpdateFrequencyInSeconds * Constants.MILLISECONDS_PER_SECOND;
+    public static int mainThreadUpdateFrequencyInSeconds = 5;
+    public static long mainThreadUpdateFrequencyInMilliseconds = mainThreadUpdateFrequencyInSeconds *Constants.MILLISECONDS_PER_SECOND;
 
-    private static Handler sMainThread;
+    private static Handler mMainThread;
 
-    private static ConnectivityManager sConnectivityManager;
+    private static ConnectivityManager mConnectivityManager;
 
     private ConnectivityStream mStream;
+    private ConnectivityDataRecordDAO mDAO;
 
-    public ConnectivityStreamGenerator() {
+    private SharedPreferences sharedPrefs;
 
-        sConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
-
-    }
-
-    public ConnectivityStreamGenerator(Context applicationContext) {
+    public ConnectivityStreamGenerator(Context applicationContext){
         super(applicationContext);
 
-        mContext = applicationContext;
+        this.mContext = applicationContext;
+        this.mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ConnectivityDataRecord.class);
 
-        mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
-        sConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
+        mConnectivityManager = (ConnectivityManager)mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
 
-
-        register();
+        this.register();
     }
 
     @Override
@@ -99,32 +90,25 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     public boolean updateStream() {
 
         Log.d(TAG, "updateStream called");
+
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         //TODO get service data
         ConnectivityDataRecord connectivityDataRecord =
-                new ConnectivityDataRecord(sNetworkType, sIsNetworkAvailable, sIsConnected, sIsWifiAvailable,
-                        sIsMobileAvailable, sIsWifiConnected, sIsMobileConnected);
+                new ConnectivityDataRecord(mNetworkType,mIsNetworkAvailable, mIsConnected, mIsWifiAvailable,
+                        mIsMobileAvailable, mIsWifiConnected, mIsMobileConnected, String.valueOf(session_id));
         mStream.add(connectivityDataRecord);
         Log.d(TAG, "CheckFamiliarOrNot to be sent to event bus" + connectivityDataRecord);
         // also post an event.
         EventBus.getDefault().post(connectivityDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
-            List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
-            for (ConnectivityDataRecord c : connectivityDataRecords) {
-                Log.e(TAG, " isIsWifiConnected: " + String.valueOf(c.isIsWifiConnected()));
-                Log.e(TAG," NetworkType: " + c.getNetworkType());
-                Log.e(TAG, " isNetworkAvailable: " + String.valueOf(c.isNetworkAvailable()));
-                Log.e(TAG, " isIsConnected: " + String.valueOf(c.isIsConnected()));
-                Log.e(TAG, " isIsWifiAvailable: " +String.valueOf(isIsWifiAvailable()));
-                Log.e(TAG, " isIsMobileAvailable: " +String.valueOf(isIsMobileAvailable()));
-                Log.e(TAG, " isIsMobileConnected: " + String.valueOf(isIsMobileConnected()));
-
-            }
-        } catch (NullPointerException e) { //Sometimes no data is normal
+            mDAO.add(connectivityDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
+        }catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
         }
@@ -150,11 +134,11 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
 
     }
 
-    public void runPhoneStatusMainThread() {
+    public void runPhoneStatusMainThread(){
 
         Log.d(TAG, "runPhoneStatusMainThread") ;
 
-        sMainThread = new Handler();
+        mMainThread = new Handler();
 
         Runnable runnable = new Runnable() {
             @Override
@@ -162,65 +146,72 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
 
                 getNetworkConnectivityUpdate();
 
-                sMainThread.postDelayed(this, sMainThreadUpdateFrequencyInMilliseconds);
+                mMainThread.postDelayed(this, mainThreadUpdateFrequencyInMilliseconds);
             }
         };
 
-        sMainThread.post(runnable);
+        mMainThread.post(runnable);
     }
 
-    private void getNetworkConnectivityUpdate() {
+    private void getNetworkConnectivityUpdate(){
 
-        sIsNetworkAvailable = false;
-        sIsConnected = false;
-        sIsWifiAvailable = false;
-        sIsMobileAvailable = false;
-        sIsWifiConnected = false;
-        sIsMobileConnected = false;
+        mIsNetworkAvailable = false;
+        mIsConnected = false;
+        mIsWifiAvailable = false;
+        mIsMobileAvailable = false;
+        mIsWifiConnected = false;
+        mIsMobileConnected = false;
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            Network[] networks = sConnectivityManager.getAllNetworks();
+            Network[] networks = mConnectivityManager.getAllNetworks();
 
             NetworkInfo activeNetwork;
 
             for (Network network : networks) {
-                activeNetwork = sConnectivityManager.getNetworkInfo(network);
+                activeNetwork = mConnectivityManager.getNetworkInfo(network);
 
-                if (activeNetwork.getType()== ConnectivityManager.TYPE_WIFI) {
-                    sIsWifiAvailable = activeNetwork.isAvailable();
-                    sIsWifiConnected = activeNetwork.isConnected();
-                } else if (activeNetwork.getType()==ConnectivityManager.TYPE_MOBILE) {
-                    sIsMobileAvailable = activeNetwork.isAvailable();
-                    sIsMobileConnected = activeNetwork.isConnected();
+                //if there is no default network
+                if(activeNetwork == null){
+
+                    break;
+                }
+
+                if (activeNetwork.getType()== ConnectivityManager.TYPE_WIFI){
+                    mIsWifiAvailable = activeNetwork.isAvailable();
+                    mIsWifiConnected = activeNetwork.isConnected();
+                } else if (activeNetwork.getType()==ConnectivityManager.TYPE_MOBILE){
+                    mIsMobileAvailable = activeNetwork.isAvailable();
+                    mIsMobileConnected = activeNetwork.isConnected();
                 }
 
             }
 
-            if (sIsWifiConnected) {
-                sNetworkType = NETWORK_TYPE_WIFI;
-            } else if (sIsMobileConnected) {
-                sNetworkType = NETWORK_TYPE_MOBILE;
+            if (mIsWifiConnected) {
+                mNetworkType = NETWORK_TYPE_WIFI;
+            }
+            else if (mIsMobileConnected) {
+                mNetworkType = NETWORK_TYPE_MOBILE;
             }
 
-            sIsNetworkAvailable = sIsWifiAvailable | sIsMobileAvailable;
-            sIsConnected = sIsWifiConnected | sIsMobileConnected;
+            mIsNetworkAvailable = mIsWifiAvailable | mIsMobileAvailable;
+            mIsConnected = mIsWifiConnected | mIsMobileConnected;
 
 
-            Log.d(TAG, "[test save records] connectivity change available? WIFI: available " + sIsWifiAvailable +
-                    "  mIsConnected: " + sIsWifiConnected + " Mobile: available: " + sIsMobileAvailable + " mIs connected: " + sIsMobileConnected
-                    + " network type: " + sNetworkType + ",  mIs connected: " + sIsConnected + " mIs network available " + sIsNetworkAvailable);
+            Log.d(TAG, "[test save records] connectivity change available? WIFI: available " + mIsWifiAvailable  +
+                    "  mIsConnected: " + mIsWifiConnected + " Mobile: available: " + mIsMobileAvailable + " mIs connected: " + mIsMobileConnected
+                    +" network type: " + mNetworkType + ",  mIs connected: " + mIsConnected + " mIs network available " + mIsNetworkAvailable);
 
 
-        } else {
+        } else{
 
             Log.d(TAG, "[test save records] api under lollipop " );
 
 
-            if (sConnectivityManager != null) {
+            if (mConnectivityManager!=null) {
 
-                NetworkInfo activeNetworkWifi = sConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                NetworkInfo activeNetworkMobile = sConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                NetworkInfo activeNetworkWifi = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                NetworkInfo activeNetworkMobile = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
                 boolean isWiFi = activeNetworkWifi.getType() == ConnectivityManager.TYPE_WIFI;
                 boolean isMobile = activeNetworkMobile.getType() == ConnectivityManager.TYPE_MOBILE;
@@ -230,33 +221,33 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
 
                 if(activeNetworkWifi !=null) {
 
-                    sIsWifiConnected = activeNetworkWifi != null &&
+                    mIsWifiConnected = activeNetworkWifi != null &&
                             activeNetworkWifi.isConnected();
-                    sIsMobileConnected = activeNetworkWifi != null &&
+                    mIsMobileConnected = activeNetworkWifi != null &&
                             activeNetworkMobile.isConnected();
 
-                    sIsConnected = sIsWifiConnected | sIsMobileConnected;
+                    mIsConnected = mIsWifiConnected | mIsMobileConnected;
 
-                    sIsWifiAvailable = activeNetworkWifi.isAvailable();
-                    sIsMobileAvailable = activeNetworkMobile.isAvailable();
+                    mIsWifiAvailable = activeNetworkWifi.isAvailable();
+                    mIsMobileAvailable = activeNetworkMobile.isAvailable();
 
-                    sIsNetworkAvailable = sIsWifiAvailable | sIsMobileAvailable;
+                    mIsNetworkAvailable = mIsWifiAvailable | mIsMobileAvailable;
 
 
-                    if (sIsWifiConnected) {
-                        sNetworkType = NETWORK_TYPE_WIFI;
+                    if (mIsWifiConnected) {
+                        mNetworkType = NETWORK_TYPE_WIFI;
                     }
 
-                    else if (sIsMobileConnected) {
-                        sNetworkType = NETWORK_TYPE_MOBILE;
+                    else if (mIsMobileConnected) {
+                        mNetworkType = NETWORK_TYPE_MOBILE;
                     }
 
 
                     //assign value
 //
-                    Log.d(TAG, "[test save records] connectivity change available? WIFI: available " + sIsWifiAvailable +
-                            "  mIsConnected: " + sIsWifiConnected + " Mobile: available: " + sIsMobileAvailable + " mIs connected: " + sIsMobileConnected
-                            + " network type: " + sNetworkType + ",  mIs connected: " + sIsConnected + " mIs network available " + sIsNetworkAvailable);
+                    Log.d(TAG, "[test save records] connectivity change available? WIFI: available " + mIsWifiAvailable  +
+                            "  mIsConnected: " + mIsWifiConnected + " Mobile: available: " + mIsMobileAvailable + " mIs connected: " + mIsMobileConnected
+                            +" network type: " + mNetworkType + ",  mIs connected: " + mIsConnected + " mIs network available " + mIsNetworkAvailable);
 
                 }
             }

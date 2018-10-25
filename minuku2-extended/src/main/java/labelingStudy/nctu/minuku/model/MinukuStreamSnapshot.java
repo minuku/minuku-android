@@ -30,7 +30,6 @@ import labelingStudy.nctu.minukucore.model.StreamSnapshot;
 
 /**
  * Created by neerajkumar on 7/27/16.
- * MinukuStreamSnapshot stores the (currentValue, previousValue) of each stream to help speculate the changing of the value
  */
 public class MinukuStreamSnapshot implements StreamSnapshot {
 

@@ -22,56 +22,85 @@
 
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
+import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
-
 /**
  * Created by shriti on 7/15/16.
  */
-
-/**
- * LocationDataRecord stores information about location data from GPS
- */
-@Entity
 public class LocationDataRecord implements DataRecord {
 
-    @PrimaryKey(autoGenerate = true)
+    private long creationTime;
+    private int taskDayCount;
+    private long hour;
+    private String sessionid;
+
+    private float latitude;
+    private float longitude;
+    private float Accuracy;
+    private float Altitude;
+    private float Speed;
+    private float Bearing;
+    private String Provider;
+
+
     private long _id;
 
-    @ColumnInfo(name = "creationTime")
-    public long creationTime;
 
-    @ColumnInfo(name = "sessionid")
-    public String sessionid;
+    protected JSONObject jSONObject;
 
-    @ColumnInfo(name = "latitude")
-    public float latitude;
 
-    @ColumnInfo(name = "longitude")
-    public float longitude;
+    public LocationDataRecord() {
 
-    @ColumnInfo(name = "Accuracy")
-    public float Accuracy;
+    }
 
-    @ColumnInfo(name = "Altitude")
-    public float Altitude;
+    public LocationDataRecord(float latitude, float longitude, float Accuracy){
 
-    @ColumnInfo(name = "Speed")
-    public float Speed;
+        this.creationTime = new Date().getTime();
+//        this.taskDayCount = Constants.TaskDayCount;
+//        this.hour = getmillisecondToHour(creationTime);
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.Accuracy = Accuracy;
 
-    @ColumnInfo(name = "Bearing")
-    public float Bearing;
+    }
 
-    @ColumnInfo(name = "Provider")
-    public String Provider;
+    public LocationDataRecord(float latitude, float longitude, float Accuracy, String sessionid){
 
-    public LocationDataRecord(float latitude, float longitude, float Accuracy, float Altitude, float Speed, float Bearing, String Provider, String sessionid){
+        this.creationTime = new Date().getTime();
+//        this.taskDayCount = Constants.daysInSurvey;
+//        this.hour = getmillisecondToHour(creationTime);
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.Accuracy = Accuracy;
+        this.sessionid = sessionid;
+    }
+
+    public LocationDataRecord(String sessionid, float latitude, float longitude, float Accuracy){
+
+        this.creationTime = new Date().getTime();
+        this.sessionid = sessionid;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.Accuracy = Accuracy;
+
+    }
+
+    public LocationDataRecord(float latitude, float longitude, float Accuracy, float Altitude, float Speed, float Bearing, String Provider) {
+        this.creationTime = new Date().getTime();
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.Accuracy = Accuracy;
+        this.Altitude = Altitude;
+        this.Speed = Speed;
+        this.Bearing = Bearing;
+        this.Provider = Provider;
+    }
+
+    public LocationDataRecord(float latitude, float longitude, float Accuracy, float Altitude, float Speed, float Bearing, String Provider, String sessionid) {
         this.creationTime = new Date().getTime();
         this.latitude = latitude;
         this.longitude = longitude;
@@ -83,43 +112,49 @@ public class LocationDataRecord implements DataRecord {
         this.sessionid = sessionid;
     }
 
-    @Ignore
-    public LocationDataRecord(float latitude, float longitude, float Accuracy, String sessionid){
+    public LocationDataRecord(float latitude, float longitude) {
+        this.creationTime = new Date().getTime();
         this.latitude = latitude;
         this.longitude = longitude;
-        this.Accuracy = Accuracy;
-        this.sessionid = sessionid;
+    }
+
+    public LocationDataRecord(JSONObject jSONObject) {
+        this.creationTime = new Date().getTime();
+        this.jSONObject = jSONObject;
+    }
+
+    private long getmillisecondToHour(long timeStamp){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeStamp);
+
+        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        return mhour;
 
     }
 
-    public LocationDataRecord(float lat, float lng, float accuracy) {
-        this.latitude = lat;
-        this.longitude = lng;
-        this.Accuracy = accuracy;
+    public long getHour(){
+        return hour;
     }
 
-    public long get_id() {
+    public int getTaskDayCount(){
+        return taskDayCount;
+    }
+
+    public void setID(long id){
+        _id = id;
+    }
+
+    public long getID(){
         return _id;
     }
 
-    public void set_id(long _id) {
-        this._id = _id;
-    }
-
-    @Override
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public String getSessionid() {
+    public String getSessionid(){
         return sessionid;
     }
 
-    public void setSessionid(String sessionid) {
+    public void setSessionid(String sessionid){
         this.sessionid = sessionid;
     }
 
@@ -127,55 +162,69 @@ public class LocationDataRecord implements DataRecord {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
     public float getLongitude() {
         return longitude;
+    }
+
+    public float getAccuracy(){
+        return Accuracy;
+    }
+
+    public void setAccuracy(float accuracy) {
+        this.Accuracy = accuracy;
+    }
+
+    @Override
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
     public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
-    public float getAccuracy() {
-        return Accuracy;
-    }
-
-    public void setAccuracy(float accuracy) {
-        Accuracy = accuracy;
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
     public float getAltitude() {
         return Altitude;
     }
 
-    public void setAltitude(float altitude) {
-        Altitude = altitude;
+    public void setAltitude(float Altitude) {
+        this.Altitude = Altitude;
     }
 
     public float getSpeed() {
         return Speed;
     }
 
-    public void setSpeed(float speed) {
-        Speed = speed;
+    public void setSpeed(float Speed) {
+        this.Speed = Speed;
     }
 
     public float getBearing() {
         return Bearing;
     }
 
-    public void setBearing(float bearing) {
-        Bearing = bearing;
+    public void setBearing(float Bearing) {
+        this.Bearing = Bearing;
     }
 
     public String getProvider() {
         return Provider;
     }
 
-    public void setProvider(String provider) {
-        Provider = provider;
+    public void setProvider(String Provider) {
+        this.Provider = Provider;
+    }
+
+    @Override
+    public String toString() {
+        return "Loc:" + this.latitude + ":" + this.longitude;
     }
 }

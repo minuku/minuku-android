@@ -1,156 +1,145 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.util.Log;
-
 import com.google.android.gms.location.DetectedActivity;
 
-import java.util.ArrayList;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minukucore.model.DataRecord;
 
-
 /**
- * Created by tingwei on 2018/3/15.
+ * Created by Lawrence on 2017/5/15.
  */
 
-/**
- * ActivityRecognitionDataRecord stores information about the possible activities of the specific detected time
- */
-@Entity
 public class ActivityRecognitionDataRecord implements DataRecord {
 
-    public static String TAG = "ActivityRecognitionDataRecord";
-
-    @PrimaryKey(autoGenerate = true)
-    private long _id;
-
-    @ColumnInfo(name = "creationTime")
     public long creationTime;
+    private static DetectedActivity MostProbableActivity;
+    private List<DetectedActivity> mProbableActivities;
+    private static long Detectedtime;
 
-    @ColumnInfo(name = "MostProbableActivity")
-    // TODO: to string
-    public String MostProbableActivity;
+    protected long _id;
+    protected JSONObject mData;
+    protected long _timestamp;
+    protected String mTimestring;
+    private String sessionid;
 
-    @ColumnInfo(name = "ProbableActivities")
-    public String ProbableActivities;
-
-    @ColumnInfo(name = "Detectedtime")
-    public long Detectedtime;
-
-    public ActivityRecognitionDataRecord() {
+    public ActivityRecognitionDataRecord(){
 
     }
 
-    public ActivityRecognitionDataRecord(DetectedActivity mostProbableActivity, List<DetectedActivity> ProbableActivities,
-                                         long detectedtime) {
+    public ActivityRecognitionDataRecord(long detectedtime){
+        this.creationTime = detectedtime;
+    }
+
+    public ActivityRecognitionDataRecord(DetectedActivity MostProbableActivity, List<DetectedActivity> mProbableActivities){
         this.creationTime = new Date().getTime();
-        Log.d(TAG, "in constructor");
-        setMostProbableActivity(mostProbableActivity);
-        setProbableActivities(ProbableActivities);
-        setDetectedtime(detectedtime);
+        this.MostProbableActivity = MostProbableActivity;
+        this.mProbableActivities = mProbableActivities;
+
     }
 
-    public ActivityRecognitionDataRecord(DetectedActivity mostProbableActivity, long detectedtime) {
+    public ActivityRecognitionDataRecord(DetectedActivity MostProbableActivity,long Detectedtime){
+        this.creationTime = new Date().getTime();
+        this.MostProbableActivity = MostProbableActivity;
+        this.Detectedtime = Detectedtime;
+
+    }
+
+    public ActivityRecognitionDataRecord(DetectedActivity mostProbableActivity, List<DetectedActivity> mProbableActivities,long detectedtime){
+        this.creationTime = new Date().getTime();
+        this.MostProbableActivity = mostProbableActivity;
+        this.mProbableActivities = mProbableActivities;
         this.Detectedtime = detectedtime;
-        this.MostProbableActivity = mostProbableActivity.toString();
+
     }
 
-    public long get_id() {
+    public ActivityRecognitionDataRecord(DetectedActivity mostProbableActivity, List<DetectedActivity> mProbableActivities,long detectedtime, String sessionid){
+        this.creationTime = detectedtime;
+        this.MostProbableActivity = mostProbableActivity;
+        this.mProbableActivities = mProbableActivities;
+        this.Detectedtime = detectedtime;
+        this.sessionid = sessionid;
+    }
+
+    public String getSessionid() {
+        return sessionid;
+    }
+
+    public DetectedActivity getMostProbableActivity(){return MostProbableActivity;}
+
+    public void setProbableActivities(List<DetectedActivity> probableActivities) {
+        mProbableActivities = probableActivities;
+
+    }
+
+    public void setMostProbableActivity(DetectedActivity mostProbableActivity) {
+        MostProbableActivity = mostProbableActivity;
+
+    }
+
+    public void setDetectedtime(long detectedtime){
+        Detectedtime = detectedtime;
+
+    }
+
+    private long getmillisecondToHour(long timeStamp){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeStamp);
+
+        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        return mhour;
+
+    }
+
+    public void setID(long id){
+        _id = id;
+    }
+
+    public long getID(){
         return _id;
     }
 
-    public void set_id(long _id) {
-        this._id = _id;
-    }
+    public long getDetectedtime(){return Detectedtime;}
 
     @Override
     public long getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
+    public void setTimestamp(long t){
+        _timestamp = t;
     }
 
-    public DetectedActivity getMostProbableActivity() {
-        return StringToDetectedActivity(MostProbableActivity);
+    public long getTimestamp(){
+        return _timestamp;
     }
 
-    public void setMostProbableActivity(DetectedActivity mostProbableActivity) {
-        this.MostProbableActivity = mostProbableActivity.toString();
+    public JSONObject getData() {
+        return mData;
+    }
+
+    public void setData(JSONObject data) {
+        this.mData = data;
+    }
+
+    public String getTimeString(){
+
+        SimpleDateFormat sdf_now = new SimpleDateFormat(Constants.DATE_FORMAT_NOW);
+        mTimestring = sdf_now.format(_timestamp);
+
+        return mTimestring;
     }
 
     public List<DetectedActivity> getProbableActivities() {
-        List<DetectedActivity> detectedActivities = new ArrayList<>();
-        String[] split = ProbableActivities.split(";");
-        for (String s : split) {
-            detectedActivities.add(StringToDetectedActivity(s));
-        }
-        return detectedActivities;
+        return mProbableActivities;
     }
 
-    public void setProbableActivities(List<DetectedActivity> mProbableActivities) {
-        String p = "";
-
-        for (DetectedActivity a: mProbableActivities) {
-            String tmp = a.toString();
-            tmp += ";";
-            p += tmp;
-        }
-//        Log.d(TAG, p);
-        this.ProbableActivities = p;
-    }
-
-    public long getDetectedtime() {
-        return Detectedtime;
-    }
-
-    public void setDetectedtime(long detectedtime) {
-        Detectedtime = detectedtime;
-    }
-
-    /// Convert String: MostProbableActivity to DetectActivity
-    public DetectedActivity StringToDetectedActivity(String da) {
-        // DetectedActivity [type=STILL, confidence=...]
-        String[] split_line = da.split(",");
-        int var1Start = split_line[0].indexOf("=");
-        int var1 = -1;
-        String activityString = da.substring(var1Start+1, split_line[0].length());
-        switch(activityString) {
-            case "IN_VEHICLE":
-                var1 = 0;
-                break;
-            case "ON_BICYCLE":
-                var1 = 1;
-                break;
-            case "ON_FOOT":
-                var1 = 2;
-                break;
-            case "STILL":
-                var1 = 3;
-                break;
-            case "UNKNOWN":
-                var1 = 4;
-                break;
-            case "TILTING":
-                var1 = 5;
-                break;
-            case "WALKING":
-                var1 = 7;
-                break;
-            case "RUNNING":
-                var1 = 8;
-                break;
-        }
-        int var2Start = da.lastIndexOf("=");
-        int var2 = Integer.valueOf(da.substring(var2Start+1, da.length()-1));
-
-        DetectedActivity detectedActivity = new DetectedActivity(var1, var2);
-        return detectedActivity;
-    }
 }

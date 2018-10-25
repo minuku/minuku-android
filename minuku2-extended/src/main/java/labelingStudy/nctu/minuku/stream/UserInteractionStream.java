@@ -11,10 +11,6 @@ import labelingStudy.nctu.minukucore.stream.AbstractStreamFromDevice;
  * Created by Lawrence on 2018/8/29.
  */
 
-/**
- * The collection of UserInteractionDataRecord
- *      {@link UserInteractionDataRecord}
- */
 public class UserInteractionStream extends AbstractStreamFromDevice<UserInteractionDataRecord> {
     public UserInteractionStream(int maxSize) {
         super(maxSize);

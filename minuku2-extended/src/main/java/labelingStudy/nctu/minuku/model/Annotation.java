@@ -12,14 +12,6 @@ import labelingStudy.nctu.minuku.manager.SessionManager;
  * Created by Lawrence on 2018/3/13.
  */
 
-/**
- * Annotation is every data that want to be recorded about the session.
- * In current edition of Minuku, there would be three kinds of annotation, which also are the three type of tag
- *      DETECTED_TRANSPORTATION_ACTIVITY : if the detected transportation is walk, bike or vehicle, while the content would be the detected transportation
- *      DETECTED_SITENAME : if the detected transportation is static, while the content would be the site name
- *      LABEL : after user label the activity manually, the tag would be "APPEND" to the tag list, while the content would be "MODIFIED" to all the information that user has labeled
- *              such as motivation, goal and special event etc.
- */
 public class Annotation {
 
     private int mId=-1;
@@ -29,7 +21,7 @@ public class Annotation {
     private long mEndTime=-1;
     //by default an annotation applies to an entire session, unless being specified otherwise.
     private boolean mEntireSession = true;
-    //the content of the annotation,
+    //the content of the annotation
     private String mContent="";
     //metadata of annotations
     private ArrayList<String> mTags;

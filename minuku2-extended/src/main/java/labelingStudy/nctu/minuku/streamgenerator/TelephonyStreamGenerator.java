@@ -1,7 +1,7 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.telephony.PhoneStateListener;
@@ -10,23 +10,23 @@ import android.telephony.TelephonyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
-import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.model.DataRecord.TelephonyDataRecord;
 import labelingStudy.nctu.minuku.stream.TelephonyStream;
+import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
 
-import static labelingStudy.nctu.minuku.manager.MinukuStreamManager.getInstance;
 import static android.telephony.TelephonyManager.CALL_STATE_IDLE;
 import static android.telephony.TelephonyManager.CALL_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.CALL_STATE_RINGING;
 import static android.telephony.TelephonyManager.NETWORK_TYPE_CDMA;
 import static android.telephony.TelephonyManager.NETWORK_TYPE_LTE;
+import static labelingStudy.nctu.minuku.manager.MinukuStreamManager.getInstance;
 
 /**
  * Created by Lucy on 2017/9/6.
@@ -36,35 +36,41 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     private String TAG = "TelephonyStreamGenerator";
     private TelephonyStream mStream;
-    private Context mContext;
-    private TelephonyManager mTelephonyManager;
+    private TelephonyDataRecordDAO mDAO;
+    private TelephonyManager telephonyManager;
     private String mNetworkOperatorName;
     private int mCallState;
     private int mPhoneSignalType;
-    private int mLTESignalStrengthDbm;
+    private int mLTESignalStrength_dbm;
     //private int LTESignalStrength_asu;
     private int mGsmSignalStrength;
-    private int mCdmaSignalStrength;
+    private int CdmaSignalStrength;
     private int mCdmaSignalStrengthLevel; // 1, 2, 3, 4
     private int GeneralSignalStrength;
     private boolean isGSM = false;
+    private Context mContext;
+    private SharedPreferences sharedPrefs;
 
     public TelephonyStreamGenerator (Context applicationContext) {
 
         super(applicationContext);
-        mContext = applicationContext;
-        mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
-        register();
+        this.mContext = applicationContext;
+        this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
+        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TelephonyDataRecord.class);
+        this.register();
 
         mCallState = -9999;
         mPhoneSignalType = -9999;
-        mLTESignalStrengthDbm = -9999;
+        mLTESignalStrength_dbm = -9999;
         //LTESignalStrength_asu = -9999;
         mGsmSignalStrength = -9999;
-        mCdmaSignalStrength = -9999;
+        CdmaSignalStrength = -9999;
         mCdmaSignalStrengthLevel = -9999;
         GeneralSignalStrength = -9999;
         isGSM = false;
+
+        sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
+
     }
     @Override
     public void register() {
@@ -75,7 +81,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         } catch (StreamNotFoundException streamNotFoundException) {
             Log.e(TAG, "One of the streams on which" +
                     "RingerDataRecord/RingerStream depends in not found.");
-        } catch (StreamAlreadyExistsException streamAlreadyExistsException) {
+        } catch (StreamAlreadyExistsException streamAlreadyExsistsException) {
             Log.e(TAG, "Another stream which provides" +
                     " TelephonyDataRecord/TelephonyStream is already registered.");
         }
@@ -90,30 +96,22 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     public boolean updateStream() {
         Log.d(TAG, "updateStream called");
 
+//        int session_id = SessionManager.getOngoingSessionId();
+
+        int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
+
         TelephonyDataRecord telephonyDataRecord = new TelephonyDataRecord(mNetworkOperatorName, mCallState
-                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrengthDbm, mCdmaSignalStrengthLevel);
+                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrength_dbm, mCdmaSignalStrengthLevel, String.valueOf(session_id));
         mStream.add(telephonyDataRecord);
         Log.d(TAG, "Telephony to be sent to event bus" + telephonyDataRecord);
 
         //post an event
         EventBus.getDefault().post(telephonyDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.telephonyDataRecordDao().insertAll(telephonyDataRecord);
-
-            List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
-
-            for (TelephonyDataRecord t : telephonyDataRecords) {
-                Log.e(TAG," NetworkOperatorName: " + t.getNetworkOperatorName());
-                Log.e(TAG," CallState: " + String.valueOf(t.getCallState()));
-                Log.e(TAG," CdmaSignalStrengthLevel: " + String.valueOf(t.getCdmaSignalStrengthLevel()));
-                Log.e(TAG," GsmSignalStrength: " + String.valueOf(t.getGsmSignalStrength()));
-                Log.e(TAG," LTESignalStrength: " + String.valueOf(t.getLTESignalStrength()));
-                Log.e(TAG," PhoneSignalType: " + String.valueOf(t.getPhoneSignalType()));
-            }
+            mDAO.add(telephonyDataRecord);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return false;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;
@@ -135,11 +133,11 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     @Override
     public void onStreamRegistration() {
 
-        mTelephonyManager = (TelephonyManager) mApplicationContext.getSystemService(Context.TELEPHONY_SERVICE);
-        mNetworkOperatorName = mTelephonyManager.getNetworkOperatorName();
-        //int networktype = mTelephonyManager.getNetworkType();
+        telephonyManager = (TelephonyManager) mApplicationContext.getSystemService(Context.TELEPHONY_SERVICE);
+        mNetworkOperatorName = telephonyManager.getNetworkOperatorName();
+        //int networktype = telephonyManager.getNetworkType();
 
-        mTelephonyManager.listen(TelephonyStateListener,PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        telephonyManager.listen(TelephonyStateListener,PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         /*switch (networktype) {
             case 0: Log.d(TAG, "UNKNOWN");
             case 1: Log.d(TAG, "GPRS");
@@ -166,64 +164,72 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     private final PhoneStateListener TelephonyStateListener = new PhoneStateListener() {
 
         public void onCallStateChanged(int state, String incomingNumber) {
-            if (state == CALL_STATE_RINGING) {
+            if(state== CALL_STATE_RINGING){
                 mCallState = CALL_STATE_RINGING;
-            } else if (state == CALL_STATE_OFFHOOK) {
+            }
+            if(state== CALL_STATE_OFFHOOK){
                 mCallState = CALL_STATE_OFFHOOK;
-            } else if (state == CALL_STATE_IDLE) {
+            }
+            if(state== CALL_STATE_IDLE){
                 mCallState = CALL_STATE_IDLE;
             }
         }
         @RequiresApi(api = Build.VERSION_CODES.ECLAIR_MR1)
         public void onSignalStrengthsChanged(SignalStrength sStrength) {
 
-            String signal = sStrength.toString();
-            String[] parts = signal.split(" ");
+            String ssignal = sStrength.toString();
+            String[] parts = ssignal.split(" ");
 
+            int dbm;
+            int asu;
             //Log.d("parts8", parts[8]) = -1;
 
             /**If LTE 4G */
-            if (mTelephonyManager.getNetworkType() == NETWORK_TYPE_LTE) {
+            if (telephonyManager.getNetworkType() == NETWORK_TYPE_LTE){
                 mPhoneSignalType = NETWORK_TYPE_LTE;
                 Log.d(TAG, String.valueOf(mPhoneSignalType));
-                mLTESignalStrengthDbm = Integer.parseInt(parts[10]);
+                dbm = Integer.parseInt(parts[10]);
                 //asu = 140 + dbm;
+                mLTESignalStrength_dbm = dbm;
                 //LTESignalStrength_asu = asu;
-            } else if (sStrength.isGsm()) {  /** Else GSM 3G */
+            }
+            /** Else GSM 3G */
+            else if (sStrength.isGsm()) {
                 mPhoneSignalType = 16;
                 // For GSM Signal Strength: dbm =  (2*ASU)-113.
-                // Valid value of getGsmSignalStrength is (0-31, 99)
                 if (sStrength.getGsmSignalStrength() != 99) {
-                    mGsmSignalStrength = -113 + 2 * sStrength.getGsmSignalStrength();
+                    dbm = -113 + 2 * sStrength.getGsmSignalStrength();
+                    mGsmSignalStrength = dbm;
                 } else {
-                    mGsmSignalStrength = sStrength.getGsmSignalStrength();
+                    dbm = sStrength.getGsmSignalStrength();
+                    mGsmSignalStrength = dbm;
                 }
-            } else { /** CDMA */
+            }
+            /** CDMA */
+            else {
                 /**
-                             * DBM
-                             level 4 >= -75
-                             level 3 >= -85
-                             level 2 >= -95
-                             level 1 >= -100
-                             Ecio
-                             level 4 >= -90
-                             level 3 >= -110
-                             level 2 >= -130
-                             level 1 >= -150
-                             level is the lowest of the two
-                             actualLevel = (levelDbm < levelEcio) ? levelDbm : levelEcio;
-                             */
+                 * DBM
+                 level 4 >= -75
+                 level 3 >= -85
+                 level 2 >= -95
+                 level 1 >= -100
+                 Ecio
+                 level 4 >= -90
+                 level 3 >= -110
+                 level 2 >= -130
+                 level 1 >= -150
+                 level is the lowest of the two
+                 actualLevel = (levelDbm < levelEcio) ? levelDbm : levelEcio;
+                 */
                 int snr = sStrength.getEvdoSnr();
-
+                int cdmaDbm = sStrength.getCdmaDbm();
+                int cdmaEcio = sStrength.getCdmaEcio();
 
                 int levelDbm;
                 int levelEcio;
                 mPhoneSignalType = NETWORK_TYPE_CDMA;
 
                 if (snr == -1) { //if not 3G, use cdmaDBM or cdmaEcio
-                    int cdmaDbm = sStrength.getCdmaDbm();
-                    int cdmaEcio = sStrength.getCdmaEcio();
-
                     if (cdmaDbm >= -75) levelDbm = 4;
                     else if (cdmaDbm >= -85) levelDbm = 3;
                     else if (cdmaDbm >= -95) levelDbm = 2;
@@ -238,12 +244,12 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
                     else levelEcio = 0;
 
                     mCdmaSignalStrengthLevel = (levelDbm < levelEcio) ? levelDbm : levelEcio;
-                } else {  // if 3G, use SNR
-//                    if (snr == 7 || snr == 8) mCdmaSignalStrengthLevel = 4;
-//                    else if (snr == 5 || snr == 6 ) mCdmaSignalStrengthLevel = 3;
-//                    else if (snr == 3 || snr == 4) mCdmaSignalStrengthLevel = 2;
-//                    else if (snr ==1 || snr ==2) mCdmaSignalStrengthLevel = 1;
-                    mCdmaSignalStrengthLevel = (snr + 1) / 2;
+                }
+                else {  // if 3G, use SNR
+                    if (snr == 7 || snr == 8) mCdmaSignalStrengthLevel =4;
+                    else if (snr == 5 || snr == 6 ) mCdmaSignalStrengthLevel =3;
+                    else if (snr == 3 || snr == 4) mCdmaSignalStrengthLevel = 2;
+                    else if (snr ==1 || snr ==2) mCdmaSignalStrengthLevel =1;
                 }
             }
         }
