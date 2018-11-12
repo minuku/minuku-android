@@ -27,7 +27,6 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
     private String TAG = "UserInteractionStreamGenerator";
 
     private UserInteractionStream mStream;
-    private UserInteractionDataRecordDAO mDAO;
 
     private static final String STRING_FALSE = "0";
     private static final String STRING_TRUE = "1";
@@ -43,7 +42,6 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
 
         super(applicationContext);
         this.mStream = new UserInteractionStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(UserInteractionDataRecord.class);
         this.register();
     }
 

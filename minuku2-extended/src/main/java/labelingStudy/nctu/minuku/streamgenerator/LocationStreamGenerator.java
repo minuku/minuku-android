@@ -22,6 +22,7 @@
 
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -54,6 +55,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.LocationDataRecordDAO;
 import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
@@ -121,14 +123,12 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     private Location location;
 
-    LocationDataRecordDAO mDAO;
 
     private SharedPreferences sharedPrefs;
 
     public LocationStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new LocationStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(LocationDataRecord.class);
         this.latestLatitude = new AtomicDouble();
         this.latestLongitude = new AtomicDouble();
 
@@ -225,30 +225,30 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
         EventBus.getDefault().post(new IncrementLoadingProcessCountEvent());
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    Log.d(TAG, "Stream " + TAG + "initialized from previous state");
-                    Future<List<LocationDataRecord>> listFuture =
-                            mDAO.getLast(Constants.LOCATION_QUEUE_SIZE);
-                    while(!listFuture.isDone()) {
-                        Thread.sleep(1000);
-                    }
-                    Log.d(TAG, "Received data from Future for " + TAG);
-                    mStream.addAll(new LinkedList<>(listFuture.get()));
-                } catch (DAOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } finally {
-                    EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
-                }
-            }
-        });
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try
+//                {
+//                    Log.d(TAG, "Stream " + TAG + "initialized from previous state");
+//                    Future<List<LocationDataRecord>> listFuture =
+//                            mDAO.getLast(Constants.LOCATION_QUEUE_SIZE);
+//                    while(!listFuture.isDone()) {
+//                        Thread.sleep(1000);
+//                    }
+//                    Log.d(TAG, "Received data from Future for " + TAG);
+//                    mStream.addAll(new LinkedList<>(listFuture.get()));
+//                } catch (DAOException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    EventBus.getDefault().post(new DecrementLoadingProcessCountEvent());
+//                }
+//            }
+//        });
 
     }
 
@@ -315,8 +315,22 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         EventBus.getDefault().post(newlocationDataRecord);
         try {
 
-            mDAO.add(newlocationDataRecord);
-        } catch (DAOException e) {
+            appDatabase db;
+            db = Room.databaseBuilder(context,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.locationDataRecordDao().insertAll(newlocationDataRecord);
+            List<LocationDataRecord> locationDataRecords = db.locationDataRecordDao().getAll();
+            for (LocationDataRecord l : locationDataRecords) {
+                Log.e(TAG, " Latitude: "+String.valueOf(l.getLatitude()));
+                Log.e(TAG, " Longitude: "+String.valueOf(l.getLongitude()));
+                Log.e(TAG," Accuracy: "+ String.valueOf(l.getAccuracy()));
+                Log.e(TAG," Altitude: "+ String.valueOf(l.getAltitude()));
+                Log.e(TAG," Speed: "+ String.valueOf(l.getSpeed()));
+                Log.e(TAG," Bearing: "+ String.valueOf(l.getBearing()));
+                Log.e(TAG," Provider: "+l.getProvider());
+            }
+        } catch (NullPointerException e) {
             e.printStackTrace();
             return false;
         }

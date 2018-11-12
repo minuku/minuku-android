@@ -1,11 +1,15 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
@@ -30,7 +34,6 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
     private final String TAG = "AccessibilityStreamGenerator";
     private AccessibilityStream mStream;
     private Context mContext;
-    AccessibilityDataRecordDAO mDAO;
     MobileAccessibilityService mobileAccessibilityService;
 
     private String pack;
@@ -46,7 +49,6 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new AccessibilityStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AccessibilityDataRecord.class);
 
         mobileAccessibilityService = new MobileAccessibilityService(this);
 
@@ -97,7 +99,7 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
         int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
 
         AccessibilityDataRecord accessibilityDataRecord
-                = new AccessibilityDataRecord(pack, text, type, extra, detectedTime, String.valueOf(session_id));
+                = new AccessibilityDataRecord(pack, text, type, extra, detectedTime);
         mStream.add(accessibilityDataRecord);
         Log.d(TAG,"pack = "+pack+" text = "+text+" type = "+type+" extra = "+extra);
         Log.d(TAG, "detectedTime : "+ScheduleAndSampleManager.getTimeString(detectedTime));
@@ -108,18 +110,28 @@ public class AccessibilityStreamGenerator extends AndroidStreamGenerator<Accessi
                 && (detectedTime != Constants.INVALID_TIME_VALUE)){
 
             accessibilityDataRecord = new AccessibilityDataRecord(Constants.INVALID_STRING_VALUE,
-                    Constants.INVALID_STRING_VALUE, Constants.INVALID_STRING_VALUE, Constants.INVALID_STRING_VALUE, ScheduleAndSampleManager.getCurrentTimeInMillis(), String.valueOf(session_id));
+                    Constants.INVALID_STRING_VALUE, Constants.INVALID_STRING_VALUE, Constants.INVALID_STRING_VALUE, ScheduleAndSampleManager.getCurrentTimeInMillis());
         }
 
         // also post an event.
         EventBus.getDefault().post(accessibilityDataRecord);
         try {
 
-            mDAO.add(accessibilityDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
-        }catch (NullPointerException e){
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+
+            db.accessibilityDataRecordDao().insertAll(accessibilityDataRecord);
+            List<AccessibilityDataRecord> accessibilityDataRecords = db.accessibilityDataRecordDao().getAll();
+
+            for (AccessibilityDataRecord a : accessibilityDataRecords) {
+                Log.e(TAG, "pack in db: "+a.getPack());
+                Log.e(TAG, "Type in db: "+a.getType());
+                Log.e(TAG, "Text in db: "+a.getText());
+                Log.e(TAG, "Extra in db: "+a.getExtra());
+            }
+        } catch (NullPointerException e){
             e.printStackTrace();
             return false;
         }

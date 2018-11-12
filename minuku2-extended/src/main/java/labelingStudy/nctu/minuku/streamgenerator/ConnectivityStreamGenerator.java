@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -10,6 +11,9 @@ import android.os.Handler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.ConnectivityDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -21,6 +25,10 @@ import labelingStudy.nctu.minukucore.dao.DAOException;
 import labelingStudy.nctu.minukucore.exception.StreamAlreadyExistsException;
 import labelingStudy.nctu.minukucore.exception.StreamNotFoundException;
 import labelingStudy.nctu.minukucore.stream.Stream;
+
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileAvailable;
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsMobileConnected;
+import static labelingStudy.nctu.minuku.model.DataRecord.ConnectivityDataRecord.isIsWifiAvailable;
 
 /**
  * Created by Lawrence on 2017/8/22.
@@ -51,7 +59,6 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     private static ConnectivityManager mConnectivityManager;
 
     private ConnectivityStream mStream;
-    private ConnectivityDataRecordDAO mDAO;
 
     private SharedPreferences sharedPrefs;
 
@@ -60,7 +67,6 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
 
         this.mContext = applicationContext;
         this.mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ConnectivityDataRecord.class);
 
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
@@ -98,17 +104,29 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
         //TODO get service data
         ConnectivityDataRecord connectivityDataRecord =
                 new ConnectivityDataRecord(mNetworkType,mIsNetworkAvailable, mIsConnected, mIsWifiAvailable,
-                        mIsMobileAvailable, mIsWifiConnected, mIsMobileConnected, String.valueOf(session_id));
+                        mIsMobileAvailable, mIsWifiConnected, mIsMobileConnected);
         mStream.add(connectivityDataRecord);
         Log.d(TAG, "CheckFamiliarOrNot to be sent to event bus" + connectivityDataRecord);
         // also post an event.
         EventBus.getDefault().post(connectivityDataRecord);
         try {
-            mDAO.add(connectivityDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
-        }catch (NullPointerException e){ //Sometimes no data is normal
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
+            List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
+            for (ConnectivityDataRecord c : connectivityDataRecords) {
+                Log.e(TAG, " isIsWifiConnected: "+String.valueOf(c.isIsWifiConnected()));
+                Log.e(TAG," NetworkType: "+c.getNetworkType());
+                Log.e(TAG, " isNetworkAvailable: "+String.valueOf(c.isNetworkAvailable()));
+                Log.e(TAG, " isIsConnected: "+ String.valueOf(c.isIsConnected()));
+                Log.e(TAG, " isIsWifiAvailable: "+String.valueOf(isIsWifiAvailable()));
+                Log.e(TAG, " isIsMobileAvailable: "+String.valueOf(isIsMobileAvailable()));
+                Log.e(TAG, " isIsMobileConnected: "+ String.valueOf(isIsMobileConnected()));
+
+            }
+        } catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
         }
