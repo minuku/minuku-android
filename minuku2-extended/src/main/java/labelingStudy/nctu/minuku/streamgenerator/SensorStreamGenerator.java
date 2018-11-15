@@ -22,6 +22,7 @@
 
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
@@ -33,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.SensorDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -58,7 +60,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     private SensorStream mStream;
     private String TAG = "SensorStreamGenerator";
     private Sensor sensor;
-    SensorDataRecordDAO mDAO;
     public static SensorDataRecord sensorDataRecord;
     /** Tag for logging. */
     private static final String LOG_TAG = "PhoneSensorMnger";
@@ -125,7 +126,6 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     public SensorStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new SensorStream(Constants.SENSOR_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(SensorDataRecord.class);
 
         mContext = applicationContext;
         //call sensor manager from the service
@@ -185,17 +185,35 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         Log.d(TAG,"mPressure_str = "+mPressure_str+" mRelativeHumidity_str = "+mRelativeHumidity_str+" mAmbientTemperature_str = "+mAmbientTemperature_str+" session_id = "+session_id);
 
         SensorDataRecord sensorDataRecord = new SensorDataRecord(mAccele_str, mGyroscope_str, mGravity_str, mLinearAcceleration_str,
-                mRotationVector_str, mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str, mAmbientTemperature_str, String.valueOf(session_id));
+                mRotationVector_str, mProximity_str, mMagneticField_str, mLight_str, mPressure_str, mRelativeHumidity_str, mAmbientTemperature_str);
         mStream.add(sensorDataRecord);
         Log.d(TAG, "Sensor to be sent to event bus" + sensorDataRecord);
 
         //post an event
         EventBus.getDefault().post(sensorDataRecord);
         try {
-            mDAO.add(sensorDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.sensorDataRecordDao().insertAll(sensorDataRecord);
+            List<SensorDataRecord> sensorDataRecords = db.sensorDataRecordDao().getAll();
+
+            for (SensorDataRecord s : sensorDataRecords) {
+                Log.e(TAG," Accele: "+ s.getmAccele_str());
+                Log.e(TAG," AmbientTemperature: "+ s.getmAmbientTemperature_str());
+                Log.e(TAG," Gravity: "+ s.getmGravity_str());
+
+                Log.e(TAG," Gyroscope: "+ s.getmGyroscope_str());
+                Log.e(TAG," Light: "+ s.getmLight_str());
+                Log.e(TAG," LinearAcceleration: "+ s.getmLinearAcceleration_str());
+                Log.e(TAG," MagneticField: "+ s.getmMagneticField_str());
+                Log.e(TAG," Pressure: "+ s.getmPressure_str());
+                Log.e(TAG," Proximity: "+ s.getmProximity_str());
+                Log.e(TAG," RelativeHumidity: "+ s.getmRelativeHumidity_str());
+                Log.e(TAG," RotationVector: "+ s.getmRotationVector_str());
+
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;

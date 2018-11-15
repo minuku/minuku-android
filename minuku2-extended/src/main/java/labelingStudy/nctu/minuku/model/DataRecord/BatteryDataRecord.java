@@ -1,104 +1,73 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.util.Log;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
+
+//import static labelingStudy.nctu.minuku.streamgenerator.BatteryStreamGenerator.TAG;
 
 /**
  * Created by Lawrence on 2017/7/22.
  */
 
-public class BatteryDataRecord implements DataRecord{
+/**
+ * BatteryDataRecord stores information about battery conditions and status
+ */
+@Entity
+public class BatteryDataRecord implements DataRecord {
 
-    private final String TAG = "BatteryDataRecord";
+    public String TAG = "BatteryDataRecord";
 
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
+
+    @ColumnInfo(name = "creationTime")
     public long creationTime;
-    private int taskDayCount;
-    private long hour;
+
+    @ColumnInfo(name = "BatteryLevel")
     public int BatteryLevel;
+
+    @ColumnInfo(name = "BatteryPercentage")
     public float BatteryPercentage;
-    private String BatteryChargingState = "NA";
+
+    @ColumnInfo(name = "BatteryChargingState")
+    public String BatteryChargingState = "NA";
+
+    @ColumnInfo(name = "isCharging")
     public boolean isCharging;
-    private String sessionid;
 
-    public BatteryDataRecord(){}
 
-    public BatteryDataRecord(int BatteryLevel, float BatteryPercentage, String BatteryChargingState, boolean isCharging){
+    public BatteryDataRecord(){
         this.creationTime = new Date().getTime();
+    }
+    public BatteryDataRecord(int BatteryLevel, float BatteryPercentage, String BatteryChargingState, boolean isCharging, long detectedTime){
+        this.creationTime = detectedTime;
+        Log.d(TAG, "creationTime : "+creationTime);
+
         this.BatteryLevel = BatteryLevel;
         this.BatteryPercentage = BatteryPercentage;
         this.BatteryChargingState = BatteryChargingState;
         this.isCharging = isCharging;
 
         Log.d(TAG,"BatteryLevel : "+ this.BatteryLevel+" BatteryPercentage : "+ this.BatteryPercentage
-        +" BatteryChargingState : "+ this.BatteryChargingState +" isCharging : "+ this.isCharging);
+                +" BatteryChargingState : "+ this.BatteryChargingState +" isCharging : "+ this.isCharging);
     }
 
-    public BatteryDataRecord(int BatteryLevel, float BatteryPercentage, String BatteryChargingState, boolean isCharging, String sessionid){
-        this.creationTime = new Date().getTime();
-        this.BatteryLevel = BatteryLevel;
-        this.BatteryPercentage = BatteryPercentage;
-        this.BatteryChargingState = BatteryChargingState;
-        this.isCharging = isCharging;
-        this.sessionid = sessionid;
+    public String getTAG() {
+        return TAG;
     }
 
-    public BatteryDataRecord(int BatteryLevel, float BatteryPercentage, String BatteryChargingState, boolean isCharging, String sessionid, long detectedTime){
-        this.creationTime = detectedTime;
-        this.BatteryLevel = BatteryLevel;
-        this.BatteryPercentage = BatteryPercentage;
-        this.BatteryChargingState = BatteryChargingState;
-        this.isCharging = isCharging;
-        this.sessionid = sessionid;
+    public long get_id() {
+        return _id;
     }
 
-    public String getSessionid() {
-        return sessionid;
-    }
-
-    private long getmillisecondToHour(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        return mhour;
-
-    }
-
-    private String getmillisecondToDateWithTime(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH)+1;
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        int mhour = calendar.get(Calendar.HOUR);
-        int mMin = calendar.get(Calendar.MINUTE);
-        int mSec = calendar.get(Calendar.SECOND);
-
-        return addZero(mYear)+"/"+addZero(mMonth)+"/"+addZero(mDay)+" "+addZero(mhour)+":"+addZero(mMin)+":"+addZero(mSec);
-
-    }
-
-    private String addZero(int date){
-        if(date<10)
-            return String.valueOf("0"+date);
-        else
-            return String.valueOf(date);
-    }
-
-    public long getHour(){
-        return hour;
-    }
-
-    public int getTaskDayCount(){
-        return taskDayCount;
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     @Override
@@ -106,19 +75,40 @@ public class BatteryDataRecord implements DataRecord{
         return creationTime;
     }
 
-    public int getBatteryLevel(){
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public int getBatteryLevel() {
         return BatteryLevel;
     }
 
-    public float getBatteryPercentage(){
+    public void setBatteryLevel(int batteryLevel) {
+        BatteryLevel = batteryLevel;
+    }
+
+    public float getBatteryPercentage() {
         return BatteryPercentage;
     }
 
-    public String getBatteryChargingState(){
+    public void setBatteryPercentage(float batteryPercentage) {
+        BatteryPercentage = batteryPercentage;
+    }
+
+    public String getBatteryChargingState() {
         return BatteryChargingState;
     }
 
-    public boolean getisCharging(){
+    public void setBatteryChargingState(String batteryChargingState) {
+        BatteryChargingState = batteryChargingState;
+    }
+
+    public boolean isCharging() {
         return isCharging;
     }
+
+    public void setCharging(boolean charging) {
+        isCharging = charging;
+    }
+
 }

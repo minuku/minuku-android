@@ -171,4 +171,5 @@ public class Constants {
 
     public static final String ACTIVITY_CONFIDENCE_CONNECTOR = ":";
 
+    public static int NOTIFICATION_UPDATE_THREAD_SIZE = 1;
 }

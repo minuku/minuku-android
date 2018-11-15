@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,12 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.BatteryDataRecordDAO;
@@ -30,7 +37,6 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     private final String TAG = "BatteryStreamGenerator";
     private BatteryStream mStream;
-    private BatteryDataRecordDAO mDAO;
 
     public static int mBatteryLevel= -1;
     public static float mBatteryPercentage = -1;
@@ -46,7 +52,6 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
         this.mContext = applicationContext;
         this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(BatteryDataRecord.class);;
 
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
 
@@ -84,13 +89,13 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
         //TODO get service data
         BatteryDataRecord batteryDataRecord
-                = new BatteryDataRecord(mBatteryLevel, mBatteryPercentage, mBatteryChargingState, isCharging, String.valueOf(session_id), detectedTime);
+                = new BatteryDataRecord(mBatteryLevel, mBatteryPercentage, mBatteryChargingState, isCharging, detectedTime);
 
         if((ScheduleAndSampleManager.getCurrentTimeInMillis() - detectedTime) >= Constants.MILLISECONDS_PER_MINUTE * 10
                 && (detectedTime != Constants.INVALID_TIME_VALUE)){
 
             batteryDataRecord = new BatteryDataRecord(-1,
-                    -1, "NA", false, String.valueOf(session_id), detectedTime);
+                    -1, "NA", false, detectedTime);
         }
 
         mStream.add(batteryDataRecord);
@@ -98,12 +103,25 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         // also post an event.
         EventBus.getDefault().post(batteryDataRecord);
         try {
-            mDAO.add(batteryDataRecord);
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.batteryDataRecordDao().insertAll(batteryDataRecord);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//            Date start =sdf.parse("2018/03/26 00:00:00");
+//            Date end =sdf.parse("2018/03/26 15:37:00");
+
+            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
+            for (BatteryDataRecord b : batteryDataRecords) {
+                Log.e(TAG, " BatteryChargingState "+b.getBatteryChargingState());
+                Log.e(TAG, " BatteryPercentage "+String.valueOf(b.getBatteryPercentage()));
+                Log.e(TAG, " BatteryLevel: "+String.valueOf(b.getBatteryLevel()));
+                Log.e(TAG, " isCharging: "+String.valueOf(b.isCharging()));
+            }
 //            mDAO.query_counting();
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
-        }catch (NullPointerException e){ //Sometimes no data is normal
+        } catch (NullPointerException e){ //Sometimes no data is normal
             e.printStackTrace();
             return false;
         }
@@ -145,9 +163,6 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 detectedTime = ScheduleAndSampleManager.getCurrentTimeInMillis();
 
                 int status = intent.getIntExtra("status", -1);
-                //int health = intent.getIntExtra("health", 0);
-                //boolean present = intent.getBooleanExtra("present",false);
-                //int mBatteryLevel = intent.getIntExtra("mBatteryLevel", 0);
                 mBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
@@ -156,11 +171,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                         status == BatteryManager.BATTERY_STATUS_FULL;
 
                 mBatteryPercentage = mBatteryLevel / (float)scale;
-//                int icon_small = intent.getIntExtra("icon-small", 0);
-//                int plugged = intent.getIntExtra("plugged", 0);
-//                int voltage = intent.getIntExtra("voltage", 0);
                 int temperature = intent.getIntExtra("temperature",0);
-                //String technology = intent.getStringExtra("technology");
 
                 int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 
@@ -190,54 +201,16 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
                 }else if (chargePlug==BatteryManager.BATTERY_PLUGGED_AC){
                     mBatteryChargingState = "ac charging";
                 }
-
-//                String healthString = "";
-//                switch (health) {
-//                    case BatteryManager.BATTERY_HEALTH_UNKNOWN:
-//                        healthString = "unknown";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_GOOD:
-//                        healthString = "good";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_OVERHEAT:
-//                        healthString = "overheat";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_DEAD:
-//                        healthString = "dead";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-//                        healthString = "voltage";
-//                        break;
-//                    case BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
-//                        healthString = "unspecified failure";
-//                        break;
-//                }
-//                String acString = "";
-//                switch (plugged) {
-//                    case BatteryManager.BATTERY_PLUGGED_AC:
-//                        acString = "plugged ac";
-//                        break;
-//                    case BatteryManager.BATTERY_PLUGGED_USB:
-//
-//                        acString = "plugged usb";
-//                        break;
-//                }
                 Log.d("Batterystatus", statusString);
-                //Log.d("Batteryhealth", healthString);
-                //Log.d("Batterypresent", String.valueOf(present));
                 Log.d("mBatteryLevel", String.valueOf(mBatteryLevel));
                 Log.d("BatteryScale", String.valueOf(scale));
                 Log.d("mBatteryPercentage", String.valueOf(mBatteryPercentage));
-                //Log.d("Batteryicon_small", String.valueOf(icon_small));
 
                 Log.d("IsCharging",String.valueOf(isCharging));
 
                 Log.d("BatteryChargingState",mBatteryChargingState);
 
-                //Log.d("Batteryplugged", acString);
-                //Log.d("Batteryvoltage", String.valueOf(voltage));
                 Log.d("Batterytemperature", String.valueOf(temperature));
-                //Log.d("Batterytechnology", technology);
             }
         }
     };

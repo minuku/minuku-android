@@ -1,5 +1,6 @@
 package labelingStudy.nctu.minuku.streamgenerator;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -10,6 +11,9 @@ import android.telephony.TelephonyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.TelephonyDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -36,7 +40,6 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     private String TAG = "TelephonyStreamGenerator";
     private TelephonyStream mStream;
-    private TelephonyDataRecordDAO mDAO;
     private TelephonyManager telephonyManager;
     private String mNetworkOperatorName;
     private int mCallState;
@@ -56,7 +59,6 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TelephonyDataRecord.class);
         this.register();
 
         mCallState = -9999;
@@ -101,17 +103,29 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
 
         TelephonyDataRecord telephonyDataRecord = new TelephonyDataRecord(mNetworkOperatorName, mCallState
-                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrength_dbm, mCdmaSignalStrengthLevel, String.valueOf(session_id));
+                , mPhoneSignalType, mGsmSignalStrength, mLTESignalStrength_dbm, mCdmaSignalStrengthLevel);
         mStream.add(telephonyDataRecord);
         Log.d(TAG, "Telephony to be sent to event bus" + telephonyDataRecord);
 
         //post an event
         EventBus.getDefault().post(telephonyDataRecord);
         try {
-            mDAO.add(telephonyDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+            appDatabase db;
+            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+            db.telephonyDataRecordDao().insertAll(telephonyDataRecord);
+
+            List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
+
+            for (TelephonyDataRecord t : telephonyDataRecords) {
+                Log.e(TAG," NetworkOperatorName: "+ t.getNetworkOperatorName());
+                Log.e(TAG," CallState: "+ String.valueOf(t.getCallState()));
+                Log.e(TAG," CdmaSignalStrengthLevel: "+ String.valueOf(t.getCdmaSignalStrengthLevel()));
+                Log.e(TAG," GsmSignalStrength: "+ String.valueOf(t.getGsmSignalStrength()));
+                Log.e(TAG," LTESignalStrength: "+ String.valueOf(t.getLTESignalStrength()));
+                Log.e(TAG," PhoneSignalType: "+ String.valueOf(t.getPhoneSignalType()));
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             return false;
@@ -135,30 +149,8 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
         telephonyManager = (TelephonyManager) mApplicationContext.getSystemService(Context.TELEPHONY_SERVICE);
         mNetworkOperatorName = telephonyManager.getNetworkOperatorName();
-        //int networktype = telephonyManager.getNetworkType();
 
         telephonyManager.listen(TelephonyStateListener,PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        /*switch (networktype) {
-            case 0: Log.d(TAG, "UNKNOWN");
-            case 1: Log.d(TAG, "GPRS");
-            case 2: Log.d(TAG, "EDGE");
-            case 3: Log.d(TAG, "UMTS");
-            case 4: Log.d(TAG, "CDMA");
-            case 5: Log.d(TAG, "EVDO_0");
-            case 6: Log.d(TAG, "EVDO_A");
-            case 7: Log.d(TAG, "1xRTT");
-            case 8: Log.d(TAG, "HSDPA");
-            case 9: Log.d(TAG, "HSUPA");
-            case 10: Log.d(TAG, "HSPA");
-            case 11: Log.d(TAG, "IDEN");
-            case 12: Log.d(TAG, "EVDO_B");
-            case 13: Log.d(TAG, "LTE");
-            case 14: Log.d(TAG, "EHRPD");
-            case 15: Log.d(TAG, "HSPAP");
-            case 16: Log.d(TAG, "GSM");
-            case 17: Log.d(TAG, "TD_SCDMA");
-            case 18: Log.d(TAG, "IWLAN");
-        }*/
 
     }
     private final PhoneStateListener TelephonyStateListener = new PhoneStateListener() {
@@ -181,8 +173,6 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
             String[] parts = ssignal.split(" ");
 
             int dbm;
-            int asu;
-            //Log.d("parts8", parts[8]) = -1;
 
             /**If LTE 4G */
             if (telephonyManager.getNetworkType() == NETWORK_TYPE_LTE){

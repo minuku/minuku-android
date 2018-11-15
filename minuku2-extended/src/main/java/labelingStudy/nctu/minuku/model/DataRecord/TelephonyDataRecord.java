@@ -1,8 +1,10 @@
 package labelingStudy.nctu.minuku.model.DataRecord;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.util.Log;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import labelingStudy.nctu.minukucore.model.DataRecord;
@@ -11,23 +13,42 @@ import labelingStudy.nctu.minukucore.model.DataRecord;
  * Created by Lawrence on 2017/7/22.
  */
 
+/**
+ * TelephonyDataRecord stores information about the signal detail, including LTE, Gsm, Cdma
+ */
+@Entity
 public class TelephonyDataRecord implements DataRecord {
-    private final String TAG = "TelephonyDataRecord";
 
+    private String TAG = "TelephonyDataRecord";
+
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
+
+    @ColumnInfo(name = "creationTime")
     public long creationTime;
-    private int taskDayCount;
-    private long hour;
-    private String NetworkOperatorName = "NA";
-    private int CallState = -9999;
-    private int PhoneSignalType = -9999;
-    private int GsmSignalStrength = -9999;
-    private int LTESignalStrength = -9999;
-    private int CdmaSignalStrengthLevel = -9999;
-    private String sessionid;
+
+    @ColumnInfo(name = "NetworkOperatorName")
+    public String NetworkOperatorName = "NA";
+
+    @ColumnInfo(name = "CallState")
+    public int CallState = -9999;
+
+    @ColumnInfo(name = "PhoneSignalType")
+    public int PhoneSignalType = -9999;
+
+    @ColumnInfo(name = "GsmSignalStrength")
+    public int GsmSignalStrength = -9999;
+
+    @ColumnInfo(name = "LTESignalStrength")
+    public int LTESignalStrength = -9999;
+
+    @ColumnInfo(name = "CdmaSignalStrengthLevel")
+    public int CdmaSignalStrengthLevel = -9999;
+
+
 
     public TelephonyDataRecord(String NetworkOperatorName, int CallState, int PhoneSignalType
             , int GsmSignalStrength, int LTESignalStrength, int CdmaSignalStrengthLevel) {
-
         this.creationTime = new Date().getTime();
         this.NetworkOperatorName = NetworkOperatorName;
         this.CallState = CallState;
@@ -41,70 +62,76 @@ public class TelephonyDataRecord implements DataRecord {
                 +" mCdmaSignalStrenthLevel : "+ CdmaSignalStrengthLevel);
     }
 
-    public TelephonyDataRecord(String NetworkOperatorName, int CallState, int PhoneSignalType
-            , int GsmSignalStrength, int LTESignalStrength, int CdmaSignalStrengthLevel, String sessionid) {
-
-        this.creationTime = new Date().getTime();
-        this.NetworkOperatorName = NetworkOperatorName;
-        this.CallState = CallState;
-        this.PhoneSignalType = PhoneSignalType;
-        this.GsmSignalStrength = GsmSignalStrength;
-        this.LTESignalStrength = LTESignalStrength;
-        this.CdmaSignalStrengthLevel = CdmaSignalStrengthLevel;
-        this.sessionid = sessionid;
-
+    public String getTAG() {
+        return TAG;
     }
 
-    public String getSessionid() {
-        return sessionid;
+    public void setTAG(String TAG) {
+        this.TAG = TAG;
     }
 
-    private long getmillisecondToHour(long timeStamp){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeStamp);
-
-        long mhour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        return mhour;
-
-    }
-    public long getHour(){
-        return hour;
+    public long get_id() {
+        return _id;
     }
 
-    public int getTaskDayCount(){
-        return taskDayCount;
+    public void set_id(long _id) {
+        this._id = _id;
     }
-
 
     @Override
     public long getCreationTime() {
-
         return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
     public String getNetworkOperatorName() {
         return NetworkOperatorName;
     }
 
+    public void setNetworkOperatorName(String networkOperatorName) {
+        NetworkOperatorName = networkOperatorName;
+    }
+
     public int getCallState() {
         return CallState;
+    }
+
+    public void setCallState(int callState) {
+        CallState = callState;
     }
 
     public int getPhoneSignalType() {
         return PhoneSignalType;
     }
 
+    public void setPhoneSignalType(int phoneSignalType) {
+        PhoneSignalType = phoneSignalType;
+    }
+
     public int getGsmSignalStrength() {
         return GsmSignalStrength;
+    }
+
+    public void setGsmSignalStrength(int gsmSignalStrength) {
+        GsmSignalStrength = gsmSignalStrength;
     }
 
     public int getLTESignalStrength() {
         return LTESignalStrength;
     }
 
+    public void setLTESignalStrength(int LTESignalStrength) {
+        this.LTESignalStrength = LTESignalStrength;
+    }
+
     public int getCdmaSignalStrengthLevel() {
         return CdmaSignalStrengthLevel;
+    }
+
+    public void setCdmaSignalStrengthLevel(int cdmaSignalStrengthLevel) {
+        CdmaSignalStrengthLevel = cdmaSignalStrengthLevel;
     }
 }

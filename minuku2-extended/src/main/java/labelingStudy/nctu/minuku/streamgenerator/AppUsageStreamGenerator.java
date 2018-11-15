@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.AppUsageDataRecordDAO;
 import labelingStudy.nctu.minuku.logger.Log;
@@ -92,7 +94,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
     private static final String STRING_INTERACTIVE = "Interactive";
     private static final String STRING_NOT_INTERACTIVE = "Not_Interactive";
 
-    AppUsageDataRecordDAO mDAO;
 
     private SharedPreferences sharedPrefs;
 
@@ -107,7 +108,6 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
         mContext = applicationContext;
         this.mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(AppUsageDataRecord.class);
 
         mPowerManager = (PowerManager) applicationContext.getSystemService(POWER_SERVICE);
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, mContext.MODE_PRIVATE);
@@ -143,7 +143,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 //        int session_id = SessionManager.getOngoingSessionId();
         int session_id = sharedPrefs.getInt("ongoingSessionid", Constants.INVALID_INT_VALUE);
 
-        AppUsageDataRecord appUsageDataRecord = new AppUsageDataRecord(Screen_Status,mLastestForegroundPackage,mLastestForegroundActivity, String.valueOf(session_id));
+        AppUsageDataRecord appUsageDataRecord = new AppUsageDataRecord(Screen_Status,mLastestForegroundPackage,mLastestForegroundActivity);
 
         //appUsageDataRecord.setCreationTime();
         if(appUsageDataRecord!=null) {
@@ -157,8 +157,19 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    mDAO.add(appUsageDataRecord);
-                } catch (DAOException e) {
+                    appDatabase db;
+                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                            .allowMainThreadQueries()
+                            .build();
+                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
+                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
+                    Log.d(TAG, "test test");
+                    for (AppUsageDataRecord a : appUsageDataRecords) {
+                        Log.e(TAG, "Latest_Used_App "+a.getLatest_Used_App());
+                        Log.e(TAG, "Latest_Foreground_Activity "+a.getLatest_Foreground_Activity());
+                        Log.e(TAG, "getScreen_Status "+a.getScreen_Status());
+                    }
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -177,8 +188,20 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    mDAO.add(appUsageDataRecord);
-                } catch (DAOException e) {
+                    appDatabase db;
+                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+                            .allowMainThreadQueries()
+                            .build();
+                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
+
+                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
+
+                    for (AppUsageDataRecord a : appUsageDataRecords) {
+                        Log.e(TAG, "Latest_Used_App "+a.getLatest_Used_App());
+                        Log.e(TAG, "Latest_Foreground_Activity "+a.getLatest_Foreground_Activity());
+                        Log.e(TAG, "getScreen_Status "+a.getScreen_Status());
+                    }
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                     return false;
                 }
