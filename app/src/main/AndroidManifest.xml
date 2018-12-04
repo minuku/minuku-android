@@ -75,7 +75,7 @@
             android:value="AIzaSyCiV1bU3lnapK7kJJh-C1DIsGCZsf8JK8o" />
         -->
         <activity
-            android:name="labelingStudy.nctu.minuku_2.controller.WelcomeActivity"
+            android:name="labelingStudy.nctu.minuku_2.MainActivity"
             android:launchMode="singleInstance"
             android:persistent="true">
         </activity>

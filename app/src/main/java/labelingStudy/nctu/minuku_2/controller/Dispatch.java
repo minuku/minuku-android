@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex;
 
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.logger.Log;
+import labelingStudy.nctu.minuku_2.MainActivity;
 import labelingStudy.nctu.minuku_2.R;
 import labelingStudy.nctu.minuku_2.service.BackgroundService;
 
@@ -49,10 +50,10 @@ public class Dispatch extends Activity {
         try {
 
             activityClass = Class.forName(
-                    sharedPrefs.getString("lastActivity", WelcomeActivity.class.getName()));
+                    sharedPrefs.getString("lastActivity", MainActivity.class.getName()));
         } catch(ClassNotFoundException e) {
 
-            activityClass = WelcomeActivity.class;
+            activityClass = MainActivity.class;
         }
 
         Log.d(TAG, "Going to "+activityClass.getName());

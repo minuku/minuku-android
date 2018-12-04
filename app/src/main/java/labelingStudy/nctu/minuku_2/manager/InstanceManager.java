@@ -37,12 +37,14 @@ import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuSituationManager;
 //import labelingStudy.nctu.minuku.manager.SituationParserManager;
 import labelingStudy.nctu.minuku.model.UserSubmissionStats;
+import labelingStudy.nctu.minuku.stream.NotificationStream;
 import labelingStudy.nctu.minuku.streamgenerator.AccessibilityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.AppUsageStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.BatteryStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.ConnectivityStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.LocationStreamGenerator;
+import labelingStudy.nctu.minuku.streamgenerator.NotificationStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.RingerStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.SensorStreamGenerator;
 import labelingStudy.nctu.minuku.streamgenerator.TelephonyStreamGenerator;
@@ -125,6 +127,9 @@ public class InstanceManager {
 
         SensorStreamGenerator sensorStreamGenerator =
                 new SensorStreamGenerator(getApplicationContext());
+
+        NotificationStreamGenerator notificationStreamGenerator =
+                new NotificationStreamGenerator(getApplicationContext());
 
         UserInteractionStreamGenerator userInteractionStreamGenerator =
                 new UserInteractionStreamGenerator(getApplicationContext());

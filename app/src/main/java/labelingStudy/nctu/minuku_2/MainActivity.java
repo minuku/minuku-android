@@ -22,8 +22,12 @@
 
 package labelingStudy.nctu.minuku_2;
 
+import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,11 +37,13 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,7 +65,9 @@ import labelingStudy.nctu.minuku.event.DecrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import labelingStudy.nctu.minuku.logger.Log;
 //import labelingStudy.nctu.minuku_2.controller.CounterActivity;
+import labelingStudy.nctu.minuku.service.NotificationListenService;
 import labelingStudy.nctu.minuku_2.controller.DeviceIdPage;
+import labelingStudy.nctu.minuku_2.service.BackgroundService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AtomicInteger loadingProcessCount = new AtomicInteger(0);
     private ProgressDialog loadingProgressDialog;
+    private NotificationManager mManager;
+    private NotificationCompat.Builder mBuilder;
 
     public static String task="PART"; //default is PART
     ArrayList viewList;
@@ -81,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPrefs;
 
     private boolean firstTimeOrNot;
+
+    private AlertDialog enableNotificationListenerAlertDialog;
+
+    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+    private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,25 +116,40 @@ public class MainActivity extends AppCompatActivity {
 //            initViewPager(checkpointview, recordview);
 //        }
 
-        SettingViewPager();
+//        SettingViewPager();
 
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
+        mManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(this);
+
+        if(!isNotificationServiceEnabled()) {
+            android.util.Log.d(TAG, "notification start!!");
+            enableNotificationListenerAlertDialog = buildNotificationServiceAlertDialog();
+            enableNotificationListenerAlertDialog.show();
+        }else{
+            toggleNotificationListenerService();
+        }
 
         int sdk_int = Build.VERSION.SDK_INT;
         if(sdk_int>=23) {
             checkAndRequestPermissions();
         }else{
             startServiceWork();
+            startService(new Intent(getBaseContext(), BackgroundService.class));
+            startService(new Intent(getBaseContext(), NotificationListenService.class));
         }
 
-        firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
-        Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
-
-        if(firstTimeOrNot) {
-            startpermission();
-            firstTimeOrNot = false;
-            sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
-        }
+//        startService(new Intent(getBaseContext(), BackgroundService.class));
+//        startService(new Intent(getBaseContext(), NotificationListenService.class));
+//COMMENT
+//        firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
+//        Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
+//
+//        if(firstTimeOrNot) {
+//            startpermission();
+//            firstTimeOrNot = false;
+//            sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
+//        }
 
         try {
             //for notification
@@ -133,7 +163,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNotificationServiceEnabled(){
+        android.util.Log.d(TAG, "isNotificationServiceEnabled");
+        String pkgName = getPackageName();
+        final String flat = Settings.Secure.getString(getContentResolver(),
+                ENABLED_NOTIFICATION_LISTENERS);
+        if (!TextUtils.isEmpty(flat)) {
+            final String[] names = flat.split(":");
+            for (int i = 0; i < names.length; i++) {
+                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null) {
+                    if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
+    private void toggleNotificationListenerService() {
+        android.util.Log.d(TAG, "toggleNotificationListenerService");
+        PackageManager pm = getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(this, NotificationListenService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(new ComponentName(this, NotificationListenService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    private AlertDialog buildNotificationServiceAlertDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("start notification");
+        alertDialogBuilder.setMessage("請開啟權限");
+        alertDialogBuilder.setPositiveButton("yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("no",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // If you choose to not enable the notification listener
+                        // the app. will not work as expected
+                    }
+                });
+        return(alertDialogBuilder.create());
+    }
 
     @Override
     public void onResume(){
@@ -209,6 +285,15 @@ public class MainActivity extends AppCompatActivity {
     public void startServiceWork(){
 
         getDeviceid();
+
+        firstTimeOrNot = sharedPrefs.getBoolean("firstTimeOrNot", true);
+        Log.d(TAG,"firstTimeOrNot : "+ firstTimeOrNot);
+
+        if(firstTimeOrNot) {
+            startpermission();
+            firstTimeOrNot = false;
+            sharedPrefs.edit().putBoolean("firstTimeOrNot", firstTimeOrNot).apply();
+        }
 
     }
 
