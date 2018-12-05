@@ -135,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
             checkAndRequestPermissions();
         }else{
             startServiceWork();
-            startService(new Intent(getBaseContext(), BackgroundService.class));
-            startService(new Intent(getBaseContext(), NotificationListenService.class));
-        }
 
+        }
+        startService(new Intent(getBaseContext(), BackgroundService.class));
+        startService(new Intent(getBaseContext(), NotificationListenService.class));
 //        startService(new Intent(getBaseContext(), BackgroundService.class));
 //        startService(new Intent(getBaseContext(), NotificationListenService.class));
 //COMMENT

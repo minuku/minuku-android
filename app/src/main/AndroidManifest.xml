@@ -74,11 +74,11 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCiV1bU3lnapK7kJJh-C1DIsGCZsf8JK8o" />
         -->
-        <activity
-            android:name="labelingStudy.nctu.minuku_2.MainActivity"
-            android:launchMode="singleInstance"
-            android:persistent="true">
-        </activity>
+        <!--<activity-->
+            <!--android:name="labelingStudy.nctu.minuku_2.MainActivity"-->
+            <!--android:launchMode="singleInstance"-->
+            <!--android:persistent="true">-->
+        <!--</activity>-->
 
         <!--<activity android:name="labelingStudy.nctu.minuku_2.controller.CheckPointActivity" />-->
         <activity android:name="labelingStudy.nctu.minuku_2.controller.DeviceIdPage" />
@@ -93,16 +93,23 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity
-            android:name="labelingStudy.nctu.minuku_2.controller.Dispatch"
-            android:theme="@android:style/Theme.NoDisplay">
+        <!--<activity-->
+            <!--android:name="labelingStudy.nctu.minuku_2.controller.Dispatch"-->
+            <!--android:theme="@android:style/Theme.NoDisplay">-->
 
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+        <activity
+            android:name="labelingStudy.nctu.minuku_2.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
+        </activity>
 
 
         <!-- Activities included from third party libraries -->
@@ -112,6 +119,15 @@
             android:name="labelingStudy.nctu.minuku_2.service.BackgroundService"
             android:enabled="true"
             android:exported="true" />
+
+        <service
+            android:name="labelingStudy.nctu.minuku.service.NotificationListenService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name="labelingStudy.nctu.minuku_2.BootCompleteReceiver"

@@ -111,8 +111,8 @@ public class NotificationStreamGenerator extends AndroidStreamGenerator<Notifica
             List<NotificationDataRecord> notificationDataRecords = db.notificationDataRecordDao().getAll();
             for (NotificationDataRecord l : notificationDataRecords) {
                 Log.e(TAG, " NotificationPackageName: " + String.valueOf(l.getNotificaitonPackageName()));
-                Log.e(TAG, " NotificaitonTitle: " + String.valueOf(l.getNotificaitonTitle()));
-                Log.e(TAG, " NotificaitonText: " + String.valueOf(l.getNotificaitonText()));
+                Log.e(TAG, " NotificationTitle: " + String.valueOf(l.getNotificaitonTitle()));
+                Log.e(TAG, " NotificationText: " + String.valueOf(l.getNotificaitonText()));
             }
 //            List<NotificationDataRecord> NotificationDataRecords = db.notificationDataRecordDao().getAll();
 //            for (NotificationDataRecord n : NotificationDataRecords) {
