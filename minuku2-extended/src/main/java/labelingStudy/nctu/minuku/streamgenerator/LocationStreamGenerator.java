@@ -80,7 +80,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     private LocationStream mStream;
     private String TAG = "LocationStreamGenerator";
-    
+    private LocationDataRecordDAO locationDataRecordDAO;
     private CSVWriter csv_writer = null;
 
     private GoogleApiClient mGoogleApiClient;
@@ -133,7 +133,7 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         this.latestLongitude = new AtomicDouble();
 
         this.context = applicationContext;
-
+        locationDataRecordDAO = appDatabase.getDatabase(applicationContext).locationDataRecordDao();
         mLocationDataRecords = new ArrayList<LocationDataRecord>();
 
         startIndoorOutdoor = false;
@@ -315,12 +315,12 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         EventBus.getDefault().post(newlocationDataRecord);
         try {
 
-            appDatabase db;
-            db = Room.databaseBuilder(context,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.locationDataRecordDao().insertAll(newlocationDataRecord);
-            List<LocationDataRecord> locationDataRecords = db.locationDataRecordDao().getAll();
+//            appDatabase db;
+//            db = Room.databaseBuilder(context,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            locationDataRecordDAO.insertAll(newlocationDataRecord);
+            List<LocationDataRecord> locationDataRecords = locationDataRecordDAO.getAll();
             for (LocationDataRecord l : locationDataRecords) {
                 Log.e(TAG, " Latitude: "+String.valueOf(l.getLatitude()));
                 Log.e(TAG, " Longitude: "+String.valueOf(l.getLongitude()));

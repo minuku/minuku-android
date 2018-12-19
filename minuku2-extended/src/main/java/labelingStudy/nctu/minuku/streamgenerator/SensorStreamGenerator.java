@@ -68,6 +68,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
     public static final String RECORD_DATA_PROPERTY_NAME = "SensorValues";
     /**system components**/
     private static Context mContext;
+    private SensorDataRecordDAO sensorDataRecordDAO;
     private static SensorManager mSensorManager;
     private static List<Sensor> SensorList;
 
@@ -128,6 +129,7 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         this.mStream = new SensorStream(Constants.SENSOR_QUEUE_SIZE);
 
         mContext = applicationContext;
+        sensorDataRecordDAO = appDatabase.getDatabase(applicationContext).sensorDataRecordDao();
         //call sensor manager from the service
         mSensorManager = (SensorManager) mContext.getSystemService(mContext.SENSOR_SERVICE);
 
@@ -192,12 +194,12 @@ public class SensorStreamGenerator extends AndroidStreamGenerator<SensorDataReco
         //post an event
         EventBus.getDefault().post(sensorDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.sensorDataRecordDao().insertAll(sensorDataRecord);
-            List<SensorDataRecord> sensorDataRecords = db.sensorDataRecordDao().getAll();
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            sensorDataRecordDAO.insertAll(sensorDataRecord);
+            List<SensorDataRecord> sensorDataRecords = sensorDataRecordDAO.getAll();
 
             for (SensorDataRecord s : sensorDataRecords) {
                 Log.e(TAG," Accele: "+ s.getmAccele_str());

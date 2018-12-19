@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import labelingStudy.nctu.minuku.Data.DBHelper;
+import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.config.Constants;
 import labelingStudy.nctu.minuku.dao.UserInteractionDataRecordDAO;
@@ -27,6 +28,7 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
     private String TAG = "UserInteractionStreamGenerator";
 
     private UserInteractionStream mStream;
+    //private UserInteractionDataRecordDAO userInteractionDataRecordDAO;
 
     private static final String STRING_FALSE = "0";
     private static final String STRING_TRUE = "1";
@@ -42,6 +44,7 @@ public class UserInteractionStreamGenerator extends AndroidStreamGenerator<UserI
 
         super(applicationContext);
         this.mStream = new UserInteractionStream(Constants.DEFAULT_QUEUE_SIZE);
+        //userInteractionDataRecordDAO = appDatabase.getDatabase(applicationContext).userInteractionDataRecordDao();
         this.register();
     }
 

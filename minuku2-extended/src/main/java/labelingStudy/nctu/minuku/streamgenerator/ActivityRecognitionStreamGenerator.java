@@ -74,6 +74,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     private Context mContext;
     private ActivityRecognitionStream mStream;
+    private ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO;
 
     private ActivityRecognitionDataRecord activityRecognitionDataRecord;
 
@@ -100,7 +101,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         //this.mContext = mMainServiceContext;
         this.mContext = applicationContext;
         this.mStream = new ActivityRecognitionStream(Constants.LOCATION_QUEUE_SIZE);
-
+        activityRecognitionDataRecordDAO = appDatabase.getDatabase(applicationContext).activityRecognitionDataRecordDao();
         mLocalRecordPool = new ArrayList<ActivityRecognitionDataRecord>();
 
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, mContext.MODE_PRIVATE);
@@ -193,12 +194,12 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
             mStream.add(activityRecognitionDataRecord);
             try {
-                appDatabase db;
-                db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                        .allowMainThreadQueries()
-                        .build();
-                db.activityRecognitionDataRecordDao().insertAll(activityRecognitionDataRecord);
-                List<ActivityRecognitionDataRecord> activityRecognitionDataRecords = db.activityRecognitionDataRecordDao().getAll();
+//                appDatabase db;
+//                db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                        .allowMainThreadQueries()
+//                        .build();
+                activityRecognitionDataRecordDAO.insertAll(activityRecognitionDataRecord);
+                List<ActivityRecognitionDataRecord> activityRecognitionDataRecords = activityRecognitionDataRecordDAO.getAll();
                 for (ActivityRecognitionDataRecord a : activityRecognitionDataRecords) {
                     labelingStudy.nctu.minuku.logger.Log.e(TAG, "Detectedtime"+String.valueOf(a.getDetectedtime()));
                     labelingStudy.nctu.minuku.logger.Log.e(TAG, "ostProbableActivity"+a.getMostProbableActivity().toString());
@@ -255,11 +256,13 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void offer(ActivityRecognitionDataRecord dataRecord) {
         Log.e(TAG, "Offer for ActivityRecognition data record does nothing!");
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onConnected(Bundle bundle) {
 
