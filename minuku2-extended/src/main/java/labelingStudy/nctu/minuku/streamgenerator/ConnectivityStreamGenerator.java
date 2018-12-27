@@ -39,7 +39,7 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
     private final String TAG = "ConnectivityStreamGenerator";
 
     private Context mContext;
-
+    private ConnectivityDataRecordDAO connectivityDataRecordDAO;
     public static String NETWORK_TYPE_WIFI = "Wifi";
     public static String NETWORK_TYPE_MOBILE = "Mobile";
     private static boolean mIsNetworkAvailable = false;
@@ -67,6 +67,7 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
 
         this.mContext = applicationContext;
         this.mStream = new ConnectivityStream(Constants.DEFAULT_QUEUE_SIZE);
+        connectivityDataRecordDAO = appDatabase.getDatabase(applicationContext).connectivityDataRecordDao();
 
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
@@ -110,12 +111,12 @@ public class ConnectivityStreamGenerator extends AndroidStreamGenerator<Connecti
         // also post an event.
         EventBus.getDefault().post(connectivityDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.connectivityDataRecordDao().insertAll(connectivityDataRecord);
-            List<ConnectivityDataRecord> connectivityDataRecords = db.connectivityDataRecordDao().getAll();
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            connectivityDataRecordDAO.insertAll(connectivityDataRecord);
+            List<ConnectivityDataRecord> connectivityDataRecords = connectivityDataRecordDAO.getAll();
             for (ConnectivityDataRecord c : connectivityDataRecords) {
                 Log.e(TAG, " isIsWifiConnected: "+String.valueOf(c.isIsWifiConnected()));
                 Log.e(TAG," NetworkType: "+c.getNetworkType());

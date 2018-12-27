@@ -46,6 +46,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
     private AppUsageStream mStream;
     private String TAG = "AppUsageStreamGenerator";
     private PowerManager mPowerManager;
+    private AppUsageDataRecordDAO appUsageDataRecordDAO;
     private static ActivityManager mActivityManager;
 
     private static HashMap<String, String> mAppPackageNameHmap;
@@ -108,6 +109,7 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
 
         mContext = applicationContext;
         this.mStream = new AppUsageStream(Constants.LOCATION_QUEUE_SIZE);
+        appUsageDataRecordDAO = appDatabase.getDatabase(applicationContext).appUsageDataRecordDao();
 
         mPowerManager = (PowerManager) applicationContext.getSystemService(POWER_SERVICE);
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, mContext.MODE_PRIVATE);
@@ -157,12 +159,12 @@ public class AppUsageStreamGenerator extends AndroidStreamGenerator<AppUsageData
                 EventBus.getDefault().post(appUsageDataRecord);
 
                 try {
-                    appDatabase db;
-                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                            .allowMainThreadQueries()
-                            .build();
-                    db.appUsageDataRecordDao().insertAll(appUsageDataRecord);
-                    List<AppUsageDataRecord> appUsageDataRecords = db.appUsageDataRecordDao().getAll();
+//                    appDatabase db;
+//                    db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                            .allowMainThreadQueries()
+//                            .build();
+                    appUsageDataRecordDAO.insertAll(appUsageDataRecord);
+                    List<AppUsageDataRecord> appUsageDataRecords = appUsageDataRecordDAO.getAll();
                     Log.d(TAG, "test test");
                     for (AppUsageDataRecord a : appUsageDataRecords) {
                         Log.e(TAG, "Latest_Used_App "+a.getLatest_Used_App());

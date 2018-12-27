@@ -1,7 +1,9 @@
 package labelingStudy.nctu.minuku.Data;
 
 import android.arch.persistence.room.Database;
+import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.content.Context;
 
 import labelingStudy.nctu.minuku.dao.AccessibilityDataRecordDAO;
 import labelingStudy.nctu.minuku.dao.ActivityRecognitionDataRecordDAO;
@@ -51,4 +53,20 @@ public abstract class appDatabase extends RoomDatabase {
     public abstract TransportationModeDataRecordDAO transportationModeDataRecordDao();
     public abstract NotificationDataRecordDAO notificationDataRecordDao();
     public abstract UserInteractionDataRecordDAO userInteractionDataRecordDao();
+
+    private static appDatabase INSTANCE;
+    public static appDatabase getDatabase(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(context,appDatabase.class,"dataCollection")
+                    .allowMainThreadQueries()
+                    .build();
+        }
+        return INSTANCE;
+    }
+
+    public static void destoryInstance(){
+        if (INSTANCE != null)
+            INSTANCE.close();
+        INSTANCE = null;
+    }
 }

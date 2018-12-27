@@ -26,6 +26,7 @@ import labelingStudy.nctu.minuku.Utilities.CSVHelper;
 import labelingStudy.nctu.minuku.Utilities.ScheduleAndSampleManager;
 import labelingStudy.nctu.minuku.Utilities.Utils;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.TransportationModeDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuDAOManager;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.ActivityRecognitionDataRecord;
@@ -47,6 +48,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public final String TAG = "TransportationModeStreamGenerator";
 
     private TransportationModeStream mStream;
+    private TransportationModeDataRecordDAO transportationModeDataRecordDAO;
 
     private String ConfirmedActvitiyString = "NA";
 
@@ -167,6 +169,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new TransportationModeStream(Constants.LOCATION_QUEUE_SIZE);
+        transportationModeDataRecordDAO = appDatabase.getDatabase(applicationContext).transportationModeDataRecordDao();
 
         mScheduledExecutorService = Executors.newScheduledThreadPool(TransportationMode_ThreadSize);
 
@@ -258,13 +261,13 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
 
         try {
 
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.transportationModeDataRecordDao().insertAll(transportationModeDataRecord);
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            transportationModeDataRecordDAO.insertAll(transportationModeDataRecord);
 
-            List<TransportationModeDataRecord> transportationModeDataRecords = db.transportationModeDataRecordDao().getAll();
+            List<TransportationModeDataRecord> transportationModeDataRecords = transportationModeDataRecordDAO.getAll();
             for (TransportationModeDataRecord t : transportationModeDataRecords) {
                 labelingStudy.nctu.minuku.logger.Log.e(TAG," ConfirmedActivity: "+ t.getConfirmedActivityString());
                 labelingStudy.nctu.minuku.logger.Log.e(TAG, " SuspectedStartActivityString: "+t.getSuspectedStartActivityString());

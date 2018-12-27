@@ -37,7 +37,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
     private final String TAG = "BatteryStreamGenerator";
     private BatteryStream mStream;
-
+    private BatteryDataRecordDAO batteryDataRecordDAO;
     public static int mBatteryLevel= -1;
     public static float mBatteryPercentage = -1;
     private static String mBatteryChargingState = "NA";
@@ -52,7 +52,7 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
 
         this.mContext = applicationContext;
         this.mStream = new BatteryStream(Constants.DEFAULT_QUEUE_SIZE);
-
+        batteryDataRecordDAO = appDatabase.getDatabase(applicationContext).batteryDataRecordDao();
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString, Context.MODE_PRIVATE);
 
         this.register();
@@ -103,17 +103,17 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
         // also post an event.
         EventBus.getDefault().post(batteryDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.batteryDataRecordDao().insertAll(batteryDataRecord);
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            batteryDataRecordDAO.insertAll(batteryDataRecord);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 //            Date start =sdf.parse("2018/03/26 00:00:00");
 //            Date end =sdf.parse("2018/03/26 15:37:00");
 
-            List<BatteryDataRecord> batteryDataRecords = db.batteryDataRecordDao().getAll();
+            List<BatteryDataRecord> batteryDataRecords = batteryDataRecordDAO.getAll();
             for (BatteryDataRecord b : batteryDataRecords) {
                 Log.e(TAG, " BatteryChargingState "+b.getBatteryChargingState());
                 Log.e(TAG, " BatteryPercentage "+String.valueOf(b.getBatteryPercentage()));

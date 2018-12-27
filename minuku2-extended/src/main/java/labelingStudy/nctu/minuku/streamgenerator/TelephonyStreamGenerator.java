@@ -40,6 +40,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     private String TAG = "TelephonyStreamGenerator";
     private TelephonyStream mStream;
+    private TelephonyDataRecordDAO telephonyDataRecordDAO;
     private TelephonyManager telephonyManager;
     private String mNetworkOperatorName;
     private int mCallState;
@@ -59,6 +60,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
+        telephonyDataRecordDAO = appDatabase.getDatabase(applicationContext).telephonyDataRecordDao();
         this.register();
 
         mCallState = -9999;
@@ -110,13 +112,13 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
         //post an event
         EventBus.getDefault().post(telephonyDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.telephonyDataRecordDao().insertAll(telephonyDataRecord);
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            telephonyDataRecordDAO.insertAll(telephonyDataRecord);
 
-            List<TelephonyDataRecord> telephonyDataRecords = db.telephonyDataRecordDao().getAll();
+            List<TelephonyDataRecord> telephonyDataRecords = telephonyDataRecordDAO.getAll();
 
             for (TelephonyDataRecord t : telephonyDataRecords) {
                 Log.e(TAG," NetworkOperatorName: "+ t.getNetworkOperatorName());

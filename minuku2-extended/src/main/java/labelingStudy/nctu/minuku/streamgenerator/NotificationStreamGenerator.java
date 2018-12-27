@@ -14,6 +14,7 @@ import java.util.List;
 
 import labelingStudy.nctu.minuku.Data.appDatabase;
 import labelingStudy.nctu.minuku.config.Constants;
+import labelingStudy.nctu.minuku.dao.NotificationDataRecordDAO;
 import labelingStudy.nctu.minuku.manager.MinukuStreamManager;
 import labelingStudy.nctu.minuku.model.DataRecord.NotificationDataRecord;
 import labelingStudy.nctu.minuku.service.NotificationListenService;
@@ -31,6 +32,7 @@ public class NotificationStreamGenerator extends AndroidStreamGenerator<Notifica
     private Context mContext;
     String TAG = "NotificationStreamGenerator";
     String room = "room";
+    private NotificationDataRecordDAO notificationDataRecordDAO;
     private NotificationStream mStream;
     private static NotificationManager notificationManager;
     public static String mNotificaitonTitle = "";
@@ -40,7 +42,6 @@ public class NotificationStreamGenerator extends AndroidStreamGenerator<Notifica
     public static  String mNotificaitonPackageName ="";
     private NotificationListenService notificationlistener;
     public static Integer accessid=-1;
-    appDatabase db;
 
 
 
@@ -65,7 +66,7 @@ public class NotificationStreamGenerator extends AndroidStreamGenerator<Notifica
     public NotificationStreamGenerator(Context applicationContext) {
         super(applicationContext);
 
-
+        notificationDataRecordDAO = appDatabase.getDatabase(applicationContext).notificationDataRecordDao();
         mContext = applicationContext;
         notificationlistener = new NotificationListenService(this);
         this.mStream = new NotificationStream(Constants.DEFAULT_QUEUE_SIZE);
@@ -104,11 +105,11 @@ public class NotificationStreamGenerator extends AndroidStreamGenerator<Notifica
         EventBus.getDefault().post(notificationDataRecord);
 
         try {
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.notificationDataRecordDao().insertAll(notificationDataRecord);
-            List<NotificationDataRecord> notificationDataRecords = db.notificationDataRecordDao().getAll();
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            notificationDataRecordDAO.insertAll(notificationDataRecord);
+            List<NotificationDataRecord> notificationDataRecords = notificationDataRecordDAO.getAll();
             for (NotificationDataRecord l : notificationDataRecords) {
                 Log.e(TAG, " NotificationPackageName: " + String.valueOf(l.getNotificaitonPackageName()));
                 Log.e(TAG, " NotificationTitle: " + String.valueOf(l.getNotificaitonTitle()));

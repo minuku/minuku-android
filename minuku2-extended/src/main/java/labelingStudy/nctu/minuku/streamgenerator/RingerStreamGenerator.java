@@ -33,7 +33,7 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
     private String TAG = "RingerStreamGenerator";
     private RingerStream mStream;
-
+    private RingerDataRecordDAO ringerDataRecordDAO;
     //audio and ringer
     public static final String RINGER_MODE_NORMAL = "Normal";
     public static final String RINGER_MODE_VIBRATE = "Vibrate";
@@ -74,6 +74,7 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
         this.mContext = applicationContext;
         this.mStream = new RingerStream(Constants.DEFAULT_QUEUE_SIZE);
+        ringerDataRecordDAO = appDatabase.getDatabase(applicationContext).ringerDataRecordDao();
 
         sharedPrefs = mContext.getSharedPreferences(Constants.sharedPrefString,Context.MODE_PRIVATE);
 
@@ -118,13 +119,13 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
         // also post an event.
         EventBus.getDefault().post(ringerDataRecord);
         try {
-            appDatabase db;
-            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
-                    .allowMainThreadQueries()
-                    .build();
-            db.ringerDataRecordDao().insertAll(ringerDataRecord);
+//            appDatabase db;
+//            db = Room.databaseBuilder(mContext,appDatabase.class,"dataCollection")
+//                    .allowMainThreadQueries()
+//                    .build();
+            ringerDataRecordDAO.insertAll(ringerDataRecord);
 
-            List<RingerDataRecord> ringerDataRecords = db.ringerDataRecordDao().getAll();
+            List<RingerDataRecord> ringerDataRecords = ringerDataRecordDAO.getAll();
             for (RingerDataRecord r : ringerDataRecords) {
                 labelingStudy.nctu.minuku.logger.Log.e(TAG," RingerMode: "+ r.getRingerMode());
                 labelingStudy.nctu.minuku.logger.Log.e(TAG," AudioMode: "+ r.getAudioMode());
